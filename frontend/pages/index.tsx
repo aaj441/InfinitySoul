@@ -181,6 +181,30 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+          {/* LEGAL FOOTER - After Results */}
+          <div className="mt-12 p-6 bg-red-950 border border-red-700 rounded text-center">
+            <p className="text-red-100 text-sm mb-3">
+              <strong>⚠️ CRITICAL LEGAL DISCLAIMER</strong>
+            </p>
+            <div className="text-red-100 text-xs space-y-2 text-left max-w-2xl mx-auto">
+              <p>
+                InfinitySol is a <strong>technical auditing tool</strong>, not a law firm. This scan provides automated analysis only and <strong>does NOT</strong> constitute legal advice.
+              </p>
+              <p className="font-bold">
+                ❌ <strong>This scan does NOT guarantee:</strong> ADA compliance, WCAG compliance, freedom from lawsuits, or legal protection
+              </p>
+              <p>
+                ✅ Automated tools detect only ~40-60% of real accessibility issues. You must conduct manual testing and consult a licensed attorney before making legal decisions.
+              </p>
+              <p>
+                Our results may contain false positives or false negatives. Your company remains solely responsible for accessibility compliance and legal liability.
+              </p>
+              <p className="text-center mt-3">
+                <a href="/legal" className="text-red-300 underline hover:text-red-200">Read complete legal terms</a>
+              </p>
+            </div>
+          </div>
         )}
 
         {/* SOCIAL PROOF */}

@@ -149,8 +149,6 @@ async function performScan(url: string) {
       });
     });
 
-    await browser.close();
-
     // Parse results
     const axeResults: any = results;
     const violations = {
@@ -180,8 +178,17 @@ async function performScan(url: string) {
       topViolations
     };
   } catch (error) {
-    if (browser) await browser.close();
     throw error;
+  } finally {
+    // Always close browser, regardless of success or failure
+    if (browser) {
+      try {
+        await browser.close();
+      } catch (closeError) {
+        console.error('⚠️ [SCAN] Error closing browser:', closeError);
+        // Don't throw - browser cleanup failure shouldn't crash the job
+      }
+    }
   }
 }
 
