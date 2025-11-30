@@ -1,34 +1,31 @@
 {
   "name": "infinitysol",
   "version": "1.0.0",
-  "description": "Enterprise accessibility compliance platform with litigation risk intelligence",
+  "description": "ADA compliance scanner - prevent accessibility lawsuits before they happen",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "type-check": "tsc --noEmit",
-    "scanner": "node scripts/run-scanner.js",
-    "litigation-sync": "node scripts/sync-litigation-db.js"
+    "dev": "npm run backend &",
+    "backend": "cd backend && npx ts-node server.ts",
+    "frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "npm run backend",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "next": "^14.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^5.0.0",
-    "axe-core": "^4.7.2",
-    "pa11y": "^6.2.3",
-    "axios": "^1.6.0",
-    "cheerio": "^1.0.0-rc.12",
-    "jsonwebtoken": "^9.1.0",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
-    "zod": "^3.22.0"
+    "uuid": "^9.0.1",
+    "playwright": "^1.40.0",
+    "axios": "^1.6.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/react": "^18.2.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "eslint": "^8.0.0"
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.2",
+    "ts-node": "^10.9.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
