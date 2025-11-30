@@ -6,7 +6,7 @@
  * Deploy to: Railway.app (5 minute setup)
  */
 
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import { chromium } from 'playwright';
 import axios from 'axios';
@@ -18,6 +18,45 @@ dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// ============ RATE LIMITING (Prevent API Abuse) ============
+
+interface RateLimitStore {
+  [key: string]: { count: number; resetTime: number };
+}
+
+const rateLimitStore: RateLimitStore = {};
+
+function rateLimit(maxRequests: number = 10, windowMs: number = 60000) {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const ip = req.ip || 'unknown';
+    const now = Date.now();
+
+    // Initialize or reset if window expired
+    if (!rateLimitStore[ip] || rateLimitStore[ip].resetTime < now) {
+      rateLimitStore[ip] = { count: 0, resetTime: now + windowMs };
+    }
+
+    // Increment counter
+    rateLimitStore[ip].count++;
+
+    // Check limit
+    if (rateLimitStore[ip].count > maxRequests) {
+      return res.status(429).json({
+        error: 'Too many requests',
+        message: `Rate limit exceeded: ${maxRequests} requests per minute. Sign up for API key at infinitesol.com/api`,
+        retryAfter: Math.ceil((rateLimitStore[ip].resetTime - now) / 1000)
+      });
+    }
+
+    // Add rate limit headers
+    res.setHeader('X-RateLimit-Limit', maxRequests);
+    res.setHeader('X-RateLimit-Remaining', maxRequests - rateLimitStore[ip].count);
+    res.setHeader('X-RateLimit-Reset', new Date(rateLimitStore[ip].resetTime).toISOString());
+
+    next();
+  };
+}
 
 // ============ INTERFACES ============
 
@@ -166,7 +205,7 @@ function getIndustryFromDomain(url: string): string {
 
 // ============ MAIN SCAN ENDPOINT ============
 
-app.post('/api/v1/scan', async (req: Request, res: Response) => {
+app.post('/api/v1/scan', rateLimit(10, 60000), async (req: Request, res: Response) => {
   const { url, email } = req.body as ScanRequest;
 
   if (!url) {
@@ -246,7 +285,7 @@ app.post('/api/v1/scan', async (req: Request, res: Response) => {
 
 // ============ LITIGATION DATA ENDPOINT ============
 
-app.get('/api/v1/litigation/:industry', (req: Request, res: Response) => {
+app.get('/api/v1/litigation/:industry', rateLimit(50, 60000), (req: Request, res: Response) => {
   const { industry } = req.params;
   const data = LITIGATION_DATA[industry.toLowerCase()] || LITIGATION_DATA['default'];
 

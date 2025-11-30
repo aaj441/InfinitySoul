@@ -112,8 +112,20 @@ export default function Home() {
         {result && result.status === 'success' && (
           <div className="bg-gray-900 py-12 border-t-2 border-red-600">
             <div className="max-w-2xl mx-auto px-6">
+              {/* FALSE POSITIVE WARNING */}
+              <div className="bg-yellow-900 border-l-4 border-yellow-500 p-4 mb-6 rounded">
+                <p className="text-yellow-100 font-bold">⚠️ About This Scan</p>
+                <ul className="text-yellow-100 text-sm mt-2 space-y-1">
+                  <li>✓ Automated scan found {result.violations.total} potential issues</li>
+                  <li>✗ This scan may contain false positives (~60% of real issues may be missed)</li>
+                  <li>✗ Automated tools cannot assess context or intent</li>
+                  <li>✗ This is NOT legal advice and does NOT guarantee compliance</li>
+                  <li>✗ Manual expert review REQUIRED before legal decisions</li>
+                </ul>
+              </div>
+
               <div className="bg-black border-2 border-red-600 p-8 rounded-lg">
-                <h2 className="text-3xl font-black text-red-600 mb-6">⚠️ CRITICAL RISK DETECTED</h2>
+                <h2 className="text-3xl font-black text-red-600 mb-6">📊 Scan Results</h2>
 
                 <div className="grid grid-cols-2 gap-6 mb-8">
                   <div className="bg-gray-800 p-6 rounded">
@@ -174,7 +186,16 @@ export default function Home() {
         {/* SOCIAL PROOF */}
         <div className="bg-black py-16 border-t border-gray-800">
           <div className="max-w-4xl mx-auto px-6">
-            <h2 className="text-3xl font-black mb-12 text-center">Recent ADA Lawsuits (Public Record)</h2>
+            <div className="mb-12 p-6 bg-green-900 border border-green-600 rounded text-center">
+              <p className="text-green-100 mb-3">
+                💡 <strong>Want inspiration instead of warnings?</strong>
+              </p>
+              <p className="text-green-100 mb-4">
+                Check out our <a href="/hall-of-fame" className="text-white underline font-bold hover:no-underline">Hall of Fame</a> to see companies leading in accessibility.
+              </p>
+            </div>
+
+            <h2 className="text-3xl font-black mb-12 text-center">Recent ADA Litigation (Public Record)</h2>
 
             <div className="grid gap-6">
               {[

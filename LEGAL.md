@@ -221,6 +221,70 @@ We may update these terms at any time. Continued use of InfinitySol constitutes 
 
 ---
 
+## Service Warranties & Exclusions
+
+### What InfinitySol GUARANTEES
+- Scan will be performed using current axe-core library
+- Report will be delivered within 24 hours of completion
+- Methodology is transparent and auditable
+- Data sources are publicly available and documented
+
+### What InfinitySol DOES NOT GUARANTEE
+- ❌ **Lawsuit prevention** - We cannot guarantee you will not be sued
+- ❌ **100% accuracy** - Automated tools miss ~60% of real accessibility issues
+- ❌ **Zero false positives** - Some detected issues may not be actionable violations
+- ❌ **Legal compliance** - This is technical analysis, not legal compliance certification
+- ❌ **Absence of future violations** - New issues may emerge after remediation
+- ❌ **Settlement avoidance** - Even compliant sites may receive demand letters
+- ❌ **Plaintiff immunity** - Serial plaintiffs may still file against you
+
+**InfinitySol is NOT an insurance policy, legal opinion, or liability guarantee.**
+
+---
+
+## Outcome-Based Pricing Exclusions
+
+InfinitySol pricing is based on **deliverables**, NOT outcomes.
+
+### Our Obligations (What You Pay For)
+✅ Comprehensive automated WCAG 2.2 AA scanning
+✅ Detailed violation report with remediation guidance
+✅ Industry risk benchmarking
+✅ Expert consultation (if purchased)
+✅ Support and follow-up questions
+
+### Your Obligations (Your Responsibility)
+You are responsible for:
+- Reviewing results with your legal counsel
+- Implementing remediation recommendations
+- Testing fixes thoroughly before deployment
+- Ongoing monitoring and maintenance
+- Legal decisions regarding compliance standards
+
+### What This Means
+- **You cannot receive refund if you still get sued** - We deliver the scan, not lawsuit prevention
+- **You cannot receive refund for false positives** - You must verify results with your developer or accessibility consultant
+- **You cannot claim we guaranteed compliance** - We provided technical analysis, not legal certification
+- **We are not liable for incomplete implementation** - Your team executes the fixes, not us
+
+**Refunds are available ONLY if InfinitySol fails to deliver the purchased services (e.g., scan fails, report not delivered within SLA).**
+
+---
+
+## Plaintiff Representation Disclosure
+
+InfinitySol works with accessibility plaintiffs, advocacy groups, and plaintiff attorneys in separate consulting capacity.
+
+This means:
+- We may provide accessibility audits for both defendants AND plaintiffs
+- We have no conflict of interest (we're independent technical expert, not aligned with either side)
+- Plaintiffs may use our public methodology and data in their cases
+- You should assume our audit data may be reviewed by opposing counsel in litigation
+
+**This is not a conflict; it's independence.**
+
+---
+
 ## Governing Law
 
 These terms are governed by applicable U.S. law. InfinitySol disputes shall be resolved through binding arbitration, not litigation.
