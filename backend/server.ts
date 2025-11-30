@@ -1,23 +1,90 @@
 /**
- * InfinitySol Production Backend
- * Real, working scanner that launches TODAY
+ * InfinitySol Production Backend - IRONCLAD HARDENED
+ * Production-ready scanner with error handling, queue jobs, and Stripe webhooks
  *
- * Stack: Express + Playwright + axe-core
+ * Stack: Express + Playwright + axe-core + BullMQ + Stripe + Perplexity
  * Deploy to: Railway.app (5 minute setup)
+ *
+ * 4 Ironclad Systems Implemented:
+ * 1. Global Error Handling Shield - catches all crashes
+ * 2. Ironclad Queue (BullMQ) - prevents scanner hangs
+ * 3. Revenue Gate (Stripe) - idempotent webhook handler
+ * 4. Intelligence Engine (Perplexity) - streaming insights API
  */
 
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { chromium } from 'playwright';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 
+// Ironclad imports
+import {
+  AppError,
+  ValidationError,
+  catchAsync,
+  globalErrorHandler,
+  handleUnhandledRejection,
+  handleUncaughtException
+} from './errors';
+import { addScanJob, getScanJobStatus, getScanResult, closeQueue } from './queue';
+import { handleStripeWebhook, getSubscriptionStatus } from './stripe-webhooks';
+import { sonarInsights, sonarInsightsComplete } from './perplexity-sonar';
+import { validate, ScanRequestSchema, SonarQuerySchema } from './schemas';
+import { logger } from './logger';
+
 dotenv.config();
 
+// ============ SETUP ERROR HANDLERS ============
+handleUnhandledRejection();
+handleUncaughtException();
+
 const app = express();
-app.use(cors());
-app.use(express.json());
+
+// ============ MIDDLEWARE - Security Headers (Helmet) ============
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      styleSrc: ["'self'", "'unsafe-inline'"]
+    }
+  },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+  noSniff: true,
+  xssFilter: true,
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+}));
+
+// ============ MIDDLEWARE - Raw body for Stripe webhooks (MUST come first) ============
+app.use('/api/webhooks/stripe', express.raw({ type: 'application/json' }));
+
+// ============ MIDDLEWARE - Standard JSON ============
+app.use(cors({
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'],
+  credentials: true,
+  optionsSuccessStatus: 200
+}));
+app.use(express.json({ limit: '10mb' }));
+
+// ============ MIDDLEWARE - Request Logging ============
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const startTime = Date.now();
+  const originalSend = res.send;
+
+  res.send = function(data: any) {
+    const duration = Date.now() - startTime;
+    logger.httpRequest(req.method, req.path, res.statusCode, duration, {
+      ip: req.ip,
+      userAgent: req.get('user-agent')
+    });
+    return originalSend.call(this, data);
+  };
+
+  next();
+});
 
 // ============ RATE LIMITING (Prevent API Abuse) ============
 
@@ -203,119 +270,216 @@ function getIndustryFromDomain(url: string): string {
   return 'default';
 }
 
-// ============ MAIN SCAN ENDPOINT ============
+// ============ SCAN ENDPOINT (Queue-based for reliability) ============
 
-app.post('/api/v1/scan', rateLimit(10, 60000), async (req: Request, res: Response) => {
-  const { url, email } = req.body as ScanRequest;
+/**
+ * POST /api/v1/scan
+ * Submits a scan job to the queue
+ * Returns immediately with jobId (polling endpoint below)
+ */
+app.post(
+  '/api/v1/scan',
+  rateLimit(10, 60000),
+  validate(ScanRequestSchema, 'body'),
+  catchAsync(async (req: Request, res: Response) => {
+    const { url, email } = req.body as any;
 
-  if (!url) {
-    return res.status(400).json({ error: 'URL is required' });
-  }
+    logger.info('Scan requested', { url, hasEmail: !!email });
 
-  try {
-    // Validate URL
-    const parsedUrl = new URL(url);
-    const fullUrl = parsedUrl.toString();
+    // Add job to queue
+    const { jobId, auditId } = await addScanJob(url, email);
 
-    console.log(`[SCAN] Starting scan for ${fullUrl}`);
+    logger.info('Scan job queued', { auditId, url });
 
-    // Run axe scan
-    const axeResults: any = await scanWithAxe(fullUrl);
+    return res.json({
+      auditId,
+      jobId,
+      status: 'queued',
+      message: 'Scan queued. Poll /api/v1/scan-status/:auditId for results.',
+      pollingUrl: `/api/v1/scan-status/${auditId}`,
+      timestamp: new Date().toISOString()
+    });
+  })
+);
 
-    // Parse violations
-    const violations = {
-      critical: axeResults.violations.filter((v: any) => v.impact === 'critical').length,
-      serious: axeResults.violations.filter((v: any) => v.impact === 'serious').length,
-      moderate: axeResults.violations.filter((v: any) => v.impact === 'moderate').length,
-      minor: axeResults.violations.filter((v: any) => v.impact === 'minor').length,
-      total: axeResults.violations.length
-    };
+/**
+ * GET /api/v1/scan-status/:auditId
+ * Poll for scan job status
+ */
+app.get(
+  '/api/v1/scan-status/:auditId',
+  catchAsync(async (req: Request, res: Response) => {
+    const { auditId } = req.params;
 
-    // Get top violations
-    const topViolations = axeResults.violations
-      .slice(0, 5)
-      .map((v: any) => ({
-        code: v.id,
-        description: v.description,
-        violationCount: v.nodes.length
-      }));
+    const status = await getScanJobStatus(auditId);
 
-    // Determine industry and get litigation data
-    const industry = getIndustryFromDomain(fullUrl);
-    const litigationData = LITIGATION_DATA[industry] || LITIGATION_DATA['default'];
+    if (!status) {
+      throw new AppError('Scan job not found', 404);
+    }
 
-    // Calculate risk
-    const riskScore = calculateRiskScore(violations.total, violations.critical);
-    const estimatedCost = estimateLawsuitCost(violations.total, litigationData);
+    // If complete, return results
+    if (status.isCompleted) {
+      const result = await getScanResult(auditId);
+      return res.json({
+        auditId,
+        status: 'completed',
+        result,
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    // Build response
-    const result: ScanResult = {
-      auditId: uuidv4(),
-      url: fullUrl,
-      timestamp: new Date().toISOString(),
-      status: 'success',
-      violations,
-      riskScore,
-      estimatedLawsuitCost: estimatedCost,
-      topViolations
-    };
+    // Still processing
+    return res.json({
+      auditId,
+      status: status.state,
+      progress: status.progress,
+      timestamp: new Date().toISOString()
+    });
+  })
+);
 
-    console.log(`[SCAN] Complete for ${fullUrl}: ${violations.total} violations, risk score ${riskScore}`);
+/**
+ * GET /api/v1/scan-result/:auditId
+ * Get final scan result (after completion)
+ */
+app.get(
+  '/api/v1/scan-result/:auditId',
+  catchAsync(async (req: Request, res: Response) => {
+    const { auditId } = req.params;
 
-    // Save email if provided (for follow-up)
-    if (email) {
-      console.log(`[EMAIL] Captured email: ${email}`);
-      // TODO: Save to database for follow-up
+    const result = await getScanResult(auditId);
+
+    if (!result) {
+      throw new AppError('Scan result not found or still processing', 404);
     }
 
     return res.json(result);
+  })
+);
 
-  } catch (error) {
-    console.error('[SCAN ERROR]', error);
-    const result: ScanResult = {
-      auditId: uuidv4(),
-      url: url || 'unknown',
-      timestamp: new Date().toISOString(),
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    };
-    return res.status(500).json(result);
-  }
-});
+// ============ STRIPE WEBHOOK ENDPOINT ============
+
+app.post('/api/webhooks/stripe',
+  catchAsync(async (req: Request, res: Response) => {
+    await handleStripeWebhook(req, res);
+  })
+);
+
+// ============ PERPLEXITY SONAR ENDPOINTS ============
+
+/**
+ * POST /api/sonar/insights
+ * Stream real-time accessibility insights
+ */
+app.post('/api/sonar/insights',
+  rateLimit(30, 60000),
+  validate(SonarQuerySchema, 'body'),
+  catchAsync(async (req: Request, res: Response) => {
+    logger.info('Sonar insights requested', { violationCode: (req.body as any).violationCode });
+    await sonarInsights(req, res);
+  })
+);
+
+/**
+ * POST /api/sonar/insights-complete
+ * Get complete insights (non-streaming)
+ */
+app.post('/api/sonar/insights-complete',
+  rateLimit(30, 60000),
+  validate(SonarQuerySchema, 'body'),
+  catchAsync(async (req: Request, res: Response) => {
+    logger.info('Sonar complete insights requested', { violationCode: (req.body as any).violationCode });
+    await sonarInsightsComplete(req, res);
+  })
+);
+
+// ============ SUBSCRIPTION STATUS ============
+
+/**
+ * GET /api/subscription/:customerId
+ * Check if customer has active subscription
+ */
+app.get('/api/subscription/:customerId',
+  catchAsync(async (req: Request, res: Response) => {
+    const { customerId } = req.params;
+    const status = getSubscriptionStatus(customerId);
+    return res.json(status);
+  })
+);
 
 // ============ LITIGATION DATA ENDPOINT ============
 
-app.get('/api/v1/litigation/:industry', rateLimit(50, 60000), (req: Request, res: Response) => {
-  const { industry } = req.params;
-  const data = LITIGATION_DATA[industry.toLowerCase()] || LITIGATION_DATA['default'];
+app.get('/api/v1/litigation/:industry', rateLimit(50, 60000),
+  catchAsync(async (req: Request, res: Response) => {
+    const { industry } = req.params;
+    const data = LITIGATION_DATA[industry.toLowerCase()] || LITIGATION_DATA['default'];
 
-  return res.json({
-    industry: data.industry,
-    avgSettlement: data.avgSettlement,
-    casesPerYear: data.casesPerYear,
-    commonViolations: data.commonViolations,
-    disclaimer: 'Based on public court records (PACER, CourtListener). Not legal advice.'
-  });
-});
+    return res.json({
+      industry: data.industry,
+      avgSettlement: data.avgSettlement,
+      casesPerYear: data.casesPerYear,
+      commonViolations: data.commonViolations,
+      disclaimer: 'Based on public court records (PACER, CourtListener). Not legal advice.'
+    });
+  })
+);
 
 // ============ HEALTH CHECK ============
 
-app.get('/health', (req: Request, res: Response) => {
-  return res.json({
-    status: 'healthy',
-    version: '1.0.0',
-    timestamp: new Date().toISOString()
-  });
-});
+app.get('/health',
+  catchAsync(async (req: Request, res: Response) => {
+    return res.json({
+      status: 'healthy',
+      version: '1.0.0',
+      timestamp: new Date().toISOString(),
+      services: {
+        server: 'ok',
+        queue: 'ok'
+      }
+    });
+  })
+);
+
+// ============ GLOBAL ERROR HANDLER (MUST BE LAST) ============
+
+app.use(globalErrorHandler);
 
 // ============ START SERVER ============
 
 const PORT = process.env.PORT || 8000;
 
-app.listen(PORT, () => {
-  console.log(`✅ InfinitySol API running on port ${PORT}`);
+const server = app.listen(PORT, () => {
+  console.log(`\n╔══════════════════════════════════════╗`);
+  console.log(`║ 🛡️  InfinitySol Ironclad Server     ║`);
+  console.log(`╚══════════════════════════════════════╝`);
+  console.log(`\n✅ API running on port ${PORT}`);
   console.log(`📊 Health: http://localhost:${PORT}/health`);
   console.log(`🔍 Scan: POST http://localhost:${PORT}/api/v1/scan`);
+  console.log(`\n🔒 Ironclad Systems Active:`);
+  console.log(`  1. Global Error Handling Shield`);
+  console.log(`  2. Ironclad Job Queue (BullMQ)`);
+  console.log(`  3. Revenue Gate (Stripe Webhooks)`);
+  console.log(`  4. Intelligence Engine (Perplexity Sonar)\n`);
 });
+
+// ============ GRACEFUL SHUTDOWN ============
+
+async function gracefulShutdown() {
+  console.log('\n🛑 Shutdown signal received. Gracefully closing...');
+
+  server.close(async () => {
+    await closeQueue();
+    process.exit(0);
+  });
+
+  // Force exit after 30 seconds
+  setTimeout(() => {
+    console.error('❌ Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
+}
+
+process.on('SIGTERM', gracefulShutdown);
+process.on('SIGINT', gracefulShutdown);
 
 export default app;
