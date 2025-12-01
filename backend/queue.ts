@@ -1,12 +1,14 @@
 /**
  * BullMQ Background Job Queue
  * Prevents scanner from hanging by processing scans asynchronously
+ *
+ * TIER 1: Uses Browserless.io instead of local Playwright for production scaling
  */
 
 import { Queue, Worker, Job } from 'bullmq';
 import redis from './redisConfig';
-import { chromium } from 'playwright';
 import { v4 as uuidv4 } from 'uuid';
+import { browserlessService } from './browserless-service';
 
 // ============ TYPES ============
 
@@ -108,87 +110,38 @@ scanWorker.on('stalled', (jobId) => {
 
 // ============ ACTUAL SCAN LOGIC ============
 
+/**
+ * Perform scan using Browserless.io service
+ * This offloads browser memory requirements from Vercel
+ */
 async function performScan(url: string) {
-  let browser;
   try {
     // Validate URL
     const parsedUrl = new URL(url);
     const fullUrl = parsedUrl.toString();
 
-    // Launch browser
-    browser = await chromium.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    console.log(`🌐 [SCAN] Starting Browserless scan: ${fullUrl}`);
+
+    // Call Browserless service (no local browser needed!)
+    const result = await browserlessService.performScan({
+      url: fullUrl,
+      timeout: 30000,
+      waitUntil: 'networkidle'
     });
 
-    const page = await browser.newPage();
-
-    // Navigate and wait for load
-    await page.goto(fullUrl, { waitUntil: 'networkidle', timeout: 30000 });
-
-    // Inject axe-core
-    await page.evaluate(() => {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.7.2/axe.min.js';
-      script.onload = function () {
-        (window as any).axeReady = true;
-      };
-      document.head.appendChild(script);
-    });
-
-    // Wait for axe to load
-    await page.waitForFunction(() => (window as any).axeReady, { timeout: 10000 });
-
-    // Run axe scan
-    const results = await page.evaluate(() => {
-      return new Promise((resolve, reject) => {
-        (window as any).axe.run((error: any, results: any) => {
-          if (error) reject(error);
-          resolve(results);
-        });
-      });
-    });
-
-    // Parse results
-    const axeResults: any = results;
-    const violations = {
-      critical: axeResults.violations.filter((v: any) => v.impact === 'critical').length,
-      serious: axeResults.violations.filter((v: any) => v.impact === 'serious').length,
-      moderate: axeResults.violations.filter((v: any) => v.impact === 'moderate').length,
-      minor: axeResults.violations.filter((v: any) => v.impact === 'minor').length,
-      total: axeResults.violations.length
-    };
-
-    const topViolations = axeResults.violations
-      .slice(0, 5)
-      .map((v: any) => ({
-        code: v.id,
-        description: v.description,
-        violationCount: v.nodes.length
-      }));
-
-    // Calculate risk
-    const riskScore = calculateRiskScore(violations.total, violations.critical);
-    const estimatedLawsuitCost = estimateLitigationCost(violations.total);
+    // Recalculate risk scores using our metrics
+    const riskScore = calculateRiskScore(result.violations.total, result.violations.critical);
+    const estimatedLawsuitCost = estimateLitigationCost(result.violations.total);
 
     return {
-      violations,
+      violations: result.violations,
       riskScore,
       estimatedLawsuitCost,
-      topViolations
+      topViolations: result.topViolations
     };
   } catch (error) {
+    console.error(`❌ [SCAN] Browserless scan failed for ${url}:`, error);
     throw error;
-  } finally {
-    // Always close browser, regardless of success or failure
-    if (browser) {
-      try {
-        await browser.close();
-      } catch (closeError) {
-        console.error('⚠️ [SCAN] Error closing browser:', closeError);
-        // Don't throw - browser cleanup failure shouldn't crash the job
-      }
-    }
   }
 }
 

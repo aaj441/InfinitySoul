@@ -1,0 +1,62 @@
+{
+  "version": 2,
+  "env": [
+    "NODE_ENV",
+    "PORT",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "BROWSERLESS_API_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "ALLOWED_ORIGINS",
+    "NEXT_PUBLIC_API_URL"
+  ],
+  "buildCommand": "npm run build && npx prisma migrate deploy",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "regions": ["sfo1", "iad1"],
+  "functions": {
+    "backend/server.ts": {
+      "maxDuration": 30,
+      "memory": 512
+    }
+  },
+  "env-example": {
+    "NODE_ENV": "production",
+    "PORT": "8000",
+    "DATABASE_URL": "postgresql://user:password@host:5432/infinitysol",
+    "REDIS_URL": "redis://default:password@host:6379",
+    "BROWSERLESS_API_KEY": "your_api_key_here",
+    "STRIPE_SECRET_KEY": "sk_live_...",
+    "STRIPE_WEBHOOK_SECRET": "whsec_...",
+    "ALLOWED_ORIGINS": "https://infinitesol.com,https://app.infinitesol.com",
+    "NEXT_PUBLIC_API_URL": "https://api.infinitesol.com"
+  },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        }
+      ]
+    }
+  ]
+}
