@@ -391,7 +391,7 @@ app.post('/api/sonar/insights-complete',
 app.get('/api/subscription/:customerId',
   catchAsync(async (req: Request, res: Response) => {
     const { customerId } = req.params;
-    const status = getSubscriptionStatus(customerId);
+    const status = await getSubscriptionStatus(customerId);
     return res.json(status);
   })
 );

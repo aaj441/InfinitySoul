@@ -1,30 +1,18 @@
 /**
  * Stripe Webhook Handler - Revenue Gate
  * Idempotent handlers ensure "paid" users never get stuck on "free"
+ *
+ * TIER 1: Uses database for persistence across deployments
+ * Idempotency keys stored in PostgreSQL prevent duplicate charges
  */
 
 import { Request, Response } from 'express';
 import crypto from 'crypto';
+import { idempotencyOps, subscriptionOps } from './database';
 
 // In production, use Stripe SDK:
 // import Stripe from 'stripe';
 // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-
-// Store for idempotent processing
-const processedEvents = new Map<string, any>();
-
-// In production, use a database instead
-const subscriptionDatabase = new Map<
-  string,
-  {
-    customerId: string;
-    email: string;
-    status: 'active' | 'past_due' | 'canceled';
-    planId: string;
-    currentPeriodStart: number;
-    currentPeriodEnd: number;
-  }
->();
 
 // ============ WEBHOOK SIGNATURE VERIFICATION ============
 
@@ -55,27 +43,28 @@ function verifyWebhookSignature(
 
 // ============ IDEMPOTENT EVENT HANDLER ============
 
-function createIdempotentHandler(eventId: string) {
-  // Check if event was already processed
-  if (processedEvents.has(eventId)) {
-    console.log(`⏭️ [WEBHOOK] Event ${eventId} already processed, skipping`);
-    return processedEvents.get(eventId);
+/**
+ * Check if webhook event was already processed (using database)
+ */
+async function isEventProcessed(eventId: string): Promise<boolean> {
+  try {
+    return await idempotencyOps.isProcessed(eventId);
+  } catch (error) {
+    console.error('Error checking event idempotency:', error);
+    // On error, return false to allow processing (safer than blocking)
+    return false;
   }
-
-  // Mark as being processed
-  processedEvents.set(eventId, { processing: true });
-
-  return null;
 }
 
-function recordProcessedEvent(eventId: string, result: any) {
-  processedEvents.set(eventId, { ...result, processedAt: Date.now() });
-
-  // Clean up old events (older than 24 hours)
-  for (const [key, value] of processedEvents.entries()) {
-    if (value.processedAt && Date.now() - value.processedAt > 86400000) {
-      processedEvents.delete(key);
-    }
+/**
+ * Record processed event in database (for idempotency)
+ */
+async function recordProcessedEvent(eventId: string, result: any): Promise<void> {
+  try {
+    await idempotencyOps.record(eventId, result);
+  } catch (error) {
+    console.error('Error recording processed event:', error);
+    // Don't throw - webhook handler should complete even if recording fails
   }
 }
 
@@ -85,31 +74,20 @@ function recordProcessedEvent(eventId: string, result: any) {
  * checkout.session.completed
  * User just completed payment - activate subscription
  */
-function handleCheckoutSessionCompleted(event: any) {
+async function handleCheckoutSessionCompleted(event: any) {
   const { id, customer, client_reference_id, subscription, amount_total } = event.data.object;
 
   console.log(`💳 [STRIPE] Checkout completed: ${id}`);
 
-  // Create or update user subscription
   try {
     // CRITICAL: Upsert pattern - create user if missing
-    if (!subscriptionDatabase.has(customer)) {
-      subscriptionDatabase.set(customer, {
-        customerId: customer,
-        email: client_reference_id || 'unknown@example.com',
-        status: 'active',
-        planId: subscription || 'starter',
-        currentPeriodStart: Date.now(),
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000 // 30 days
-      });
-    } else {
-      const existing = subscriptionDatabase.get(customer)!;
-      subscriptionDatabase.set(customer, {
-        ...existing,
-        status: 'active',
-        currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000
-      });
-    }
+    await subscriptionOps.upsert(customer, {
+      email: client_reference_id || 'unknown@example.com',
+      status: 'active',
+      planId: subscription || 'starter',
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+    });
 
     console.log(`✅ [STRIPE] Subscription activated for ${customer}`);
     return { success: true, message: 'Subscription activated' };
@@ -123,33 +101,21 @@ function handleCheckoutSessionCompleted(event: any) {
  * customer.subscription.updated
  * Subscription details changed - update database
  */
-function handleSubscriptionUpdated(event: any) {
+async function handleSubscriptionUpdated(event: any) {
   const { id, customer, status, current_period_start, current_period_end } =
     event.data.object;
 
   console.log(`🔄 [STRIPE] Subscription updated: ${id}`);
 
   try {
-    const existing = subscriptionDatabase.get(customer);
-
-    if (!existing) {
-      // Create if missing (upsert pattern)
-      subscriptionDatabase.set(customer, {
-        customerId: customer,
-        email: 'unknown@example.com',
-        status,
-        planId: id,
-        currentPeriodStart: current_period_start * 1000,
-        currentPeriodEnd: current_period_end * 1000
-      });
-    } else {
-      subscriptionDatabase.set(customer, {
-        ...existing,
-        status,
-        currentPeriodStart: current_period_start * 1000,
-        currentPeriodEnd: current_period_end * 1000
-      });
-    }
+    // Upsert pattern - create if missing
+    await subscriptionOps.upsert(customer, {
+      email: 'unknown@example.com',
+      status,
+      planId: id,
+      currentPeriodStart: new Date(current_period_start * 1000),
+      currentPeriodEnd: new Date(current_period_end * 1000)
+    });
 
     console.log(`✅ [STRIPE] Subscription updated for ${customer}: ${status}`);
     return { success: true, message: 'Subscription updated' };
@@ -163,30 +129,20 @@ function handleSubscriptionUpdated(event: any) {
  * customer.subscription.deleted
  * Subscription cancelled - downgrade to free
  */
-function handleSubscriptionDeleted(event: any) {
+async function handleSubscriptionDeleted(event: any) {
   const { id, customer } = event.data.object;
 
   console.log(`🚫 [STRIPE] Subscription deleted: ${id}`);
 
   try {
-    const existing = subscriptionDatabase.get(customer);
-
-    if (existing) {
-      subscriptionDatabase.set(customer, {
-        ...existing,
-        status: 'canceled'
-      });
-    } else {
-      // Create cancelled subscription record
-      subscriptionDatabase.set(customer, {
-        customerId: customer,
-        email: 'unknown@example.com',
-        status: 'canceled',
-        planId: 'free',
-        currentPeriodStart: 0,
-        currentPeriodEnd: 0
-      });
-    }
+    // Upsert pattern - create cancelled record if missing
+    await subscriptionOps.upsert(customer, {
+      email: 'unknown@example.com',
+      status: 'canceled',
+      planId: 'free',
+      currentPeriodStart: new Date(),
+      currentPeriodEnd: new Date()
+    });
 
     console.log(`✅ [STRIPE] Subscription cancelled for ${customer}`);
     return { success: true, message: 'Subscription cancelled' };
@@ -225,27 +181,28 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
   console.log(`📨 [WEBHOOK] Received: ${event.type} (${event.id})`);
 
-  // Check idempotency
-  const existing = createIdempotentHandler(event.id);
-  if (existing && !existing.processing) {
+  // Check idempotency (database-backed)
+  const processed = await isEventProcessed(event.id);
+  if (processed) {
+    console.log(`⏭️ [WEBHOOK] Event ${event.id} already processed, returning cached response`);
     return res.json({ received: true, cached: true });
   }
 
   try {
     let result;
 
-    // Route to appropriate handler
+    // Route to appropriate handler (now all async)
     switch (event.type) {
       case 'checkout.session.completed':
-        result = handleCheckoutSessionCompleted(event);
+        result = await handleCheckoutSessionCompleted(event);
         break;
 
       case 'customer.subscription.updated':
-        result = handleSubscriptionUpdated(event);
+        result = await handleSubscriptionUpdated(event);
         break;
 
       case 'customer.subscription.deleted':
-        result = handleSubscriptionDeleted(event);
+        result = await handleSubscriptionDeleted(event);
         break;
 
       default:
@@ -253,8 +210,8 @@ export async function handleStripeWebhook(req: Request, res: Response) {
         result = { success: true, message: 'Event ignored' };
     }
 
-    // Record successful processing
-    recordProcessedEvent(event.id, result);
+    // Record successful processing (database-backed)
+    await recordProcessedEvent(event.id, result);
 
     return res.json({ received: true, processed: true });
   } catch (error) {
@@ -266,30 +223,30 @@ export async function handleStripeWebhook(req: Request, res: Response) {
 
 // ============ QUERY SUBSCRIPTION STATUS ============
 
-export function getSubscriptionStatus(customerId: string) {
-  const subscription = subscriptionDatabase.get(customerId);
+/**
+ * Get subscription status from database
+ * Now async to support database lookups
+ */
+export async function getSubscriptionStatus(customerId: string) {
+  try {
+    const subscription = await subscriptionOps.getByCustomerId(customerId);
 
-  if (!subscription) {
+    if (!subscription) {
+      return { status: 'free', planId: 'free' };
+    }
+
+    // Check if subscription is still valid
+    if (subscription.status === 'canceled' || new Date() > new Date(subscription.currentPeriodEnd)) {
+      return { status: 'free', planId: 'free' };
+    }
+
+    return {
+      status: subscription.status,
+      planId: subscription.planId,
+      expiresAt: subscription.currentPeriodEnd
+    };
+  } catch (error) {
+    console.error('Error getting subscription status:', error);
     return { status: 'free', planId: 'free' };
   }
-
-  // Check if subscription is still valid
-  if (subscription.status === 'canceled' || Date.now() > subscription.currentPeriodEnd) {
-    return { status: 'free', planId: 'free' };
-  }
-
-  return {
-    status: subscription.status,
-    planId: subscription.planId,
-    expiresAt: subscription.currentPeriodEnd
-  };
-}
-
-// ============ DEBUG: List all subscriptions ============
-
-export function getAllSubscriptions() {
-  return Array.from(subscriptionDatabase.entries()).map(([customerId, data]) => ({
-    customerId,
-    ...data
-  }));
 }
