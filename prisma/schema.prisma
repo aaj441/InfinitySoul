@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============ SUBSCRIPTIONS ============
+
+model Subscription {
+  id                  String    @id @default(cuid())
+  customerId          String    @unique
+  email               String
+  status              String    @default("active") // active, past_due, canceled
+  planId              String    @default("free")
+  currentPeriodStart  DateTime
+  currentPeriodEnd    DateTime
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  @@index([customerId])
+  @@index([email])
+  @@index([status])
+}
+
+// ============ SCAN RESULTS ============
+
+model ScanResult {
+  id                      String    @id @default(cuid())
+  auditId                 String    @unique
+  url                     String
+  status                  String    @default("queued") // queued, processing, completed, failed
+  violations              Json      // { critical, serious, moderate, minor, total }
+  riskScore               Float
+  estimatedLawsuitCost    Float
+  topViolations           Json      // Array of violations
+  error                   String?
+  createdAt               DateTime  @default(now())
+  completedAt             DateTime?
+
+  @@index([auditId])
+  @@index([url])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============ IDEMPOTENCY KEYS ============
+
+model IdempotencyKey {
+  id        String    @id @default(cuid())
+  key       String    @unique
+  eventId   String
+  response  Json
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([eventId])
+  @@index([expiresAt])
+}
+
+// ============ API KEYS (for future) ============
+
+model ApiKey {
+  id        String    @id @default(cuid())
+  name      String
+  key       String    @unique
+  secret    String
+  active    Boolean   @default(true)
+  rateLimit Int       @default(1000) // requests per hour
+  createdAt DateTime  @default(now())
+  expiresAt DateTime?
+
+  @@index([key])
+  @@index([active])
+}
+
+// ============ AUDIT LOGS ============
+
+model AuditLog {
+  id        String    @id @default(cuid())
+  action    String    // scan_created, scan_completed, subscription_created, etc.
+  userId    String?
+  ipAddress String?
+  details   Json?
+  createdAt DateTime  @default(now())
+
+  @@index([action])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+// ============ CACHE (for Redis sync) ============
+
+model Cache {
+  id        String    @id @default(cuid())
+  key       String    @unique
+  value     Json
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([expiresAt])
+}

@@ -9,7 +9,9 @@ import { logger } from './logger';
 interface EnvConfig {
   NODE_ENV: 'development' | 'production';
   PORT: number;
+  DATABASE_URL: string;
   REDIS_URL: string;
+  BROWSERLESS_API_KEY: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   ALLOWED_ORIGINS: string;
@@ -22,7 +24,9 @@ interface EnvConfig {
 export function validateEnv(): EnvConfig {
   const requiredVars = [
     'PORT',
+    'DATABASE_URL',
     'REDIS_URL',
+    'BROWSERLESS_API_KEY',
     'STRIPE_SECRET_KEY',
     'STRIPE_WEBHOOK_SECRET'
   ];
@@ -50,7 +54,9 @@ export function validateEnv(): EnvConfig {
   return {
     NODE_ENV: (process.env.NODE_ENV || 'production') as any,
     PORT: parseInt(process.env.PORT || '8000', 10),
+    DATABASE_URL: process.env.DATABASE_URL!,
     REDIS_URL: process.env.REDIS_URL!,
+    BROWSERLESS_API_KEY: process.env.BROWSERLESS_API_KEY!,
     STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY!,
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET!,
     ALLOWED_ORIGINS: process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://localhost:3001'
@@ -70,7 +76,9 @@ export function printEnvStatus() {
 
     console.log(`NODE_ENV: ${process.env.NODE_ENV}`);
     console.log(`PORT: ${process.env.PORT}`);
+    console.log(`DATABASE_URL: ${process.env.DATABASE_URL ? '✓ set' : '✗ missing'}`);
     console.log(`REDIS_URL: ${process.env.REDIS_URL ? '✓ set' : '✗ missing'}`);
+    console.log(`BROWSERLESS_API_KEY: ${process.env.BROWSERLESS_API_KEY ? '✓ set' : '✗ missing'}`);
     console.log(`STRIPE_SECRET_KEY: ${process.env.STRIPE_SECRET_KEY ? '✓ set' : '✗ missing'}`);
     console.log(`STRIPE_WEBHOOK_SECRET: ${process.env.STRIPE_WEBHOOK_SECRET ? '✓ set' : '✗ missing'}`);
     console.log(`ALLOWED_ORIGINS: ${process.env.ALLOWED_ORIGINS || 'default'}\n`);

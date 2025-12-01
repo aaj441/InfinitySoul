@@ -34,6 +34,7 @@ import { handleStripeWebhook, getSubscriptionStatus } from './stripe-webhooks';
 import { sonarInsights, sonarInsightsComplete } from './perplexity-sonar';
 import { validate, ScanRequestSchema, SonarQuerySchema } from './schemas';
 import { logger } from './logger';
+import { createRedisRateLimiter } from './redis-rate-limiter';
 
 dotenv.config();
 
@@ -86,44 +87,32 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// ============ RATE LIMITING (Prevent API Abuse) ============
+// ============ RATE LIMITING (Redis-Based for Horizontal Scaling) ============
 
-interface RateLimitStore {
-  [key: string]: { count: number; resetTime: number };
-}
+// Create rate limiters for each endpoint
+const rateLimiterScan = createRedisRateLimiter({
+  maxRequests: 10,
+  windowMs: 60000, // 1 minute
+  message: 'Scan limit exceeded. Maximum 10 scans per minute. Sign up for API key at infinitesol.com/api'
+});
 
-const rateLimitStore: RateLimitStore = {};
+const rateLimiterSonar = createRedisRateLimiter({
+  maxRequests: 30,
+  windowMs: 60000, // 1 minute
+  message: 'Sonar insights limit exceeded. Maximum 30 requests per minute.'
+});
 
-function rateLimit(maxRequests: number = 10, windowMs: number = 60000) {
-  return (req: Request, res: Response, next: NextFunction) => {
-    const ip = req.ip || 'unknown';
-    const now = Date.now();
+const rateLimiterLitigation = createRedisRateLimiter({
+  maxRequests: 50,
+  windowMs: 60000, // 1 minute
+  message: 'Litigation data limit exceeded. Maximum 50 requests per minute.'
+});
 
-    // Initialize or reset if window expired
-    if (!rateLimitStore[ip] || rateLimitStore[ip].resetTime < now) {
-      rateLimitStore[ip] = { count: 0, resetTime: now + windowMs };
-    }
-
-    // Increment counter
-    rateLimitStore[ip].count++;
-
-    // Check limit
-    if (rateLimitStore[ip].count > maxRequests) {
-      return res.status(429).json({
-        error: 'Too many requests',
-        message: `Rate limit exceeded: ${maxRequests} requests per minute. Sign up for API key at infinitesol.com/api`,
-        retryAfter: Math.ceil((rateLimitStore[ip].resetTime - now) / 1000)
-      });
-    }
-
-    // Add rate limit headers
-    res.setHeader('X-RateLimit-Limit', maxRequests);
-    res.setHeader('X-RateLimit-Remaining', maxRequests - rateLimitStore[ip].count);
-    res.setHeader('X-RateLimit-Reset', new Date(rateLimitStore[ip].resetTime).toISOString());
-
-    next();
-  };
-}
+const rateLimiterWebhook = createRedisRateLimiter({
+  maxRequests: 100,
+  windowMs: 1000, // 1 second
+  message: 'Webhook rate limit exceeded.'
+});
 
 // ============ INTERFACES ============
 
@@ -279,7 +268,7 @@ function getIndustryFromDomain(url: string): string {
  */
 app.post(
   '/api/v1/scan',
-  rateLimit(10, 60000),
+  rateLimiterScan,
   validate(ScanRequestSchema, 'body'),
   catchAsync(async (req: Request, res: Response) => {
     const { url, email } = req.body as any;
@@ -372,7 +361,7 @@ app.post('/api/webhooks/stripe',
  * Stream real-time accessibility insights
  */
 app.post('/api/sonar/insights',
-  rateLimit(30, 60000),
+  rateLimiterSonar,
   validate(SonarQuerySchema, 'body'),
   catchAsync(async (req: Request, res: Response) => {
     logger.info('Sonar insights requested', { violationCode: (req.body as any).violationCode });
@@ -385,7 +374,7 @@ app.post('/api/sonar/insights',
  * Get complete insights (non-streaming)
  */
 app.post('/api/sonar/insights-complete',
-  rateLimit(30, 60000),
+  rateLimiterSonar,
   validate(SonarQuerySchema, 'body'),
   catchAsync(async (req: Request, res: Response) => {
     logger.info('Sonar complete insights requested', { violationCode: (req.body as any).violationCode });
@@ -409,7 +398,7 @@ app.get('/api/subscription/:customerId',
 
 // ============ LITIGATION DATA ENDPOINT ============
 
-app.get('/api/v1/litigation/:industry', rateLimit(50, 60000),
+app.get('/api/v1/litigation/:industry', rateLimiterLitigation,
   catchAsync(async (req: Request, res: Response) => {
     const { industry } = req.params;
     const data = LITIGATION_DATA[industry.toLowerCase()] || LITIGATION_DATA['default'];
