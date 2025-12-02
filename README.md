@@ -10,6 +10,8 @@ InfinitySol is an accessibility compliance platform that combines:
 
 All grounded in **public data only**. No threats. No legal advice. Just facts.
 
+**📱 Now with Mobile-First Design**: Our platform is optimized for iPhone and all mobile devices with touch-friendly interactions, responsive layouts, and smooth animations. See [MOBILE_FIRST_GUIDE.md](./MOBILE_FIRST_GUIDE.md) for details.
+
 ---
 
 ## What This Platform Does

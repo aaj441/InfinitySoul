@@ -10,10 +10,17 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: "1rem",
       screens: {
         "2xl": "1400px",
       },
+    },
+    screens: {
+      'sm': '640px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1536px',
     },
     extend: {
       colors: {
@@ -56,6 +63,12 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '112': '28rem',
+      },
     },
   },
-  plugins: [],};
+  plugins: [],
+};
