@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "npm run backend &",
     "backend": "cd backend && npx ts-node server.ts",
+    "worker": "npx ts-node backend/worker.ts",
+    "worker:prod": "node dist/backend/worker.js",
     "frontend": "cd frontend && npm run dev",
     "build": "tsc && cd frontend && npm run build",
     "build:backend": "tsc",
@@ -23,21 +25,28 @@
     "test:rollback": "jest tests/consolidation-rollback.test.ts",
     "test:ai": "ts-node scripts/test-ai-consistency.ts",
     "check:prelaunch": "ts-node scripts/pre-launch-check.ts",
-    "validate:env": "ts-node -e \"require('./config/environment').validateEnvironment(); console.log('✅ Environment validated')\""
+    "validate:env": "ts-node -e \"require('./config/environment').validateEnvironment(); console.log('✅ Environment validated')\"",
+    "queue:stats": "ts-node scripts/queue-stats.ts",
+    "queue:clear": "ts-node scripts/queue-clear.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.9.1",
     "@sentry/node": "^7.92.0",
     "@sentry/profiling-node": "^1.3.3",
     "axios": "^1.6.0",
+    "bullmq": "^5.8.0",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "helmet": "^7.1.0",
+    "ioredis": "^5.3.2",
     "joi": "^17.11.0",
     "openai": "^4.20.1",
+    "pdfkit": "^0.13.0",
     "playwright": "^1.40.0",
+    "qrcode": "^1.5.3",
+    "stripe": "^14.17.0",
     "uuid": "^9.0.1",
     "winston": "^3.11.0"
   },

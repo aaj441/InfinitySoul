@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 import consultantRouter from './routes/consultant';
 import evidenceRouter from './routes/evidence';
 import automationRouter from './routes/automation';
+import { enqueueScan, getJobStatus, getQueueStats, checkQueueHealth } from './services/queue';
 
 dotenv.config();
 
@@ -168,7 +169,7 @@ function getIndustryFromDomain(url: string): string {
   return 'default';
 }
 
-// ============ MAIN SCAN ENDPOINT ============
+// ============ QUEUE-BASED SCAN ENDPOINT (ASYNC) ============
 
 app.post('/api/v1/scan', async (req: Request, res: Response) => {
   const { url, email } = req.body as ScanRequest;
@@ -182,69 +183,84 @@ app.post('/api/v1/scan', async (req: Request, res: Response) => {
     const parsedUrl = new URL(url);
     const fullUrl = parsedUrl.toString();
 
-    console.log(`[SCAN] Starting scan for ${fullUrl}`);
+    console.log(`[QUEUE] Submitting scan: ${fullUrl}`);
 
-    // Run axe scan
-    const axeResults: any = await scanWithAxe(fullUrl);
-
-    // Parse violations
-    const violations = {
-      critical: axeResults.violations.filter((v: any) => v.impact === 'critical').length,
-      serious: axeResults.violations.filter((v: any) => v.impact === 'serious').length,
-      moderate: axeResults.violations.filter((v: any) => v.impact === 'moderate').length,
-      minor: axeResults.violations.filter((v: any) => v.impact === 'minor').length,
-      total: axeResults.violations.length
-    };
-
-    // Get top violations
-    const topViolations = axeResults.violations
-      .slice(0, 5)
-      .map((v: any) => ({
-        code: v.id,
-        description: v.description,
-        violationCount: v.nodes.length
-      }));
-
-    // Determine industry and get litigation data
-    const industry = getIndustryFromDomain(fullUrl);
-    const litigationData = LITIGATION_DATA[industry] || LITIGATION_DATA['default'];
-
-    // Calculate risk
-    const riskScore = calculateRiskScore(violations.total, violations.critical);
-    const estimatedCost = estimateLawsuitCost(violations.total, litigationData);
-
-    // Build response
-    const result: ScanResult = {
-      auditId: uuidv4(),
+    // Queue the scan (returns immediately)
+    const queueResult = await enqueueScan({
       url: fullUrl,
+      email: email || undefined,
+    });
+
+    // Return 202 Accepted (async processing)
+    return res.status(202).json({
+      ...queueResult,
+      statusUrl: `/api/v1/scan/${queueResult.jobId}/status`,
       timestamp: new Date().toISOString(),
-      status: 'success',
-      violations,
-      riskScore,
-      estimatedLawsuitCost: estimatedCost,
-      topViolations
-    };
-
-    console.log(`[SCAN] Complete for ${fullUrl}: ${violations.total} violations, risk score ${riskScore}`);
-
-    // Save email if provided (for follow-up)
-    if (email) {
-      console.log(`[EMAIL] Captured email: ${email}`);
-      // TODO: Save to database for follow-up
-    }
-
-    return res.json(result);
+    });
 
   } catch (error) {
-    console.error('[SCAN ERROR]', error);
-    const result: ScanResult = {
-      auditId: uuidv4(),
-      url: url || 'unknown',
+    console.error('[QUEUE ERROR]', error);
+    return res.status(500).json({
+      error: error instanceof Error ? error.message : 'Failed to queue scan',
       timestamp: new Date().toISOString(),
-      status: 'failed',
-      error: error instanceof Error ? error.message : 'Unknown error'
-    };
-    return res.status(500).json(result);
+    });
+  }
+});
+
+// ============ GET SCAN STATUS ENDPOINT ============
+
+app.get('/api/v1/scan/:jobId/status', async (req: Request, res: Response) => {
+  const { jobId } = req.params;
+
+  try {
+    const status = await getJobStatus(jobId);
+
+    // Return appropriate status code based on job state
+    const statusCode = status.status === 'not_found' ? 404 : 200;
+
+    return res.status(statusCode).json(status);
+
+  } catch (error) {
+    console.error('[STATUS ERROR]', error);
+    return res.status(500).json({
+      error: 'Failed to get job status',
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+// ============ QUEUE STATISTICS ENDPOINT ============
+
+app.get('/api/v1/queue/stats', async (req: Request, res: Response) => {
+  try {
+    const stats = await getQueueStats();
+    return res.json({
+      ...stats,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    console.error('[STATS ERROR]', error);
+    return res.status(500).json({
+      error: 'Failed to get queue stats',
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
+
+// ============ QUEUE HEALTH CHECK ============
+
+app.get('/api/v1/queue/health', async (req: Request, res: Response) => {
+  try {
+    const health = await checkQueueHealth();
+    const statusCode = health.status === 'healthy' ? 200 : 503;
+    return res.status(statusCode).json(health);
+  } catch (error) {
+    console.error('[HEALTH ERROR]', error);
+    return res.status(503).json({
+      status: 'unhealthy',
+      error: 'Failed to check queue health',
+      timestamp: new Date().toISOString(),
+    });
   }
 });
 
