@@ -81,7 +81,7 @@ export default function Home() {
       <Head>
         <title>InfinitySol - ADA Compliance Scanner</title>
         <meta name="description" content="Scan your website for ADA accessibility violations before you get sued." />
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <div className="min-h-screen bg-black text-white font-sans">
