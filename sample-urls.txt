@@ -1,0 +1,10 @@
+https://example.com
+https://example.org
+https://example.net
+https://www.w3.org
+https://www.wikipedia.org
+https://www.github.com
+https://www.google.com
+https://www.amazon.com
+https://www.apple.com
+https://www.microsoft.com
