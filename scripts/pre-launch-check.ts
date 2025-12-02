@@ -424,7 +424,7 @@ function checkBuildSystem(): void {
 /**
  * Print final summary
  */
-function printSummary(): void {
+function printSummary(): boolean {
   console.log('\n' + '='.repeat(80));
   console.log('📊 FINAL SUMMARY');
   console.log('='.repeat(80));

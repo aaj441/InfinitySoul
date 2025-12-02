@@ -14,7 +14,7 @@
     "type-check": "tsc --noEmit",
     "test:ai": "ts-node scripts/test-ai-consistency.ts",
     "check:prelaunch": "ts-node scripts/pre-launch-check.ts",
-    "validate:env": "ts-node -e \"require('./config/environment').validateEnvironment(); console.log('✅ Environment validated')\""
+    "validate:env": "ts-node --project tsconfig.json scripts/validate-env.ts"
   },
   "dependencies": {
     "express": "^4.18.2",

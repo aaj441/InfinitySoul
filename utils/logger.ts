@@ -62,7 +62,7 @@ const consoleFormat = winston.format.combine(
 );
 
 // Define transports
-const transports = [
+const transports: winston.transport[] = [
   // Console transport (always enabled)
   new winston.transports.Console({
     format: consoleFormat,
@@ -81,7 +81,7 @@ if (process.env.NODE_ENV === 'production') {
       maxsize: 10485760, // 10MB
       maxFiles: 5,
       format,
-    })
+    }) as winston.transport
   );
 
   // Error logs only
@@ -92,7 +92,7 @@ if (process.env.NODE_ENV === 'production') {
       maxsize: 10485760, // 10MB
       maxFiles: 5,
       format,
-    })
+    }) as winston.transport
   );
 
   // HTTP request logs
@@ -103,7 +103,7 @@ if (process.env.NODE_ENV === 'production') {
       maxsize: 10485760, // 10MB
       maxFiles: 3,
       format,
-    })
+    }) as winston.transport
   );
 }
 

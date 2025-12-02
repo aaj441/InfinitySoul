@@ -120,7 +120,7 @@ class OpenAIClient {
       }
     );
 
-    return response.choices[0].message.content || 'No analysis generated';
+    return response.choices[0]?.message?.content || 'No analysis generated';
   }
 
   /**
@@ -145,7 +145,7 @@ class OpenAIClient {
       }
     );
 
-    return response.choices[0].message.content || 'No summary generated';
+    return response.choices[0]?.message?.content || 'No summary generated';
   }
 
   /**
@@ -170,7 +170,7 @@ class OpenAIClient {
       }
     );
 
-    return response.choices[0].message.content || 'No suggestions generated';
+    return response.choices[0]?.message?.content || 'No suggestions generated';
   }
 
   /**
@@ -195,7 +195,7 @@ class OpenAIClient {
       }
     );
 
-    const content = response.choices[0].message.content || '';
+    const content = response.choices[0]?.message?.content || '';
     return content
       .split('\n')
       .filter((line) => line.trim().match(/^\d+\./))

@@ -124,7 +124,7 @@ export const initErrorTracking = () => {
         }
 
         // Remove sensitive query params
-        if (event.request.query_string) {
+        if (event.request.query_string && typeof event.request.query_string === 'string') {
           event.request.query_string = event.request.query_string
             .replace(/api[_-]?key=[^&]*/gi, 'api_key=[REDACTED]')
             .replace(/token=[^&]*/gi, 'token=[REDACTED]')
@@ -177,7 +177,8 @@ export const captureError = (
   });
 
   // Send to Sentry if initialized
-  if (Sentry.isEnabled()) {
+  const client = Sentry.getClient();
+  if (client) {
     Sentry.captureException(error, {
       user: context?.userId ? { id: context.userId } : undefined,
       tags: {
@@ -199,7 +200,8 @@ export const captureMessage = (
 ) => {
   logger[level === 'warning' ? 'warn' : level](message, context);
 
-  if (Sentry.isEnabled()) {
+  const client = Sentry.getClient();
+  if (client) {
     Sentry.captureMessage(message, {
       level: level === 'warning' ? 'warning' : level,
       extra: context,
@@ -211,7 +213,8 @@ export const captureMessage = (
  * Add user context to error tracking
  */
 export const setUserContext = (userId: string, email?: string) => {
-  if (Sentry.isEnabled()) {
+  const client = Sentry.getClient();
+  if (client) {
     Sentry.setUser({ id: userId, email });
   }
 };
@@ -220,7 +223,8 @@ export const setUserContext = (userId: string, email?: string) => {
  * Add custom context to error tracking
  */
 export const addBreadcrumb = (message: string, category: string, data?: any) => {
-  if (Sentry.isEnabled()) {
+  const client = Sentry.getClient();
+  if (client) {
     Sentry.addBreadcrumb({
       message,
       category,
@@ -235,7 +239,7 @@ export const addBreadcrumb = (message: string, category: string, data?: any) => 
  * Express error handler middleware
  * Should be added AFTER all routes
  */
-export const errorHandler = (err: Error, req: any, res: any, next: any) => {
+export const errorHandler = (err: Error, req: any, res: any, _next: any) => {
   // Handle known application errors
   if (err instanceof AppError) {
     logger.warn('Application error', {
@@ -288,7 +292,8 @@ export const asyncHandler = (fn: Function) => {
  * Shutdown error tracking gracefully
  */
 export const shutdownErrorTracking = async () => {
-  if (Sentry.isEnabled()) {
+  const client = Sentry.getClient();
+  if (client) {
     logger.info('Shutting down error tracking...');
     await Sentry.close(2000);
     logger.info('Error tracking shut down');

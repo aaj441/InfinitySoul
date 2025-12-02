@@ -169,7 +169,7 @@ class PerplexityClient {
       return_related_questions: true,
     });
 
-    return response.choices[0].message.content;
+    return response.choices[0]?.message?.content || '';
   }
 
   /**
@@ -194,7 +194,7 @@ class PerplexityClient {
       return_related_questions: false,
     });
 
-    return response.choices[0].message.content;
+    return response.choices[0]?.message?.content || '';
   }
 
   /**
@@ -217,7 +217,7 @@ class PerplexityClient {
       temperature: 0.3,
     });
 
-    return response.choices[0].message.content;
+    return response.choices[0]?.message?.content || '';
   }
 }
 

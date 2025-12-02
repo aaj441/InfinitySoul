@@ -79,7 +79,7 @@ class ClaudeClient {
     const startTime = Date.now();
 
     try {
-      const response = await this.client.messages.create({
+      const response = await (this.client as any).messages.create({
         model: options?.model || this.defaultModel,
         max_tokens: options?.maxTokens || 4096,
         temperature: options?.temperature || 0.2,
@@ -95,7 +95,7 @@ class ClaudeClient {
         outputTokens: response.usage.output_tokens,
       });
 
-      return response as ClaudeResponse;
+      return response as any as ClaudeResponse;
     } catch (error: any) {
       const duration = Date.now() - startTime;
 
@@ -139,7 +139,7 @@ class ClaudeClient {
       }
     );
 
-    return response.content[0].text;
+    return response.content[0]?.text || "";
   }
 
   /**
@@ -161,7 +161,7 @@ class ClaudeClient {
       }
     );
 
-    return response.content[0].text;
+    return response.content[0]?.text || "";
   }
 
   /**
@@ -187,7 +187,7 @@ class ClaudeClient {
       }
     );
 
-    return response.content[0].text;
+    return response.content[0]?.text || "";
   }
 
   /**
@@ -215,7 +215,7 @@ class ClaudeClient {
 
     try {
       // Extract JSON from response (Claude sometimes wraps in markdown)
-      const text = response.content[0].text;
+      const text = response.content[0]?.text || '';
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
@@ -223,15 +223,15 @@ class ClaudeClient {
 
       // Fallback if no JSON found
       return {
-        riskLevel: 'Medium',
+        riskLevel: 'Medium' as 'Medium',
         reasoning: text,
         recommendations: ['Review full analysis above'],
       };
     } catch (error) {
       logger.warn('Failed to parse Claude risk assessment as JSON', { error });
       return {
-        riskLevel: 'Medium',
-        reasoning: response.content[0].text,
+        riskLevel: 'Medium' as 'Medium',
+        reasoning: response.content[0]?.text || '',
         recommendations: ['Manual review recommended'],
       };
     }
@@ -259,7 +259,7 @@ class ClaudeClient {
       }
     );
 
-    return response.content[0].text;
+    return response.content[0]?.text || "";
   }
 }
 

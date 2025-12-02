@@ -14,7 +14,7 @@
 import { perplexityClient } from '../services/ai/perplexity';
 import { claudeClient } from '../services/ai/claude';
 import { openaiClient } from '../services/ai/openai';
-import { logger, performanceLog } from '../utils/logger';
+import { logger } from '../utils/logger';
 import { validateEnvironment } from '../config/environment';
 
 // Test data: Sample violations
@@ -196,7 +196,7 @@ function compareResponses(results: AITestResult[]): void {
   console.log('='.repeat(80));
 
   if (successfulResults.length === 1) {
-    console.log(`⚠️  Only one AI service available (${successfulResults[0].service})`);
+    console.log(`⚠️  Only one AI service available (${successfulResults[0]?.service || 'unknown'})`);
     console.log('   Cannot compare consistency. Configure additional services.');
   } else {
     // Check for common themes/keywords
