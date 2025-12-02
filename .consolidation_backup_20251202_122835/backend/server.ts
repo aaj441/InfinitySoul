@@ -13,10 +13,6 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 
-import consultantRouter from './routes/consultant';
-import evidenceRouter from './routes/evidence';
-import automationRouter from './routes/automation';
-
 dotenv.config();
 
 const app = express();
@@ -262,13 +258,6 @@ app.get('/api/v1/litigation/:industry', (req: Request, res: Response) => {
     disclaimer: 'Based on public court records (PACER, CourtListener). Not legal advice.'
   });
 });
-
-
-// ============ NEW ROUTES ============
-
-app.use('/api/consultant', consultantRouter);
-app.use('/api/evidence', evidenceRouter);
-app.use('/api/automation', automationRouter);
 
 // ============ HEALTH CHECK ============
 
