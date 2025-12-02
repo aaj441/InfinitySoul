@@ -2,24 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
+@layer base {
+  :root {
+    /* Default to Dark Mode automatically for that "Infinity" vibe */
+    --background: 265 20% 10%; /* Very dark purple-black */
+    --foreground: 210 40% 98%; /* White text */
+
+    --card: 265 20% 15%; /* Slightly lighter purple for cards */
+    --card-foreground: 210 40% 98%;
+
+    --popover: 265 20% 15%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 263 70% 50%; /* Vivid Infinity Purple */
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 265 30% 20%; /* Muted deep purple */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 265 20% 25%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 263 70% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 265 30% 25%;
+    --input: 265 30% 25%;
+    --ring: 263 70% 50%;
+
+    --radius: 0.5rem;
+  }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-  background-color: #000000;
-  color: #ffffff;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
