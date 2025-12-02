@@ -5,11 +5,6 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
-
-// execAsync for potential future use
-promisify(exec);
 
 describe('Consolidation Rollback Tests', () => {
   const scriptPath = path.join(__dirname, '..', 'INFINITYSOL_CONSOLIDATION.sh');

@@ -15,7 +15,11 @@ process.env.VPAT_GENERATION_ENABLED = 'true';
 // Extend Jest timeout for integration tests
 jest.setTimeout(30000);
 
+// Store original console for potential restoration
+const originalConsole = { ...console };
+
 // Mock console methods to reduce noise in tests
+// Note: Original console can be restored in specific tests if needed for debugging
 global.console = {
   ...console,
   log: jest.fn(),
@@ -24,3 +28,6 @@ global.console = {
   warn: jest.fn(),
   error: jest.fn(),
 };
+
+// Export original console for tests that need it
+(global as any).originalConsole = originalConsole;

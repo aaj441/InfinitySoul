@@ -3,13 +3,8 @@
  * Tests for INFINITYSOL_CONSOLIDATION.sh script functionality
  */
 
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import * as fs from 'fs';
 import * as path from 'path';
-
-// execAsync for potential future use
-promisify(exec);
 
 describe('INFINITYSOL_CONSOLIDATION.sh Script Tests', () => {
   const scriptPath = path.join(__dirname, '..', 'INFINITYSOL_CONSOLIDATION.sh');
