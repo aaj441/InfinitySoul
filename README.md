@@ -363,6 +363,8 @@ Serial plaintiffs respect preparation. They avoid well-documented compliance eff
 **For legal analysis:** See `/docs/legal-framework.md` (consult your attorney)
 **For data sources:** See `/docs/data-sources.md`
 
+**For general inquiries and support:** Contact [aaroninfinity8@gmail.com](mailto:aaroninfinity8@gmail.com)
+
 ---
 
 **Version:** 1.0.0
