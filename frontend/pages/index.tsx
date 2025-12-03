@@ -28,8 +28,9 @@ export default function Home() {
     setError('');
 
     try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000',
+        `${apiUrl}/api/v1/scan`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
