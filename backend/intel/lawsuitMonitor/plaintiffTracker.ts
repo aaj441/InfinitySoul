@@ -56,7 +56,7 @@ export interface PlaintiffProximityScore {
     industryMatch: number;
     jurisdictionMatch: number;
     violationMatch: number;
-    companySize Match: number;
+    companySizeMatch: number;
   };
   recommendation: string;
 }

@@ -87,7 +87,7 @@ export class DistributedScanManager {
   /**
    * Execute a distributed scan across multiple domains
    */
-  async executeDis tributedScan(domains: string[]): Promise<Map<string, CrawlResult>> {
+  async executeDistributedScan(domains: string[]): Promise<Map<string, CrawlResult>> {
     if (!this.isInitialized) {
       await this.initialize();
     }
@@ -293,6 +293,6 @@ export const scanManager = new DistributedScanManager({
 /**
  * Main export function
  */
-export async function executeDist ributedScan(domains: string[]): Promise<Map<string, CrawlResult>> {
+export async function executeDistributedScan(domains: string[]): Promise<Map<string, CrawlResult>> {
   return scanManager.executeDistributedScan(domains);
 }
