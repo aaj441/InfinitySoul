@@ -316,3 +316,288 @@ model RiskProfile {
   @@index([industry])
   @@index([lastScanDate])
 }
+
+// ============================================================================
+// PHASE V — AUTONOMOUS ADA THREAT INTELLIGENCE NETWORK
+// ============================================================================
+
+// Real-time lawsuit tracking from PACER, CourtListener, etc.
+model Lawsuit {
+  id                    String   @id @default(uuid())
+
+  // Case identifiers
+  caseNumber            String   @unique
+  court                 String   // Federal district, state court
+  jurisdiction          String   // State abbreviation
+
+  // Parties
+  plaintiff             String
+  plaintiffAttorney     String?
+  defendant             String   // Domain or company
+  defendantSize         String?  // 'startup', 'smb', 'mid-market', 'enterprise'
+
+  // Case details
+  violationTypes        String[] // WCAG violations alleged
+  filedDate             DateTime
+  status                String   // 'filed', 'settled', 'judgment', 'dismissed'
+  settlementAmount      Int?
+  legalFeesPaid         Int?
+
+  // Risk signals
+  industry              String?
+  isSocialMedia         Boolean  @default(false)
+  isRetail              Boolean  @default(false)
+  isEcommerce           Boolean  @default(false)
+  isHealthcare          Boolean  @default(false)
+  isEducation           Boolean  @default(false)
+
+  // Intelligence
+  serialPlaintiff       Boolean  @default(false)
+  aggressiveAttorney    Boolean  @default(false)
+  mediaAttention        Boolean  @default(false)
+
+  // Source & metadata
+  source                String   // 'PACER', 'CourtListener', 'News'
+  sourceUrl             String?
+  fetchedAt             DateTime @default(now())
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("lawsuits")
+  @@index([defendant])
+  @@index([jurisdiction])
+  @@index([filedDate])
+  @@index([plaintiffAttorney])
+  @@index([serialPlaintiff])
+}
+
+// Serial plaintiff profile with behavioral data
+model SerialPlaintiff {
+  id                    String   @id @default(uuid())
+
+  // Profile
+  name                  String   @unique
+  lawFirm               String?
+  attorneyNames         String[]
+
+  // Activity metrics
+  totalFilings          Int      @default(0)
+  settlementsWon        Int      @default(0)
+  winRate               Float    @default(0.0) // 0-1.0
+  averageSettlement     Int?     // Average settlement amount
+
+  // Targeting patterns
+  preferredJurisdictions String[]
+  preferredIndustries   String[]
+  targetCompanySizes    String[] // 'startup', 'smb', etc.
+  targetCMS             String[] // 'WordPress', 'Shopify', etc.
+
+  // Behavior signals
+  filingVelocity        Int      @default(0) // Lawsuits per month
+  jurisdictionExpansion Boolean  @default(false)
+  partnershipChanges    Boolean  @default(false)
+
+  // Threat level
+  threatLevel           String   @default("medium") // 'critical', 'high', 'medium', 'low'
+  lastActivityDate      DateTime?
+  nextPredictedTarget   String?  // Domain or company name
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("serial_plaintiffs")
+  @@index([name])
+  @@index([threatLevel])
+  @@index([preferredIndustries])
+}
+
+// Industry-wide litigation heatmap
+model IndustryLitigationRisk {
+  id                    String   @id @default(uuid())
+
+  // Industry info
+  industry              String   @unique // e.g., 'retail', 'ecommerce', 'saas'
+
+  // Risk metrics
+  litigationDensity     Float    // Lawsuits per 10K companies per year
+  recentFilingCount     Int      // Lawsuits in past 90 days
+  totalFilingsThisYear  Int
+
+  // Trends
+  trend                 String   @default("stable") // 'rising', 'falling', 'stable'
+  trendDirection        Int      @default(0) // -1 = falling, 0 = stable, +1 = rising
+
+  // Threat intelligence
+  dominantPlaintiffs    String[] // Top 3 serial plaintiffs
+  commonViolations      String[] // Most-sued violations
+  averageSettlement     Int?
+
+  // Predictive signals
+  forecasted30DayFilings Int?
+  forecasted90DayFilings Int?
+
+  // Metadata
+  lastUpdated           DateTime @default(now())
+  dataSource            String   // 'PACER', 'aggregated'
+
+  @@map("industry_litigation_risk")
+  @@index([industry])
+  @@index([trend])
+  @@index([litigationDensity])
+}
+
+// Jurisdiction-level threat assessment
+model JurisdictionThreat {
+  id                    String   @id @default(uuid())
+
+  // Location
+  state                 String   @unique // CA, NY, FL, etc.
+  federalCircuit        String?
+
+  // Litigation metrics
+  annualLawsuitCount    Int      @default(0)
+  activeSerialPlaintiffs Int     @default(0)
+  averageSettlement     Int?
+  plaintiff wins         Float    @default(0.5) // 0-1.0
+
+  // Risk assessment
+  threatLevel           String   @default("medium") // 'critical', 'high', 'medium', 'low'
+  heating                Boolean  @default(false) // Is litigation rising?
+  litigationTrend       String   @default("stable") // 'rising', 'falling', 'stable'
+
+  // Trend data
+  litigationVelocity    Int      @default(0) // New lawsuits per month
+  recent30DayFilings    Int      @default(0)
+  recent90DayFilings    Int      @default(0)
+
+  // Plaintiff activity
+  activePlaintiffNames  String[]
+  aggressiveLawFirms    String[]
+
+  // Metadata
+  lastUpdated           DateTime @default(now())
+  flaggedForEscalation  Boolean  @default(false)
+
+  @@map("jurisdiction_threats")
+  @@index([state])
+  @@index([threatLevel])
+  @@index([heating])
+}
+
+// Lawsuit prediction model outputs
+model LawsuitPrediction {
+  id                    String   @id @default(uuid())
+
+  // Target
+  domain                String
+  companyName           String?
+  industry              String?
+  jurisdiction          String?
+
+  // Probability predictions
+  probability30Days     Float    // 0.0-1.0
+  probability90Days     Float
+  probability1Year      Float
+
+  // Feature importance (what drives the prediction)
+  violationTrendScore   Float
+  industryRiskScore     Float
+  jurisdictionRiskScore Float
+  plaintiffProximityScore Float
+  cmsRiskScore          Float
+
+  // Prediction metadata
+  confidence            Float    // 0.0-1.0
+  riskRating            String   // 'critical', 'high', 'medium', 'low'
+  predictedPlaintiffs   String[] // Top 3 likely plaintiffs
+  predictedSettlement   Int?     // Estimated if sued
+
+  // Model version
+  modelVersion          String   @default("v3.0")
+  predictedAt           DateTime @default(now())
+  nextUpdateAt          DateTime?
+
+  @@map("lawsuit_predictions")
+  @@index([domain])
+  @@index([probability30Days])
+  @@index([riskRating])
+  @@index([predictedAt])
+}
+
+// Portfolio-level risk aggregation for insurers/law firms
+model PortfolioRiskAssessment {
+  id                    String   @id @default(uuid())
+
+  // Portfolio info
+  portfolioName         String
+  ownerType             String   // 'law_firm', 'insurer', 'agency'
+  ownerName             String?
+  clientCount           Int      @default(0)
+
+  // Aggregate metrics
+  totalExposure         Int      // Sum of all client exposures
+  expectedClaimsPerYear Float
+  averageComplianceScore Int?
+  averageLitigationProbability Float?
+
+  // Risk distribution
+  criticalRiskCount     Int      @default(0) // Clients in critical risk
+  highRiskCount         Int      @default(0)
+  mediumRiskCount       Int      @default(0)
+  lowRiskCount          Int      @default(0)
+
+  // Clustered risks
+  litigationClusterRisk Boolean  @default(false) // Multiple clients at risk
+  jurisdictionHotspots  String[]
+  industryHotspots      String[]
+
+  // Insurer-relevant metrics
+  estimatedTotalClaims  Int?
+  recommendedPremium    Int?
+  lossReductionOpportunity Int?
+
+  // Remediation priorities
+  urgentRemediationCount Int      @default(0) // Clients needing immediate fixes
+
+  // Metadata
+  lastUpdated           DateTime @default(now())
+  nextAssessment        DateTime?
+
+  @@map("portfolio_risk_assessments")
+  @@index([ownerType])
+  @@index([totalExposure])
+  @@index([litigationClusterRisk])
+}
+
+// Global threat intelligence pulse
+model ThreatIntelligencePulse {
+  id                    String   @id @default(uuid())
+
+  // Global metrics
+  globalRiskIndex       Int      // 0-100 scale
+  litigationActivityLevel String  // 'surging', 'elevated', 'normal', 'quiet'
+  serialPlaintiffActivityLevel String
+
+  // Industry breakdown
+  industryRiskSnapshot  Json     // { industry: threatLevel }
+  jurisdictionRiskSnapshot Json   // { state: threatLevel }
+
+  // Alerts
+  activeAlerts          Int      @default(0)
+  emergingThreats       String[] // Industries/jurisdictions to watch
+  riskTrends            String[] // 'retail-surge', 'saas-stable', etc.
+
+  // Predictions
+  forecast30Days        Int?     // Predicted lawsuits in next 30 days
+  forecast90Days        Int?
+
+  // Metadata
+  pulseTime             DateTime @default(now())
+  dataQuality           Float    // 0.0-1.0
+  sourceCount           Int      // Number of data sources aggregated
+
+  @@map("threat_intelligence_pulses")
+  @@index([pulseTime])
+  @@index([globalRiskIndex])
+}
