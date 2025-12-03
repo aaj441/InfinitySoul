@@ -27,7 +27,9 @@
     "check:prelaunch": "ts-node scripts/pre-launch-check.ts",
     "validate:env": "ts-node -e \"require('./config/environment').validateEnvironment(); console.log('✅ Environment validated')\"",
     "queue:stats": "ts-node scripts/queue-stats.ts",
-    "queue:clear": "ts-node scripts/queue-clear.ts"
+    "queue:clear": "ts-node scripts/queue-clear.ts",
+    "intel:update-plaintiffs": "ts-node scripts/updatePlaintiffMap.ts",
+    "intel:scan": "ts-node scripts/runGlobalScan.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.9.1",
