@@ -135,3 +135,184 @@ model Lead {
   @@index([email])
   @@index([status])
 }
+
+// ============================================================================
+// PHASE III — RISK UNDERWRITING ENGINE
+// ============================================================================
+
+// Compliance Credit Score (CCS v2.0) - Like FICO but for ADA/WCAG
+model ComplianceScore {
+  id                    String   @id @default(uuid())
+  scanResultId          String   @unique
+
+  // The score (0-850)
+  score                 Int      // 0-850 scale
+  grade                 String   // 'A+', 'A', 'B', 'C', 'D', 'F'
+
+  // Score components
+  technicalDebtScore    Float    // 0-100, impact of violations
+  jurisdictionRisk      Float    // 0-100, legal risk by jurisdiction
+  serialPlaintiffRisk   Float    // 0-100, threat from serial plaintiffs
+  improvementTrend      Float    // 0-100, velocity of fixes
+  industryAdjustment    Float    // 0-100, compared to industry peers
+
+  // Scoring breakdown
+  violationCount        Int      // Total violations
+  criticalViolations    Int      // WCAG AA failures
+  seriousViolations     Int      // WCAG A failures
+
+  // Risk factors
+  publicLawsuitCount    Int      @default(0)  // Historical lawsuits
+  serialPlaintiffScore  Float    @default(0)  // Risk from known plaintiffs
+  cmsRisk               Float    @default(0)  // Platform (WordPress, etc) risk
+  trafficMagnitude      Int      @default(0)  // Monthly visitors
+  revenuePerVisitor     Float    @default(0)  // Annual revenue / traffic
+
+  // Historical tracking
+  previousScore         Int?     // Score from 30 days ago
+  trendDirection        String   @default("stable") // 'improving', 'worsening', 'stable'
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("compliance_scores")
+  @@index([score])
+  @@index([createdAt])
+}
+
+// Multi-engine accessibility scan with consensus
+model AccessibilityScanConsensus {
+  id                    String   @id @default(uuid())
+  scanResultId          String   @unique
+
+  // Scan details
+  url                   String
+  domain                String
+  scanDate              DateTime @default(now())
+
+  // Engine results (stored as JSON for flexibility)
+  axeResults            Json?    // axe-core results
+  pa11yResults          Json?    // Pa11y results
+  waveResults           Json?    // WAVE API results
+  lighthouseResults     Json?    // Lighthouse accessibility results
+
+  // Consensus violations
+  consensusViolations   Json     // Violations agreed upon by 2+ engines
+  criticalConsensus     Int      @default(0)
+  majorConsensus        Int      @default(0)
+  minorConsensus        Int      @default(0)
+
+  // Confidence scores
+  avgConfidence         Float    // Average engine confidence
+
+  // Execution details
+  executionTimeMs       Int?     // Time to run all engines
+  allEnginesSuccessful  Boolean  @default(false)
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("accessibility_scan_consensus")
+  @@index([domain])
+  @@index([scanDate])
+}
+
+// Insurance-grade risk assessment
+model RiskAssessment {
+  id                        String   @id @default(uuid())
+  scanResultId              String   @unique
+  complianceScoreId         String   @unique
+
+  // Lawsuit probability
+  annualLawsuitProbability  Float    // 0.0-1.0 (0%-100%)
+
+  // Financial exposure
+  expectedLawsuitCost       Int      // Settlement + legal fees
+  estimatedSettlementLow    Int
+  estimatedSettlementMid    Int
+  estimatedSettlementHigh   Int
+  estimatedLegalFeesLow     Int
+  estimatedLegalFeesHigh    Int
+  totalExposureLow          Int
+  totalExposureHigh         Int
+
+  // Insurance pricing
+  recommendedInsurancePremium Int   // Annual premium recommendation
+  recommendedRemediationBudget Int // Cost to fix issues
+
+  // Risk factors
+  industryRiskScore         Float    // 0-1.0
+  jurisdictionRiskScore     Float    // 0-1.0
+  plaintiffHistoryScore     Float    // 0-1.0
+  violationSeverityScore    Float    // 0-1.0
+
+  // Comparable cases
+  comparableCasesCount      Int      @default(0)
+  averageSettlementAmount   Int?
+  mediaExposureRisk         String?  // 'high', 'medium', 'low'
+
+  // Assessment quality
+  assessmentConfidence      Float    // 0-1.0
+  lastReassessmentDate      DateTime?
+
+  // Metadata
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  @@map("risk_assessments")
+  @@index([annualLawsuitProbability])
+  @@index([createdAt])
+}
+
+// Risk profile for continuous monitoring
+model RiskProfile {
+  id                    String   @id @default(uuid())
+
+  // Domain identification
+  domain                String   @unique
+  url                   String
+
+  // Organization info
+  companyName           String?
+  industry              String?
+  estimatedTraffic      Int?     // Monthly visitors
+  estimatedRevenue      Float?   // Annual revenue
+
+  // Current risk scores
+  currentCcsScore       Int?     // Latest CCS score
+  currentProbability    Float?   // Current lawsuit probability
+  currentExposure       Int?     // Current estimated exposure
+
+  // Historical tracking
+  scoringHistory        Json     @default("[]") // Array of { date, score, probability, exposure }
+  violationTrend        String   @default("neutral") // 'improving', 'worsening', 'neutral'
+
+  // Risk factors
+  publicLawsuits        Int      @default(0)
+  knownSerialPlaintiffs Boolean  @default(false)
+  regulatoryFocus       Boolean  @default(false) // Under DOJ/CFPB scrutiny
+  mediaAttention        Boolean  @default(false)
+
+  // Monitoring
+  monitoringEnabled     Boolean  @default(true)
+  monitoringFrequency   String   @default("weekly") // 'daily', 'weekly', 'monthly'
+  lastScanDate          DateTime?
+  nextScheduledScan     DateTime?
+
+  // Insurance metadata
+  insurancePartner      String?
+  insurancePolicy       String?
+  insuranceExpiresAt    DateTime?
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("risk_profiles")
+  @@index([currentCcsScore])
+  @@index([domain])
+  @@index([industry])
+  @@index([lastScanDate])
+}
