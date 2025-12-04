@@ -601,3 +601,1032 @@ model ThreatIntelligencePulse {
   @@index([pulseTime])
   @@index([globalRiskIndex])
 }
+
+// ============================================================================
+// PHASE VII — ENTERPRISE CASE MANAGEMENT & LITIGATION WORKFLOW
+// ============================================================================
+
+// Full litigation case tracking with document management
+model LitigationCase {
+  id                    String   @id @default(uuid())
+
+  // Case identifiers
+  caseNumber            String   @unique
+  court                 String
+  jurisdiction          String
+  assignedJudge         String?
+
+  // Parties
+  plaintiff             String
+  plaintiffAttorney     String
+  defendant             String
+  defendantAttorney     String?
+
+  // Case status
+  status                String   // 'filed', 'discovery', 'motion', 'trial', 'appeal', 'settled', 'dismissed'
+  statusHistory         Json     // { date, from, to, reason }[]
+  priority              String   @default("medium") // 'critical', 'high', 'medium', 'low'
+
+  // Violations
+  violationTypes        String[]
+  violationSeverity     String[] // 'critical', 'serious', 'moderate', 'minor'
+  claimsCount           Int      @default(0)
+
+  // Demand & Settlement
+  initialDemand         Int?
+  currentDemand         Int?
+  ourOffer              Int?
+  currentSettlement     Int?
+
+  // Important dates
+  filedDate             DateTime
+  serviceDate           DateTime?
+  answeredDate          DateTime?
+  discoveryDeadline     DateTime?
+  motionDeadline        DateTime?
+  trialDate             DateTime?
+  settlementDate        DateTime?
+
+  // Financial
+  estimatedExposure     Int?
+  legalFeesBudget       Int?
+  spentToDate           Int?
+
+  // AI Analysis
+  caseStrengthScore     Float?   // 0.0-1.0 our odds
+  recommendedStrategy   String?
+  aiAssessment          Json?    // AI case analysis
+
+  // Documents
+  documents             CaseDocument[]
+  timeline              CaseTimeline[]
+  stakeholders          CaseStakeholder[]
+  workflow              CaseWorkflow?
+  updates               CaseUpdate[]
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("litigation_cases")
+  @@index([caseNumber])
+  @@index([status])
+  @@index([defendant])
+  @@index([filedDate])
+}
+
+// Case documents with versioning
+model CaseDocument {
+  id                    String   @id @default(uuid())
+  caseId                String
+  case                  LitigationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // Document details
+  title                 String
+  documentType          String   // 'complaint', 'answer', 'motion', 'brief', 'discovery', 'exhibit', 'demand', 'response'
+  description           String?
+  filePath              String   // S3 path
+
+  // Content
+  content               String?  // Full text if extracted
+  pageCount             Int?
+  hash                  String?  // Document integrity verification
+
+  // Metadata
+  fileSize              Int?
+  mimeType              String?
+  uploadedBy            String
+  uploadedAt            DateTime @default(now())
+
+  // Versioning
+  version               Int      @default(1)
+  previousVersionId     String?
+
+  // AI Analysis
+  extractedText         String?  // OCR text
+  keyPhrases            String[]
+  sentiment             String?  // 'favorable', 'neutral', 'unfavorable'
+
+  // Indexing for search
+  searchable            Boolean  @default(true)
+  tags                  String[]
+
+  @@map("case_documents")
+  @@index([caseId])
+  @@index([documentType])
+  @@index([uploadedAt])
+}
+
+// Case timeline - visual event tracking
+model CaseTimeline {
+  id                    String   @id @default(uuid())
+  caseId                String
+  case                  LitigationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // Event
+  eventType             String   // 'filing', 'service', 'response', 'motion', 'hearing', 'discovery', 'settlement'
+  eventDate             DateTime
+  eventTitle            String
+  eventDescription      String?
+
+  // Importance
+  isDeadline            Boolean  @default(false)
+  isMilestone           Boolean  @default(false)
+  priority              String   @default("normal")
+
+  // Related data
+  relatedDocumentId     String?
+  relatedPlaintiffAction Boolean @default(false)
+
+  // Metadata
+  createdAt             DateTime @default(now())
+
+  @@map("case_timelines")
+  @@index([caseId])
+  @@index([eventDate])
+}
+
+// Case stakeholders - team management
+model CaseStakeholder {
+  id                    String   @id @default(uuid())
+  caseId                String
+  case                  LitigationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // Stakeholder
+  name                  String
+  role                  String   // 'lead_counsel', 'paralegal', 'expert', 'in_house_counsel', 'litigation_support'
+  email                 String
+  phone                 String?
+
+  // Team assignment
+  assignedAt            DateTime @default(now())
+  responsibilities      String[]
+  availability          String   @default("full_time") // 'full_time', 'part_time', 'as_needed'
+
+  @@map("case_stakeholders")
+  @@index([caseId])
+  @@index([role])
+}
+
+// Case workflow - task management
+model CaseWorkflow {
+  id                    String   @id @default(uuid())
+  caseId                String   @unique
+  case                  LitigationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // Workflow state
+  currentPhase          String   // 'intake', 'investigation', 'discovery', 'motion', 'trial_prep', 'trial', 'settlement', 'appeal'
+  completedPhases       String[]
+
+  // Tasks
+  tasks                 Json     // { id, title, status, dueDate, assignee, priority }[]
+  tasksCompletedCount   Int      @default(0)
+  tasksOverdueCount     Int      @default(0)
+
+  // Automation
+  automationRules       Json?    // Auto-generated tasks, notifications
+  nextAutomatedAction   String?
+  nextAutomatedActionDate DateTime?
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("case_workflows")
+  @@index([caseId])
+  @@index([currentPhase])
+}
+
+// Case updates - activity log
+model CaseUpdate {
+  id                    String   @id @default(uuid())
+  caseId                String
+  case                  LitigationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  // Update
+  updateType            String   // 'status_change', 'document_added', 'meeting_scheduled', 'strategy_update', 'financial_update', 'alert'
+  title                 String
+  description           String?
+
+  // Actor
+  updatedBy             String   // Email or system
+  isSystemGenerated     Boolean  @default(false)
+
+  // Metadata
+  createdAt             DateTime @default(now())
+
+  @@map("case_updates")
+  @@index([caseId])
+  @@index([updateType])
+  @@index([createdAt])
+}
+
+// ============================================================================
+// PHASE VIII — ADVANCED LEGAL REASONING ENGINE
+// ============================================================================
+
+// AI-generated legal opinions with citations
+model LegalOpinion {
+  id                    String   @id @default(uuid())
+
+  // Opinion
+  title                 String
+  opinionType           String   // 'case_analysis', 'legal_memorandum', 'expert_opinion', 'settlement_analysis'
+  content               String   // Full opinion text
+  summary               String
+
+  // Legal basis
+  jurisdiction          String
+  applicableLaws        String[]
+  keyStatutes           String[]
+  precedents            String[]
+
+  // AI reasoning
+  reasoning             Json     // Structured reasoning chain
+  confidence            Float    // 0.0-1.0
+  citationQuality       Float    // How well cited (0.0-1.0)
+
+  // Related data
+  caseId                String?
+  relatedCases          String[] // Case numbers
+
+  // Expert review
+  reviewedByAttorney    Boolean  @default(false)
+  reviewerName          String?
+  reviewNotes           String?
+
+  // Metadata
+  generatedAt           DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("legal_opinions")
+  @@index([opinionType])
+  @@index([confidence])
+}
+
+// Argumentation chain - reasoning structure
+model ArgumentativeChain {
+  id                    String   @id @default(uuid())
+
+  // Structure
+  chainType             String   // 'plaintiff_position', 'defense_position', 'settlement_logic', 'trial_strategy'
+  title                 String
+  description           String?
+
+  // Arguments
+  premiseArguments      String[] // Supporting facts
+  evidenceReferences    String[] // Evidence numbers
+  logicalSteps          Json     // { premise, inference, conclusion }[]
+  counterarguments      String[] // Opposing position
+  rebuttals             String[] // Our response
+
+  // Strength
+  argumentStrength      Float    // 0.0-1.0
+  vulnerabilities       String[]
+  strengthAreas         String[]
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("argumentative_chains")
+  @@index([chainType])
+}
+
+// Precedent research - case law lookup
+model PrecedentResearch {
+  id                    String   @id @default(uuid())
+
+  // Citation
+  caseTitle             String
+  caseNumber            String   @unique
+  court                 String
+  year                  Int
+  citation              String
+
+  // Content
+  holding               String   // Main legal principle
+  facts                 String   // Case facts
+  reasoning             String   // Court reasoning
+  relevantToViolation   String   // Which WCAG violation
+
+  // Relevance scoring
+  relevanceScore        Float    // 0.0-1.0
+  favorableToDefense    Boolean  @default(false)
+  favorableToPlaintiff  Boolean  @default(false)
+
+  // Usage
+  citedInOpinions       String[] // Opinion IDs
+  citedInBriefs         String[] // Brief IDs
+
+  // Metadata
+  sourceUrl             String?
+  fetchedAt             DateTime @default(now())
+
+  @@map("precedent_research")
+  @@index([caseNumber])
+  @@index([year])
+  @@index([relevanceScore])
+}
+
+// Legal brief template with AI generation
+model LegalBrief {
+  id                    String   @id @default(uuid())
+
+  // Brief
+  title                 String
+  briefType             String   // 'motion_brief', 'trial_brief', 'appellate_brief', 'amicus_brief'
+  jurisdiction          String
+
+  // Content sections
+  caption               String
+  statement             String   // Statement of issues
+  facts                 String
+  legalAnalysis         String
+  argument              String
+  conclusion            String
+  relief                String
+
+  // Formatting
+  currentPage           Int      @default(0)
+  totalPages            Int      @default(0)
+  wordCount             Int      @default(0)
+
+  // AI Generation metadata
+  generatedSections     String[] // Which sections were AI-generated
+  citationCheck         Boolean  @default(false)
+  grammarChecked        Boolean  @default(false)
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  finalizedAt           DateTime?
+
+  @@map("legal_briefs")
+  @@index([briefType])
+  @@index([jurisdiction])
+}
+
+// Demand letter generation
+model DemandLetter {
+  id                    String   @id @default(uuid())
+
+  // Letter details
+  recipientName         String
+  recipientAddress      String
+  recipientEmail        String
+
+  // Demand structure
+  natureOfClaim         String
+  factsSummary          String
+  legalBasis            String
+  damagesCalculation    String // Structured calculation
+  demandAmount          Int
+
+  // Settlement terms
+  offerDescription      String
+  timelineForResponse   String // e.g., "30 days"
+  consequences          String // What happens if rejected
+
+  // Metadata
+  generatedAt           DateTime @default(now())
+  sentDate              DateTime?
+  responseReceivedDate  DateTime?
+  responseAmount        Int?
+
+  @@map("demand_letters")
+  @@index([recipientName])
+  @@index([sentDate])
+}
+
+// Settlement negotiation tracking
+model SettlementNegotiation {
+  id                    String   @id @default(uuid())
+  caseId                String?
+
+  // Negotiation
+  roundNumber           Int      @default(1)
+  initiatingParty       String   // 'plaintiff', 'defendant', 'mediator'
+  proposedAmount        Int
+  ourInitialResponse    Int?
+
+  // Negotiation data
+  negotiationHistory    Json     // { round, date, offered, responded, notes }[]
+  currentState          String   // 'initial_demand', 'counter', 'negotiating', 'stalled', 'agreed'
+
+  // AI Recommendation
+  aiRecommendedOffer    Int?
+  recommendationBasis   String?  // Why this offer makes sense
+
+  // Outcome
+  agreedAmount          Int?
+  settlementReachedAt   DateTime?
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("settlement_negotiations")
+  @@index([caseId])
+  @@index([currentState])
+}
+
+// ============================================================================
+// PHASE IX — PREDICTIVE LITIGATION STRATEGY PLATFORM
+// ============================================================================
+
+// Opposing counsel profile
+model OpposingCounselProfile {
+  id                    String   @id @default(uuid())
+
+  // Profile
+  name                  String   @unique
+  lawFirm               String?
+  email                 String?
+  specialization       String[]
+
+  // Track record
+  successRate           Float    // 0.0-1.0
+  averageSettlement     Int?
+  typicalStrategy       String   // 'aggressive', 'settlement-focused', 'trial-savvy'
+  knownTactics          String[]
+
+  // Behavioral patterns
+  filingFrequency       String   // 'high', 'medium', 'low'
+  settlementRate        Float    // % of cases settled
+  appealFrequency       Float    // % appealed
+  mediaUsage            String   // 'high', 'medium', 'low'
+
+  // Recent activity
+  recentCases           String[] // Case numbers
+  currentCaseload       Int      @default(0)
+  reputationScore       Float    // 0.0-1.0
+
+  // AI Assessment
+  recommendedApproach   String
+  riskAssessment        String   // 'high', 'medium', 'low'
+
+  @@map("opposing_counsel_profiles")
+  @@index([name])
+  @@index([successRate])
+}
+
+// Judge profile - decision patterns
+model JudgeProfile {
+  id                    String   @id @default(uuid())
+
+  // Profile
+  name                  String   @unique
+  court                 String
+  state                 String
+  yearsOnBench          Int?
+
+  // Judicial patterns
+  accessibilityRulings  Json     // Trend data on ADA/WCAG cases
+  plaintiffFavorability Float    // % ruling for plaintiffs
+  defendantFavorability Float    // % ruling for defendants
+  settlementEncouragement Boolean @default(false)
+
+  // Behavioral patterns
+  decision TimeToDecision String // 'fast', 'medium', 'slow'
+  appealReversal        Float    // % reversed on appeal
+  precedentUsage        String   // How often cites precedent
+
+  // Writing style
+  decisionLength        String   // 'concise', 'moderate', 'verbose'
+  reasoningClarity      Float    // 0.0-1.0
+
+  // Recent decisions
+  recentCases           String[] // Case numbers
+  recentTrends          String[] // ObservedDecision
+
+  // AI Assessment
+  predictedRuling       String?  // For pending cases
+  confidenceInPrediction Float?
+
+  @@map("judge_profiles")
+  @@index([name])
+  @@index([state])
+  @@index([court])
+}
+
+// Litigation strategy recommendations
+model LitigationStrategy {
+  id                    String   @id @default(uuid())
+
+  // Context
+  caseNumber            String?
+  defendant             String?
+  jurisdiction          String
+  violationType         String
+
+  // Strategy
+  strategType           String   // 'aggressive', 'settlement-focused', 'defensive', 'hybrid'
+  reasoning             String   // Why this strategy
+  steps                 String[] // Sequential steps
+
+  // Tactics
+  recommendedMotions    String[]
+  discoveryStrategy     String
+  expertWitnessNeeded   Boolean
+  mediaStrategy         String?  // 'publicity', 'quiet', 'neutral'
+
+  // Resource planning
+  estimatedBudget       Int?
+  estimatedDuration     String   // e.g., "6-12 months"
+  staffingNeeds         String[]
+
+  // Outcome prediction
+  probabilityOfVictory  Float?   // 0.0-1.0
+  expectedCost          Int?
+  expectedSettlement    Int?
+
+  @@map("litigation_strategies")
+  @@index([strategType])
+  @@index([caseNumber])
+}
+
+// Litigation outcome predictions
+model LitigationOutcomePrediction {
+  id                    String   @id @default(uuid())
+
+  // Case
+  caseNumber            String?
+  defendant             String?
+  plaintiff             String?
+
+  // Predictions
+  predictedOutcome      String   // 'plaintiff_win', 'defendant_win', 'settlement', 'dismissal'
+  confidenceScore       Float    // 0.0-1.0
+
+  // Outcome details
+  predictedJudgment     Int?     // For plaintiff win
+  predictedSettlement   Int?     // For settlement
+  likelyRange           Json     // { low, high }
+
+  // Contributing factors
+  favoringPlaintiff     String[]
+  favoringDefendant     String[]
+  uncertainties         String[]
+
+  // Trial-specific predictions
+  predictedTrialLength  Int?     // Days
+  discoveryComplexity   String   // 'simple', 'moderate', 'complex'
+  expertWitnessImpact   Float?   // 0.0-1.0
+
+  // Model info
+  modelVersion          String   @default("v1.0")
+  predictedAt           DateTime @default(now())
+
+  @@map("litigation_outcome_predictions")
+  @@index([caseNumber])
+  @@index([predictedOutcome])
+}
+
+// ============================================================================
+// PHASE X — COMPLIANCE TRANSFORMATION SUITE
+// ============================================================================
+
+// Compliance remediation project
+model ComplianceProject {
+  id                    String   @id @default(uuid())
+
+  // Project
+  name                  String
+  domain                String
+  projectType           String   // 'wcag_remediation', 'ada_compliance', 'section508', 'vpat_preparation'
+
+  // Status
+  status                String   @default("planning") // 'planning', 'in_progress', 'in_testing', 'deployed', 'monitoring'
+  startDate             DateTime @default(now())
+  targetCompletionDate  DateTime?
+  completedDate         DateTime?
+
+  // Scope
+  totalViolations       Int
+  fixedViolations       Int      @default(0)
+  remainingViolations   Int
+  completionPercentage  Float    @default(0.0)
+
+  // Properties
+  affectedProperties    String[]
+  cmsPlatforms          String[] // 'WordPress', 'Shopify', etc.
+
+  // Budget
+  budgetAllocated       Int?
+  budgetSpent           Int      @default(0)
+
+  // Automation
+  automationEnabled     Boolean  @default(false)
+  automatedFixCount     Int      @default(0)
+  manualFixCount        Int      @default(0)
+
+  // Tasks
+  tasks                 RemediationTask[]
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("compliance_projects")
+  @@index([domain])
+  @@index([status])
+}
+
+// Individual remediation tasks
+model RemediationTask {
+  id                    String   @id @default(uuid())
+  projectId             String
+  project               ComplianceProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  // Task
+  title                 String
+  description           String?
+  violationType         String   // WCAG criterion
+  severity              String   // 'critical', 'serious', 'moderate', 'minor'
+
+  // Status
+  status                String   @default("pending") // 'pending', 'in_progress', 'completed', 'blocked'
+  startedAt             DateTime?
+  completedAt           DateTime?
+
+  // Solution
+  proposedFix           String
+  implementationSteps   String[]
+  technicalDetails      Json?
+
+  // Automation
+  isAutomatable         Boolean  @default(false)
+  automationScript      String?
+  automationExecutedAt  DateTime?
+
+  // Testing
+  testCases             String[]
+  testResults           Json?
+  testPassed            Boolean?
+
+  // Assignment
+  assignedTo            String?
+  estimatedHours        Int?
+  actualHours           Int?
+
+  @@map("remediation_tasks")
+  @@index([projectId])
+  @@index([status])
+  @@index([severity])
+}
+
+// Cross-property sync tracking
+model PropertySync {
+  id                    String   @id @default(uuid())
+
+  // Sync
+  sourceProperty        String
+  targetProperties      String[]
+  remediationType       String   // 'wcag_fix', 'ui_update', 'content_change'
+
+  // Status
+  status                String   // 'pending', 'syncing', 'completed', 'failed'
+  syncStartedAt         DateTime?
+  syncCompletedAt       DateTime?
+
+  // Results
+  successCount          Int      @default(0)
+  failureCount          Int      @default(0)
+  errorMessages         String[]
+
+  // Version control
+  versionTag            String   // e.g., "v1.2.3"
+
+  @@map("property_syncs")
+  @@index([status])
+}
+
+// Compliance drift detection
+model DriftDetection {
+  id                    String   @id @default(uuid())
+
+  // Domain
+  domain                String
+  monitoredUrl          String
+
+  // Drift detection
+  scanType              String   // 'regular', 'change_detection', 'regression'
+  previousScanHash      String?
+  currentScanHash       String?
+  driftDetected         Boolean  @default(false)
+
+  // Changes
+  violationsAdded       Int      @default(0)
+  violationsRemoved     Int      @default(0)
+  violationsModified    Int      @default(0)
+
+  // Impact
+  riskImpact            String   // 'high', 'medium', 'low'
+  requiresAttention     Boolean  @default(false)
+
+  // Response
+  alertSent             Boolean  @default(false)
+  alertSentAt           DateTime?
+  responseInitiated     Boolean  @default(false)
+
+  @@map("drift_detections")
+  @@index([domain])
+  @@index([driftDetected])
+}
+
+// Compliance reporting
+model ComplianceReport {
+  id                    String   @id @default(uuid())
+
+  // Report
+  reportType            String   // 'executive', 'detailed', 'audit', 'trending'
+  generatedFor          String   // Domain or portfolio
+  generatedDate         DateTime @default(now())
+
+  // Content
+  title                 String
+  summary               String
+  fullReport            String   // Markdown format
+
+  // Metrics
+  currentComplianceScore Int?
+  previousComplianceScore Int?
+  scoreChange           Int?
+  compliancePercentage  Float?   // % of WCAG criteria met
+
+  // Findings
+  criticalIssues        Int
+  highIssues            Int
+  mediumIssues          Int
+  lowIssues             Int
+
+  // Recommendations
+  recommendations       String[]
+  priorityActions       String[]
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  sentTo                String[]
+
+  @@map("compliance_reports")
+  @@index([generatedFor])
+  @@index([reportType])
+}
+
+// Audit trail for compliance actions
+model AuditTrail {
+  id                    String   @id @default(uuid())
+
+  // Action
+  actionType            String   // 'scan', 'fix_applied', 'property_synced', 'report_generated', 'alert_sent'
+  actor                 String   // User email or 'system'
+  domain                String
+
+  // Details
+  description           String
+  metadata              Json?
+
+  // Verification
+  verificationHash      String?  // SHA256 hash for integrity
+  verified              Boolean  @default(false)
+
+  // Metadata
+  timestamp             DateTime @default(now())
+
+  @@map("audit_trails")
+  @@index([domain])
+  @@index([actionType])
+  @@index([timestamp])
+}
+
+// ============================================================================
+// PHASE XI — ENTERPRISE ECOSYSTEM & WHITE-LABEL PLATFORM
+// ============================================================================
+
+// Enterprise accounts with multi-tenancy
+model EnterpriseAccount {
+  id                    String   @id @default(uuid())
+
+  // Account
+  name                  String   @unique
+  accountType           String   // 'law_firm', 'insurer', 'agency', 'consultant', 'in_house'
+  website               String?
+  industry              String?
+
+  // Contact
+  primaryContact        String
+  contactEmail          String
+  contactPhone          String?
+
+  // Subscription
+  subscriptionTier      String   // 'starter', 'professional', 'enterprise'
+  subscriptionStatus    String   @default("active") // 'active', 'trial', 'suspended', 'canceled'
+  subscriptionStartDate DateTime @default(now())
+  subscriptionEndDate   DateTime?
+
+  // Usage
+  usersCount            Int      @default(1)
+  clientPortfolioSize   Int      @default(0)
+  apiCallsMonthly       Int      @default(0)
+  storageMB             Int      @default(0)
+
+  // Billing
+  billingEmail          String
+  billingAddress        Json?
+  paymentMethod         String?
+
+  // Features
+  enabledFeatures       String[] // Feature flags
+  customBranding        Boolean  @default(false)
+  whiteLabel            Boolean  @default(false)
+  apiAccess             Boolean  @default(false)
+
+  // Configuration
+  config                WhiteLabelConfig?
+  integrations          APIIntegration[]
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("enterprise_accounts")
+  @@index([accountType])
+  @@index([subscriptionStatus])
+}
+
+// White-label configuration
+model WhiteLabelConfig {
+  id                    String   @id @default(uuid())
+  accountId             String   @unique
+  account               EnterpriseAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Branding
+  companyName           String
+  logoUrl               String?
+  primaryColor          String?   // Hex color
+  secondaryColor        String?
+  customCss             String?
+
+  // Customization
+  customDomain          String?   // e.g., "compliance.yourcompany.com"
+  emailBranding         Boolean   @default(false)
+  reportBranding        Boolean   @default(false)
+  uiBranding            Boolean   @default(false)
+
+  // Features
+  hidePoweredBy          Boolean  @default(false)
+  customWelcomeMessage   String?
+  customDocumentation   String?
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("white_label_configs")
+  @@index([accountId])
+}
+
+// API integrations - partner connections
+model APIIntegration {
+  id                    String   @id @default(uuid())
+  accountId             String
+  account               EnterpriseAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Integration
+  integrationType       String   // 'salesforce', 'slack', 'jira', 'zendesk', 'custom'
+  name                  String
+  description           String?
+
+  // Credentials
+  apiKey                String   @default("")
+  apiSecret             String   @default("")
+  webhookUrl            String?
+  webhookSecret         String?
+
+  // Configuration
+  isActive              Boolean  @default(false)
+  lastTestedAt          DateTime?
+  lastSyncAt            DateTime?
+
+  // Sync settings
+  autoSync              Boolean  @default(false)
+  syncFrequency         String   // 'realtime', 'hourly', 'daily', 'weekly'
+  dataSync              String[] // What data syncs
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("api_integrations")
+  @@index([accountId])
+  @@index([integrationType])
+}
+
+// Partnership agreements
+model PartnershipAgreement {
+  id                    String   @id @default(uuid())
+
+  // Partnership
+  partnerName           String
+  partnerType           String   // 'insurance', 'law_firm', 'technology', 'reseller'
+  contactEmail          String
+
+  // Terms
+  startDate             DateTime @default(now())
+  endDate               DateTime?
+  status                String   @default("active") // 'active', 'pending', 'expired', 'terminated'
+
+  // Revenue share
+  revenueSplitPercentage Float?   // Partner's cut
+  minimumThreshold      Int?      // Monthly minimum
+
+  // Agreements
+  contractUrl           String?
+  termsDocument         String?
+
+  // Performance
+  referralCount         Int      @default(0)
+  totalRevenue          Int      @default(0)
+  partnerComission      Int      @default(0)
+
+  // Metadata
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@map("partnership_agreements")
+  @@index([partnerType])
+  @@index([status])
+}
+
+// Feature access control
+model FeatureAccess {
+  id                    String   @id @default(uuid())
+  accountId             String
+  account               EnterpriseAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Feature
+  featureName           String
+  featureId             String   @unique
+  featureCategory       String   // 'core', 'premium', 'enterprise'
+
+  // Access level
+  accessLevel           String   // 'full', 'limited', 'read_only', 'none'
+  accessTier            String   // 'starter', 'professional', 'enterprise'
+
+  // Limits
+  requestLimitPerMonth  Int?
+  concurrentUsers       Int?
+  storageLimitMB        Int?
+  dataRetentionDays     Int?
+
+  // Status
+  isActive              Boolean  @default(true)
+  grantedAt             DateTime @default(now())
+  expiresAt             DateTime?
+
+  @@map("feature_access")
+  @@index([accountId])
+  @@index([featureName])
+}
+
+// Usage metrics - billing & analytics
+model UsageMetrics {
+  id                    String   @id @default(uuid())
+  accountId             String
+  account               EnterpriseAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Period
+  metricsDate           DateTime @default(now())
+  metricsMonth          String   // "2025-12"
+
+  // API usage
+  apiCallsTotal         Int      @default(0)
+  apiCallsSuccessful    Int      @default(0)
+  apiCallsFailed        Int      @default(0)
+  averageResponseTime   Float    @default(0.0) // MS
+
+  // Scanning
+  scansRun              Int      @default(0)
+  domainsScanned        Int      @default(0)
+
+  // Reports
+  reportsGenerated      Int      @default(0)
+  reportsDownloaded     Int      @default(0)
+
+  // Users
+  activeUsers           Int      @default(0)
+  totalLogins           Int      @default(0)
+
+  // Storage
+  storageUsedMB         Int      @default(0)
+  documentsStored       Int      @default(0)
+
+  // Cost calculation
+  estimatedCost         Float    @default(0.0)
+
+  @@map("usage_metrics")
+  @@index([accountId])
+  @@index([metricsMonth])
+}
+
