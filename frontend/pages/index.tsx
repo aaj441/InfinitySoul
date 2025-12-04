@@ -7,11 +7,24 @@
 import { useState, useEffect, useRef } from 'react';
 import Head from 'next/head';
 
+// Helper: Get WCAG impact badge styling
+const getImpactBadge = (impact: string) => {
+  const impacts: Record<string, { label: string; bg: string; text: string; ring: string }> = {
+    critical: { label: 'Critical', bg: 'bg-red-600', text: 'text-white', ring: 'ring-red-500' },
+    serious: { label: 'Serious', bg: 'bg-orange-600', text: 'text-white', ring: 'ring-orange-500' },
+    moderate: { label: 'Moderate', bg: 'bg-yellow-600', text: 'text-black', ring: 'ring-yellow-500' },
+    minor: { label: 'Minor', bg: 'bg-blue-600', text: 'text-white', ring: 'ring-blue-500' }
+  };
+  return impacts[impact?.toLowerCase()] || impacts.moderate;
+};
+
 export default function Home() {
   const [url, setUrl] = useState('');
   const [email, setEmail] = useState('');
   const [scanning, setScanning] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [statusUrl, setStatusUrl] = useState<string | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [highlightedViolation, setHighlightedViolation] = useState<number | null>(null);
@@ -28,9 +41,17 @@ export default function Home() {
     setError('');
 
     try {
+<<<<<<< HEAD
+      const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+=======
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+>>>>>>> d2e722cb977b12b766e2b17846c504e33fb25fb6
       const response = await fetch(
+<<<<<<< HEAD
+        `${apiBase}/api/v1/scan`,
+=======
         `${apiUrl}/api/v1/scan`,
+>>>>>>> d2e722cb977b12b766e2b17846c504e33fb25fb6
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -41,6 +62,9 @@ export default function Home() {
       if (response.status === 'failed') {
         setError(response.error || 'Scan failed');
       } else {
+        // Async flow: set job info and start polling
+        setJobId(response.jobId || null);
+        setStatusUrl(response.statusUrl ? `${apiBase}${response.statusUrl}` : null);
         setResult(response);
       }
     } catch (err) {
@@ -66,6 +90,33 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [sidebarOpen]);
 
+  // Poll job status if we have a statusUrl
+  useEffect(() => {
+    let interval: any;
+    async function poll() {
+      if (!statusUrl) return;
+      try {
+        const res = await fetch(statusUrl);
+        const data = await res.json();
+        // Update result when completed
+        if (data && data.status) {
+          setResult(data);
+          if (data.status === 'completed' || data.status === 'failed') {
+            clearInterval(interval);
+            interval = null;
+          }
+        }
+      } catch (e) {
+        // ignore transient errors
+      }
+    }
+    if (statusUrl) {
+      interval = setInterval(poll, 2000);
+      poll(); // immediate first poll
+    }
+    return () => interval && clearInterval(interval);
+  }, [statusUrl]);
+
   // Handle violation selection
   const handleViolationClick = (index: number) => {
     setHighlightedViolation(index);
@@ -90,7 +141,9 @@ export default function Home() {
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="hamburger-menu"
-          aria-label="Toggle menu"
+          aria-label="Toggle navigation menu"
+          aria-expanded={sidebarOpen}
+          aria-controls="main-navigation"
         >
           <svg
             className="w-6 h-6 text-white"
@@ -116,10 +169,16 @@ export default function Home() {
         />
 
         {/* SLIDE-OUT SIDEBAR */}
-        <div ref={sidebarRef} className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
+        <nav
+          ref={sidebarRef}
+          id="main-navigation"
+          className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}
+          aria-label="Main navigation"
+          role="navigation"
+        >
           <div className="p-6">
             <h2 className="text-xl font-bold mb-6 text-green-400">Quick Navigation</h2>
-            <nav className="space-y-4">
+            <div className="space-y-4">
               <a
                 href="#scanner"
                 onClick={(e) => {
@@ -166,7 +225,7 @@ export default function Home() {
               >
                 💰 Pricing
               </a>
-            </nav>
+            </div>
             
             {/* Violation Quick Links */}
             {result && result.topViolations && result.topViolations.length > 0 && (
@@ -188,7 +247,22 @@ export default function Home() {
               </div>
             )}
           </div>
-        </div>
+        </nav>
+        {/* STATUS BAR */}
+        {statusUrl && (
+          <div className="bg-gray-900 border-b border-gray-800" role="status" aria-live="polite" aria-atomic="true">
+            <div className="responsive-container py-2 flex items-center justify-between text-sm">
+              <div className="flex items-center gap-3">
+                <span className="px-2 py-1 rounded bg-gray-800 text-gray-300" aria-label={`Job ID: ${jobId || 'unknown'}`}>Job: {jobId || 'unknown'}</span>
+                <span className={`px-2 py-1 rounded ${result?.status === 'completed' ? 'bg-green-800 text-green-200' : result?.status === 'failed' ? 'bg-red-800 text-red-200' : 'bg-yellow-800 text-yellow-200'}`} aria-label={`Scan status: ${result?.status || 'pending'}`}>
+                  Status: {result?.status || 'pending'}
+                </span>
+              </div>
+              <a href={statusUrl} target="_blank" rel="noopener noreferrer" className="text-green-400 hover:text-green-300 underline" aria-label="View detailed status as JSON in new tab">View status JSON</a>
+            </div>
+          </div>
+        )}
+
         {/* HERO SECTION */}
         <div className="bg-gradient-to-b from-black to-gray-900 py-12 md:py-20">
           <div className="responsive-container">
@@ -211,33 +285,45 @@ export default function Home() {
               <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Scan Your Site (Free)</h2>
 
               <div className="spacing-mobile mb-4 md:mb-6">
+                <label htmlFor="scan-url" className="sr-only">Website URL to scan</label>
                 <input
+                  id="scan-url"
                   type="url"
                   placeholder="https://yoursite.com"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
-                  className="w-full p-4 bg-black border border-gray-700 rounded text-white text-base md:text-lg placeholder-gray-600 focus:outline-none focus:border-red-600 touch-optimized"
+                  aria-required="true"
+                  aria-invalid={!!error}
+                  aria-describedby={error ? 'scan-error' : undefined}
+                  className="w-full p-4 bg-black border border-gray-700 rounded text-white text-base md:text-lg placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600 touch-optimized"
                 />
 
+                <label htmlFor="scan-email" className="sr-only">Email address (optional)</label>
                 <input
+                  id="scan-email"
                   type="email"
                   placeholder="your@email.com (optional)"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-4 bg-black border border-gray-700 rounded text-white text-base md:text-lg placeholder-gray-600 focus:outline-none focus:border-red-600 touch-optimized"
+                  aria-describedby="email-help"
+                  className="w-full p-4 bg-black border border-gray-700 rounded text-white text-base md:text-lg placeholder-gray-600 focus:outline-none focus:border-red-600 focus:ring-2 focus:ring-red-600 touch-optimized"
                 />
+                <span id="email-help" className="sr-only">Email is optional. We'll send you scan results if provided.</span>
 
                 <button
                   onClick={handleScan}
                   disabled={scanning}
-                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-700 p-4 font-bold text-base md:text-lg rounded transition touch-button"
+                  aria-busy={scanning}
+                  aria-live="polite"
+                  className="w-full bg-red-600 hover:bg-red-700 disabled:bg-gray-700 disabled:cursor-not-allowed p-4 font-bold text-base md:text-lg rounded transition touch-button focus:outline-none focus:ring-4 focus:ring-red-500"
                 >
                   {scanning ? '⏳ SCANNING...' : '🔍 SCAN MY SITE (FREE)'}
+                  <span className="sr-only">{scanning ? 'Scan in progress, please wait' : 'Start free accessibility scan'}</span>
                 </button>
               </div>
 
               {error && (
-                <div className="bg-red-900 border border-red-600 p-4 rounded text-red-100 text-base">
+                <div id="scan-error" role="alert" aria-live="assertive" className="bg-red-900 border border-red-600 p-4 rounded text-red-100 text-base">
                   ⚠️ {error}
                 </div>
               )}
@@ -246,57 +332,58 @@ export default function Home() {
         </div>
 
         {/* RESULTS SECTION */}
-        {result && result.status === 'success' && (
+        {result && (
           <div id="results" ref={resultsRef} className="bg-gray-900 py-8 md:py-12 border-t-2 border-red-600">
             <div className="responsive-container">
               <div className="bg-black border-2 border-red-600 p-4 md:p-8 rounded-lg">
-                <h2 className="text-2xl md:text-3xl font-black text-red-600 mb-4 md:mb-6">⚠️ CRITICAL RISK DETECTED</h2>
-
-                {/* Stats Grid - Stacks on mobile */}
-                <div className="responsive-grid mb-6 md:mb-8">
-                  <div className="bg-gray-800 p-4 md:p-6 rounded touch-optimized">
-                    <p className="text-gray-400 text-sm">Total Violations</p>
-                    <p className="text-3xl md:text-4xl font-black text-red-400">{result.violations.total}</p>
-                  </div>
-
-                  <div className="bg-gray-800 p-4 md:p-6 rounded touch-optimized">
-                    <p className="text-gray-400 text-sm">Risk Score</p>
-                    <p className="text-3xl md:text-4xl font-black text-yellow-400">{Math.round(result.riskScore)}/100</p>
-                  </div>
-
-                  <div className="bg-gray-800 p-4 md:p-6 rounded touch-optimized">
-                    <p className="text-gray-400 text-sm">Critical Issues</p>
-                    <p className="text-3xl md:text-4xl font-black text-orange-500">{result.violations.critical}</p>
-                  </div>
-
-                  <div className="bg-gray-800 p-4 md:p-6 rounded touch-optimized">
-                    <p className="text-gray-400 text-sm">Estimated Legal Cost</p>
-                    <p className="text-xl md:text-2xl font-black text-orange-400">
-                      ${result.estimatedLawsuitCost.toLocaleString()}
-                    </p>
-                  </div>
+                <div className="flex flex-wrap gap-3 items-center mb-6">
+                  <span className="px-3 py-1 rounded bg-gray-800 text-gray-200">URL: {result.url || url}</span>
+                  {typeof result.violations?.total === 'number' && (
+                    <span className="px-3 py-1 rounded bg-gray-800 text-gray-200">Total: {result.violations.total}</span>
+                  )}
+                  {typeof result.riskScore === 'number' && (
+                    <span className="px-3 py-1 rounded bg-gray-800 text-gray-200">Risk Score: {Math.round(result.riskScore)}</span>
+                  )}
+                  {typeof result.estimatedLawsuitCost === 'number' && (
+                    <span className="px-3 py-1 rounded bg-gray-800 text-gray-200">Est. Cost: ${Math.round(result.estimatedLawsuitCost).toLocaleString()}</span>
+                  )}
+                  <span className={`px-2 py-1 rounded text-xs ${result?.status === 'completed' ? 'bg-green-800 text-green-200' : result?.status === 'failed' ? 'bg-red-800 text-red-200' : 'bg-yellow-800 text-yellow-200'}`}>
+                    Status: {result?.status || 'pending'}
+                  </span>
                 </div>
 
                 {/* Top violations */}
                 {result.topViolations && result.topViolations.length > 0 && (
                   <div className="mb-6 md:mb-8">
                     <h3 className="text-lg md:text-xl font-bold mb-4">Top Issues Found:</h3>
-                    <div className="spacing-mobile">
-                      {result.topViolations.map((v: any, i: number) => (
-                        <div
-                          key={i}
-                          className={`bg-gray-800 p-4 rounded transition cursor-pointer touch-button ${
-                            highlightedViolation === i ? 'ring-2 ring-red-500 bg-gray-700' : 'hover:bg-gray-750'
-                          }`}
-                          onClick={() => setHighlightedViolation(i)}
-                        >
-                          <div className="flex flex-col sm:flex-row sm:justify-between mb-2 gap-2">
-                            <span className="font-bold text-base">{v.code}</span>
-                            <span className="text-red-400 text-base">{v.violationCount} instances</span>
+                    <div className="spacing-mobile" role="list" aria-label="List of accessibility violations">
+                      {result.topViolations.map((v: any, i: number) => {
+                        const impact = getImpactBadge(v.impact || 'moderate');
+                        return (
+                          <div
+                            key={i}
+                            role="listitem"
+                            tabIndex={0}
+                            className={`bg-gray-800 p-4 rounded transition cursor-pointer touch-button focus:outline-none focus:ring-2 ${
+                              highlightedViolation === i ? `ring-2 ${impact.ring} bg-gray-700` : `hover:bg-gray-750 focus:${impact.ring}`
+                            }`}
+                            onClick={() => setHighlightedViolation(i)}
+                            onKeyDown={(e) => e.key === 'Enter' && setHighlightedViolation(i)}
+                            aria-label={`Violation ${i + 1} of ${result.topViolations.length}: ${v.code}, ${v.impact || 'moderate'} impact, ${v.violationCount} instances`}
+                          >
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-2 gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-bold text-base">{v.code}</span>
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${impact.bg} ${impact.text}`}>
+                                  {impact.label}
+                                </span>
+                              </div>
+                              <span className="text-red-400 text-base font-semibold">{v.violationCount} instances</span>
+                            </div>
+                            <p className="text-gray-400 text-sm leading-relaxed">{v.description}</p>
                           </div>
-                          <p className="text-gray-400 text-sm">{v.description}</p>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
