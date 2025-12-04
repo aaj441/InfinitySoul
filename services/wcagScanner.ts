@@ -2,13 +2,19 @@
  * WCAG Scanner Service
  * Integrates axe-core for automated accessibility scanning
  * Returns violations mapped to WCAG criteria and litigation risk data
+ * 
+ * CRITICAL: Must validate CFAA compliance before scanning any domain
  */
 
 import { WCAGViolation, AccessibilityAudit, ViolationElement } from '../types/index';
 import { v4 as uuidv4 } from 'uuid';
+import { validateCFAACompliance, createRateLimitedScanner, CFAA_COMPLIANT_SCANNER_CONFIG } from './compliance/cfaaValidator';
 
 // Mock axe-core integration
 // In production, use: import { AxePuppeteer } from '@axe-core/puppeteer';
+
+// Create rate-limited scanner instance
+const rateLimiter = createRateLimitedScanner();
 
 interface AxeResult {
   violations: Array<{
@@ -161,12 +167,56 @@ function getRemediationSteps(ruleId: string): string[] {
 
 /**
  * Convert axe-core results to InfinitySol violation format
+ * 
+ * CRITICAL: This function validates CFAA compliance before scanning
  */
 export async function scanURL(domain: string, options: { headless: boolean } = { headless: true }): Promise<AccessibilityAudit> {
   const auditId = uuidv4();
   const timestamp = new Date();
 
   try {
+    // CRITICAL: Validate CFAA compliance before scanning
+    console.log(`[CFAA] Validating compliance for ${domain}...`);
+    const cfaaCheck = await validateCFAACompliance(domain);
+    
+    if (!cfaaCheck.canProceedWithScan) {
+      console.error(`[CFAA] Scan blocked for ${domain}:`, cfaaCheck.issues);
+      return {
+        id: auditId,
+        domain,
+        url: `https://${domain}`,
+        timestamp,
+        status: 'failed',
+        violations: { critical: [], serious: [], moderate: [], minor: [] },
+        validation: {
+          automated: {
+            tool: 'axe-core',
+            version: '4.7.2',
+            status: 'fail',
+          },
+        },
+        stats: {
+          totalViolations: 0,
+          criticalCount: 0,
+          seriousCount: 0,
+          pagesScanned: 0,
+          wcagAACompliant: false,
+          wcagAAACompliant: false,
+        },
+      };
+    }
+    
+    console.log(`[CFAA] Compliance check passed for ${domain}`);
+    
+    // Check rate limiting
+    if (!rateLimiter.canScan()) {
+      const stats = rateLimiter.getStats();
+      console.warn(`[RATE-LIMIT] Throttling scan for ${domain}. ${stats.requestsInWindow}/${stats.maxRequests} requests in window.`);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+    }
+    
+    rateLimiter.recordScan();
+    
     // In production: Use axe-core with Puppeteer
     // For now, return structured format that can receive axe results
     const axeResults = await runAxeScan(domain);

@@ -10,10 +10,14 @@
  * Key principle: Present facts and evidence, let prospects draw conclusions.
  * No threats. No legal advice. No coercion.
  * All claims are backed by citations to public sources.
+ * 
+ * CRITICAL: All generated emails MUST pass UPL compliance validation before sending.
  */
 
 import { EmailTemplate, AccessibilityAudit, RiskAssessment, Infinity8Score } from '../types/index';
 import { v4 as uuidv4 } from 'uuid';
+import { validateCompleteUPLCompliance, STANDARD_DISCLAIMERS } from './compliance/uplValidator';
+import { verifyAllCitations } from './compliance/aiCitationVerifier';
 
 /**
  * Generate a cold prospect email
@@ -390,8 +394,84 @@ export function generateRemediationEmail(
   };
 }
 
+/**
+ * Validate email template for compliance before sending
+ * This is CRITICAL - must be called before any email is sent to clients
+ * 
+ * @param template - The email template to validate
+ * @returns Validation result with compliance issues
+ */
+export function validateEmailCompliance(template: EmailTemplate): {
+  canSend: boolean;
+  uplValidation: ReturnType<typeof validateCompleteUPLCompliance>;
+  citationValidation: ReturnType<typeof verifyAllCitations>;
+  errors: string[];
+  warnings: string[];
+} {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Validate UPL compliance
+  const uplValidation = validateCompleteUPLCompliance(template.body, `email:${template.name}`);
+  
+  if (!uplValidation.canSend) {
+    errors.push(...uplValidation.errors);
+  }
+
+  // Validate all citations
+  const citationValidation = verifyAllCitations(template.body);
+  
+  if (citationValidation.critical > 0) {
+    errors.push(`${citationValidation.critical} citations have CRITICAL issues and must be verified against PACER/CourtListener`);
+  }
+  
+  if (citationValidation.unverified > 0) {
+    warnings.push(`${citationValidation.unverified} citations are unverified. Consider adding source URLs.`);
+  }
+
+  // Check that disclaimers are present
+  if (!uplValidation.disclaimerCheck.hasDisclaimer) {
+    errors.push('Email missing required legal disclaimers. Add STANDARD_DISCLAIMERS.email');
+  }
+
+  const canSend = errors.length === 0;
+
+  return {
+    canSend,
+    uplValidation,
+    citationValidation,
+    errors,
+    warnings,
+  };
+}
+
+/**
+ * Safe wrapper that validates before returning template
+ * Use this instead of direct template generation functions
+ */
+export function generateValidatedColdProspectEmail(
+  companyName: string,
+  domain: string,
+  audit: AccessibilityAudit,
+  riskAssessment: RiskAssessment,
+  score: Infinity8Score
+): { template: EmailTemplate; validation: ReturnType<typeof validateEmailCompliance> } {
+  const template = generateColdProspectEmail(companyName, domain, audit, riskAssessment, score);
+  const validation = validateEmailCompliance(template);
+  
+  if (!validation.canSend) {
+    console.error(`Email validation failed for ${template.name}:`, validation.errors);
+    throw new Error(`Email template failed compliance validation: ${validation.errors.join('; ')}`);
+  }
+  
+  return { template, validation };
+}
+
 export default {
   generateColdProspectEmail,
   generateHighRiskProspectEmail,
   generateRemediationEmail,
+  validateEmailCompliance,
+  generateValidatedColdProspectEmail,
+  STANDARD_DISCLAIMERS,
 };
