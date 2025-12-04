@@ -167,7 +167,7 @@ describe('AI Citation Verifier', () => {
       const citation = 'Smith v. Company settled for approximately $100,000';
       const result = detectAIHallucinationRisk(citation);
       
-      expect(result.risk).toBeGreaterThanOrEqual('medium' as any);
+      expect(result.risk).toBe('medium');
     });
 
     it('should detect high risk: suspiciously round settlement', () => {

@@ -73,7 +73,7 @@ export function detectAIHallucinationRisk(citation: string): {
     if (year > currentYear) {
       indicators.push(`Future year (${year}) - likely hallucinated`);
     }
-    if (year < 1990 && citation.includes('website') || citation.includes('ADA Title III')) {
+    if (year < 1990 && (citation.includes('website') || citation.includes('ADA Title III'))) {
       indicators.push('Pre-1990 website accessibility case - anachronistic');
     }
   }

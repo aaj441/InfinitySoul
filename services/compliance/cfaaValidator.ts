@@ -64,10 +64,15 @@ export async function checkRobotsTxt(domain: string): Promise<{
         inOurSection = agent === '*' || agent.includes('infinitysol');
       }
       
-      // Collect disallowed paths
+      // Collect disallowed paths only if we're in our section
       if (inOurSection && trimmed.startsWith('disallow:')) {
         const path = trimmed.substring('disallow:'.length).trim();
         disallowed.push(path);
+      }
+      
+      // Reset if we hit a new user-agent section
+      if (trimmed.startsWith('user-agent:') && !inOurSection) {
+        disallowed = []; // Clear disallowed list for other sections
       }
     }
     

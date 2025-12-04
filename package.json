@@ -42,7 +42,7 @@
     "javascript-opentimestamps": "^1.2.0",
     "pdfkit": "^0.16.0",
     "qrcode": "^1.5.3",
-    "@clerk/clerk-sdk-node": "^4.44.3",
+    "@clerk/clerk-sdk-node": "^5.0.0",
     "stripe": "^14.21.0",
     "openai": "^4.30.0",
     "@anthropic-ai/sdk": "^0.9.0",
