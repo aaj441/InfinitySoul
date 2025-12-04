@@ -1,0 +1,104 @@
+#!/bin/bash
+# Verification Debt Prevention - Pre-Commit Hook
+# Prevents commits with quality issues
+
+set -e
+
+echo "🔍 Running Verification Debt Prevention checks..."
+
+# Color codes for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# Track failures
+FAILURES=0
+
+# 1. TypeScript/JavaScript Linting
+echo "📝 Running ESLint..."
+if npm run lint:check 2>&1 | tee /tmp/lint-output.txt; then
+    echo "${GREEN}✓ Linting passed${NC}"
+else
+    echo "${RED}✗ Linting failed${NC}"
+    FAILURES=$((FAILURES + 1))
+fi
+
+# 2. Code Formatting
+echo "🎨 Checking code formatting..."
+if npm run format:check 2>&1 | tee /tmp/format-output.txt; then
+    echo "${GREEN}✓ Formatting check passed${NC}"
+else
+    echo "${YELLOW}⚠ Running auto-fix...${NC}"
+    npm run format:fix
+fi
+
+# 3. Type Checking
+echo "🔷 Running TypeScript type check..."
+if npm run type-check 2>&1 | tee /tmp/type-output.txt; then
+    echo "${GREEN}✓ Type checking passed${NC}"
+else
+    echo "${RED}✗ Type checking failed${NC}"
+    FAILURES=$((FAILURES + 1))
+fi
+
+# 4. Unit Tests
+echo "🧪 Running unit tests..."
+if npm run test:unit 2>&1 | tee /tmp/test-output.txt; then
+    echo "${GREEN}✓ Unit tests passed${NC}"
+else
+    echo "${RED}✗ Unit tests failed${NC}"
+    FAILURES=$((FAILURES + 1))
+fi
+
+# 5. Security Audit
+echo "🔒 Running security audit..."
+if npm audit --audit-level=high 2>&1 | tee /tmp/security-output.txt; then
+    echo "${GREEN}✓ No high-severity vulnerabilities${NC}"
+else
+    echo "${YELLOW}⚠ Security vulnerabilities detected${NC}"
+    # Don't fail on security issues in pre-commit, log for review
+fi
+
+# 6. WCAG Validation (if applicable)
+if [ -d "frontend" ]; then
+    echo "♿ Running WCAG validation..."
+    if npm run wcag:check 2>&1 | tee /tmp/wcag-output.txt; then
+        echo "${GREEN}✓ WCAG validation passed${NC}"
+    else
+        echo "${YELLOW}⚠ WCAG issues detected${NC}"
+        # Log but don't fail
+    fi
+fi
+
+# 7. Check for TODO/FIXME debt markers
+echo "📋 Checking for new technical debt markers..."
+DEBT_MARKERS=$(git diff --cached | grep -E '^\+.*\b(TODO|FIXME|HACK|XXX)\b' | wc -l || true)
+if [ "$DEBT_MARKERS" -gt 0 ]; then
+    echo "${YELLOW}⚠ Found $DEBT_MARKERS new technical debt markers${NC}"
+    echo "${YELLOW}  Please ensure they are tracked in issue tracker${NC}"
+fi
+
+# 8. Check file sizes
+echo "📦 Checking file sizes..."
+LARGE_FILES=$(git diff --cached --name-only | xargs -I {} du -k {} 2>/dev/null | awk '$1 > 1024' || true)
+if [ -n "$LARGE_FILES" ]; then
+    echo "${YELLOW}⚠ Large files detected (>1MB):${NC}"
+    echo "$LARGE_FILES"
+fi
+
+# Summary
+echo ""
+echo "═══════════════════════════════════════════"
+if [ $FAILURES -eq 0 ]; then
+    echo "${GREEN}✓ All verification checks passed!${NC}"
+    echo "═══════════════════════════════════════════"
+    exit 0
+else
+    echo "${RED}✗ $FAILURES verification check(s) failed${NC}"
+    echo "═══════════════════════════════════════════"
+    echo ""
+    echo "${YELLOW}Fix the issues above or use 'git commit --no-verify' to skip${NC}"
+    echo "${YELLOW}(Not recommended for production code)${NC}"
+    exit 1
+fi
