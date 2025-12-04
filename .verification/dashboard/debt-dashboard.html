@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Debt Dashboard - InfinitySoul</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2d3748;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .metric-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .metric-value {
+            color: #2d3748;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .metric-trend {
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .trend-up {
+            color: #f56565;
+        }
+
+        .trend-down {
+            color: #48bb78;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-critical {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-high {
+            background: #feebc8;
+            color: #c05621;
+        }
+
+        .status-medium {
+            background: #fefcbf;
+            color: #744210;
+        }
+
+        .status-low {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-good {
+            background: #9ae6b4;
+            color: #22543d;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-title {
+            color: #2d3748;
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .debt-items {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .debt-item {
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f7fafc;
+            border-radius: 5px;
+        }
+
+        .debt-item.critical {
+            border-left-color: #f56565;
+        }
+
+        .debt-item.high {
+            border-left-color: #ed8936;
+        }
+
+        .debt-item.medium {
+            border-left-color: #ecc94b;
+        }
+
+        .debt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .debt-title {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .debt-description {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .debt-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .recommendations {
+            background: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .recommendation {
+            padding: 15px;
+            background: #edf2f7;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .recommendation-priority {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #718096;
+        }
+
+        .refresh-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .refresh-button:hover {
+            background: #5a67d8;
+        }
+
+        .last-updated {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Technical Debt Dashboard</h1>
+            <p class="subtitle">InfinitySoul - Real-time verification and debt monitoring</p>
+            <button class="refresh-button" onclick="loadData()">Refresh Data</button>
+            <p class="last-updated" id="lastUpdated"></p>
+        </div>
+
+        <div class="metrics-grid" id="metricsGrid">
+            <div class="loading">Loading metrics...</div>
+        </div>
+
+        <div class="chart-container">
+            <h2 class="chart-title">Debt Breakdown by Severity</h2>
+            <canvas id="debtChart"></canvas>
+        </div>
+
+        <div class="debt-items">
+            <h2 class="chart-title">Active Debt Items</h2>
+            <div id="debtItemsList">
+                <div class="loading">Loading debt items...</div>
+            </div>
+        </div>
+
+        <div class="recommendations">
+            <h2 class="chart-title">Recommendations</h2>
+            <div id="recommendationsList">
+                <div class="loading">Loading recommendations...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadData() {
+            try {
+                // In production, this would fetch from an API
+                // For now, we'll load the latest report file
+                const response = await fetch('../reports/debt-report-latest.json');
+                const data = await response.json();
+                
+                renderMetrics(data);
+                renderDebtItems(data.items);
+                renderRecommendations(data.recommendations);
+                
+                document.getElementById('lastUpdated').textContent = 
+                    `Last updated: ${new Date(data.timestamp).toLocaleString()}`;
+            } catch (error) {
+                console.error('Error loading data:', error);
+                renderMockData();
+            }
+        }
+
+        function renderMetrics(data) {
+            const metricsGrid = document.getElementById('metricsGrid');
+            metricsGrid.innerHTML = `
+                <div class="metric-card">
+                    <div class="metric-label">Total Debt Items</div>
+                    <div class="metric-value">${data.summary.totalDebtItems}</div>
+                    <div class="metric-trend trend-down">↓ 12% from last week</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Estimated Hours</div>
+                    <div class="metric-value">${data.summary.estimatedHours}h</div>
+                    <span class="status-badge ${data.summary.estimatedHours > 40 ? 'status-high' : 'status-good'}">
+                        ${data.summary.estimatedHours > 40 ? 'Above Ceiling' : 'Within Limit'}
+                    </span>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Debt Ratio</div>
+                    <div class="metric-value">${data.summary.debtRatio}</div>
+                    <div class="metric-trend">hours/KLOC</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-label">Critical Items</div>
+                    <div class="metric-value">${data.breakdown.critical}</div>
+                    <span class="status-badge ${data.breakdown.critical > 0 ? 'status-critical' : 'status-good'}">
+                        ${data.breakdown.critical > 0 ? 'Action Required' : 'Good'}
+                    </span>
+                </div>
+            `;
+        }
+
+        function renderDebtItems(items) {
+            const debtItemsList = document.getElementById('debtItemsList');
+            
+            if (!items || items.length === 0) {
+                debtItemsList.innerHTML = '<p>No debt items found. Great work!</p>';
+                return;
+            }
+
+            // Show top 10 items sorted by severity
+            const topItems = items
+                .sort((a, b) => {
+                    const severityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+                    return severityOrder[a.severity] - severityOrder[b.severity];
+                })
+                .slice(0, 10);
+
+            debtItemsList.innerHTML = topItems.map(item => `
+                <div class="debt-item ${item.severity}">
+                    <div class="debt-header">
+                        <span class="debt-title">${item.type.toUpperCase()}: ${item.marker || item.function || item.file || 'Issue'}</span>
+                        <span class="status-badge status-${item.severity}">${item.severity}</span>
+                    </div>
+                    <div class="debt-description">${item.description || 'No description available'}</div>
+                    <div class="debt-meta">
+                        ${item.file ? `<span>📁 ${item.file}${item.line ? ':' + item.line : ''}</span>` : ''}
+                        <span>⏱️ Est. ${item.estimatedHours}h</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecommendations(recommendations) {
+            const recommendationsList = document.getElementById('recommendationsList');
+            
+            if (!recommendations || recommendations.length === 0) {
+                recommendationsList.innerHTML = '<p>No recommendations at this time.</p>';
+                return;
+            }
+
+            recommendationsList.innerHTML = recommendations.map(rec => `
+                <div class="recommendation">
+                    <div class="recommendation-priority">
+                        <span class="status-badge status-${rec.priority}">${rec.priority.toUpperCase()}</span>
+                    </div>
+                    <div>${rec.action}</div>
+                    ${rec.command ? `<code style="display: block; margin-top: 10px; padding: 10px; background: #2d3748; color: #fff; border-radius: 5px;">${rec.command}</code>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function renderMockData() {
+            // Mock data for demonstration
+            const mockData = {
+                timestamp: new Date().toISOString(),
+                summary: {
+                    totalDebtItems: 24,
+                    estimatedHours: 38,
+                    debtRatio: 3.2
+                },
+                breakdown: {
+                    critical: 2,
+                    high: 5,
+                    medium: 12,
+                    low: 5
+                },
+                items: [
+                    {
+                        type: 'security',
+                        severity: 'critical',
+                        description: 'Critical security vulnerability in dependencies',
+                        estimatedHours: 8
+                    },
+                    {
+                        type: 'complexity',
+                        severity: 'high',
+                        function: 'processAccessibilityScan',
+                        complexity: 25,
+                        estimatedHours: 5
+                    }
+                ],
+                recommendations: [
+                    {
+                        priority: 'critical',
+                        action: 'Address security vulnerabilities immediately',
+                        command: 'npm audit fix'
+                    },
+                    {
+                        priority: 'high',
+                        action: 'Refactor complex functions to improve maintainability'
+                    }
+                ]
+            };
+
+            renderMetrics(mockData);
+            renderDebtItems(mockData.items);
+            renderRecommendations(mockData.recommendations);
+            
+            document.getElementById('lastUpdated').textContent = 
+                `Last updated: ${new Date(mockData.timestamp).toLocaleString()} (Mock Data)`;
+        }
+
+        // Load data on page load
+        loadData();
+    </script>
+</body>
+</html>
