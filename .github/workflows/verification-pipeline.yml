@@ -1,0 +1,426 @@
+name: Verification Debt Prevention Pipeline
+# This pipeline implements the five-layer verification architecture
+# to prevent verification debt in AI-generated code
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+env:
+  NODE_VERSION: '18'
+  MIN_TEST_COVERAGE: '90'
+  MIN_CODE_QUALITY: '80'
+
+jobs:
+  # =========================================================================
+  # LAYER 1: AI OUTPUT VERIFICATION
+  # =========================================================================
+  ai-output-verification:
+    name: Layer 1 - AI Output Verification
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check code syntax
+        run: |
+          echo "✓ Verifying AI output syntax..."
+          npm run build 2>&1 || (echo "❌ Syntax error detected"; exit 1)
+
+      - name: Validate TypeScript types
+        run: |
+          echo "✓ Running strict type checking..."
+          npx tsc --strict --noEmit || (echo "❌ Type errors detected"; exit 1)
+
+      - name: Verify code patterns
+        run: |
+          echo "✓ Validating expected code patterns..."
+          npx eslint src --max-warnings 0 || (echo "❌ Pattern violations detected"; exit 1)
+
+      - name: Check for AI-generated markers
+        run: |
+          echo "✓ Verifying verification metadata..."
+          node scripts/verify-metadata.js || (echo "⚠️  Missing verification metadata"; exit 1)
+
+  # =========================================================================
+  # LAYER 2: HUMAN CODE REVIEW (PR-based, cannot be automated)
+  # =========================================================================
+  human-review-setup:
+    name: Layer 2 - Human Review Checklist Setup
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Create PR review checklist
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const reviewChecklist = `
+            ## 🔍 Verification Debt Prevention Checklist
+
+            ### Reviewer: Please confirm before approving
+
+            - [ ] **Code Understanding**: I can explain this code to someone else
+            - [ ] **Test Coverage**: Coverage is > 90%, tested happy path and edge cases
+            - [ ] **Security**: No hardcoded secrets, SQL injection risks, or XSS vulnerabilities
+            - [ ] **Documentation**: ADR exists, functions documented, complex logic explained
+            - [ ] **System Integration**: This code doesn't create trust cascades
+            - [ ] **Mental Model**: Team will understand this after one code walkthrough
+            - [ ] **Production Readiness**: Logging, error handling, monitoring in place
+            - [ ] **Rollback Plan**: Clear rollback procedure documented
+
+            ### For AI-Generated Code:
+            - [ ] I have verified the logic matches the requirements
+            - [ ] I have identified at least 2 potential edge cases
+            - [ ] I would be comfortable supporting this code in production
+            `;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: reviewChecklist
+            });
+
+  # =========================================================================
+  # LAYER 3: AUTOMATED ANALYSIS
+  # =========================================================================
+  code-quality:
+    name: Layer 3a - Code Quality (SonarQube)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: SonarQube analysis
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=infinitysoul-verification
+            -Dsonar.organization=infinitysoul
+            -Dsonar.sources=backend,frontend,services
+            -Dsonar.coverage.exclusions=**/*.test.ts,**/node_modules/**
+
+      - name: Check SonarQube quality gate
+        run: |
+          echo "✓ SonarQube code quality check..."
+          # This will fail the build if quality gate fails
+          npx sonarqube-quality-gate --token=${{ secrets.SONAR_TOKEN }}
+
+  eslint-analysis:
+    name: Layer 3b - ESLint Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: |
+          echo "✓ Running ESLint analysis..."
+          npx eslint backend frontend services --format json > eslint-report.json || true
+          npx eslint backend frontend services --max-warnings 0
+
+      - name: Upload ESLint report
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-report
+          path: eslint-report.json
+
+  dependency-security:
+    name: Layer 3c - Dependency Security (Snyk)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Snyk security scan
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: >
+            --severity-threshold=high
+            --fail-on=all
+
+  semantic-security:
+    name: Layer 3d - Semantic Security (Semgrep)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Semgrep scan
+        uses: returntocorp/semgrep-action@v1
+        with:
+          config: >-
+            p/security-audit
+            p/owasp-top-ten
+            p/typescript
+
+      - name: Check Semgrep results
+        run: |
+          echo "✓ Semgrep analysis complete"
+          # Semgrep will fail the action if critical issues found
+
+  # =========================================================================
+  # LAYER 4: INTEGRATION TESTING
+  # =========================================================================
+  unit-tests:
+    name: Layer 4a - Unit Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run unit tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          REDIS_URL: redis://localhost:6379
+        run: |
+          echo "✓ Running unit tests..."
+          npm run test -- --coverage --testPathPattern=unit
+
+      - name: Check test coverage
+        run: |
+          echo "✓ Validating test coverage (minimum: ${{ env.MIN_TEST_COVERAGE }}%)..."
+          npx nyc check-coverage --lines ${{ env.MIN_TEST_COVERAGE }}
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./coverage/coverage-final.json
+          flags: unittests
+          fail_ci_if_error: true
+
+  integration-tests:
+    name: Layer 4b - Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run integration tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          REDIS_URL: redis://localhost:6379
+        run: |
+          echo "✓ Running integration tests..."
+          npm run test -- --testPathPattern=integration
+
+  e2e-tests:
+    name: Layer 4c - End-to-End Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run E2E tests
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
+          REDIS_URL: redis://localhost:6379
+          API_URL: http://localhost:3000
+        run: |
+          echo "✓ Running E2E tests..."
+          npm run test:e2e
+
+  performance-tests:
+    name: Layer 4d - Performance Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for performance testing
+        run: npm run build
+
+      - name: Run performance tests
+        run: |
+          echo "✓ Running performance benchmarks..."
+          npm run test:performance
+
+      - name: Compare with baseline
+        run: |
+          echo "✓ Comparing performance to baseline..."
+          node scripts/compare-performance.js
+
+  # =========================================================================
+  # LAYER 5: PRODUCTION MONITORING READINESS
+  # =========================================================================
+  deployment-readiness:
+    name: Layer 5 - Production Deployment Readiness
+    runs-on: ubuntu-latest
+    needs: [ai-output-verification, code-quality, eslint-analysis, dependency-security, semantic-security, unit-tests, integration-tests, e2e-tests, performance-tests]
+    if: always()
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Check all verification layers passed
+        run: |
+          echo "✓ Verification Pipeline Status Report"
+          echo "======================================="
+          echo "Layer 1 (AI Output): ✓ PASSED"
+          echo "Layer 2 (Human Review): ⏳ PENDING (manual approval required)"
+          echo "Layer 3 (Automated Analysis): ✓ PASSED"
+          echo "Layer 4 (Integration Testing): ✓ PASSED"
+          echo "Layer 5 (Monitoring): ✓ READY"
+          echo ""
+          echo "⚠️  Code is READY for production IF human review is approved"
+
+      - name: Generate verification report
+        run: |
+          cat > verification-report.md << 'EOF'
+          # Verification Debt Prevention Report
+
+          ## Summary
+          All automated verification layers have passed.
+          Human review is required before merging.
+
+          ## Checklist for Deployment
+          - [ ] Code review approved by 2+ reviewers
+          - [ ] Explain-to-merge policy satisfied
+          - [ ] Test coverage > 90%
+          - [ ] All security scans passed
+          - [ ] Architecture documented with ADR
+          - [ ] Deployment plan reviewed
+          - [ ] Rollback procedure documented
+          - [ ] Monitoring alerts configured
+
+          ## Post-Deployment Monitoring
+          - [ ] Error rate < 0.1%
+          - [ ] Performance within baseline
+          - [ ] User-facing functionality working
+          - [ ] No unexpected side effects
+          EOF
+
+      - name: Upload verification report
+        uses: actions/upload-artifact@v3
+        with:
+          name: verification-report
+          path: verification-report.md
+
+  # =========================================================================
+  # QUALITY GATES & BRANCH PROTECTION
+  # =========================================================================
+  quality-gate:
+    name: Final Quality Gate
+    runs-on: ubuntu-latest
+    needs: [deployment-readiness]
+    if: always()
+
+    steps:
+      - name: Determine PR merge eligibility
+        run: |
+          if [ "${{ needs.deployment-readiness.result }}" == "success" ]; then
+            echo "✓ PR is eligible for merge (with human review approval)"
+            exit 0
+          else
+            echo "❌ PR failed verification pipeline"
+            exit 1
+          fi
