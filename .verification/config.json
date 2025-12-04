@@ -1,0 +1,42 @@
+{
+  "verification": {
+    "enabled": true,
+    "strict_mode": true,
+    "fail_on_warning": false,
+    "auto_fix": true
+  },
+  "quality_gates": {
+    "code_coverage_threshold": 80,
+    "complexity_threshold": 10,
+    "duplication_threshold": 3,
+    "security_severity_blocking": ["critical", "high"],
+    "wcag_level_required": "AA"
+  },
+  "debt_tracking": {
+    "max_debt_ratio": 5,
+    "debt_ceiling_hours": 40,
+    "track_metrics": true,
+    "alert_threshold_percentage": 80
+  },
+  "automation": {
+    "auto_remediation": true,
+    "ai_assisted_fixes": true,
+    "create_issues_for_debt": true,
+    "schedule_debt_sprints": true
+  },
+  "scans": {
+    "static_analysis": true,
+    "security_scan": true,
+    "dependency_audit": true,
+    "wcag_validation": true,
+    "performance_check": true,
+    "license_compliance": true
+  },
+  "reporting": {
+    "generate_reports": true,
+    "dashboard_enabled": true,
+    "slack_notifications": true,
+    "email_alerts": false,
+    "retention_days": 90
+  }
+}
