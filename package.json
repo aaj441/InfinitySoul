@@ -17,6 +17,8 @@
     "start": "node dist/backend/server.js",
     "start:all": "npm run start & npm run worker:all",
     "start:dev": "npm run backend",
+    "db:migrate": "prisma migrate deploy",
+    "db:generate": "prisma generate",
     "type-check": "tsc --noEmit",
     "test": "jest --watch",
     "test:watch": "jest --watch",
@@ -25,13 +27,35 @@
     "test:prisma": "jest tests/prisma-models.test.ts"
   },
   "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "puppeteer": "^21.3.8",
+    "axe-core": "^4.8.2",
+    "bullmq": "^4.12.2",
+    "ioredis": "^5.3.2",
+    "@prisma/client": "^5.10.2",
+    "ipfs-http-client": "^62.0.0",
+    "javascript-opentimestamps": "^1.2.0",
+    "pdfkit": "^0.16.0",
+    "qrcode": "^1.5.3",
+    "@clerk/clerk-sdk-node": "^4.44.3",
+    "stripe": "^14.21.0",
+    "openai": "^4.30.0",
+    "@anthropic-ai/sdk": "^0.9.0",
+    "pdf-parse": "^1.1.1",
+    "tesseract.js": "^5.0.5",
+    "diff": "^5.1.0",
+    "axios": "^1.6.7",
+    "@octokit/rest": "^20.1.0",
     "next": "latest",
     "inflight": "^1.0.6",
     "glob": "^10.3.10",
     "node-domexception": "^2.0.0"
   },
   "devDependencies": {
-    "typescript": "^5.2.2",
-    "jest": "^29.7.0"
+    "prisma": "^5.10.2",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "typescript": "^5.2.2"
   }
 }
