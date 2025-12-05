@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WCAG Auditor</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      width: 420px;
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      color: white;
+    }
+
+    .container {
+      padding: 20px;
+      min-height: 500px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header {
+      margin-bottom: 16px;
+    }
+
+    .header h1 {
+      font-size: 20px;
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .header p {
+      font-size: 12px;
+      opacity: 0.85;
+    }
+
+    .section {
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      opacity: 0.7;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .button {
+      background: white;
+      color: #8b5cf6;
+      border: none;
+      padding: 11px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-size: 14px;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      font-size: 12px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+    }
+
+    .button-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    #loading {
+      display: none;
+      text-align: center;
+      margin: 15px 0;
+    }
+
+    #loading.show {
+      display: block;
+    }
+
+    .spinner {
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #status {
+      padding: 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      display: none;
+      text-align: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    #status.show {
+      display: block;
+    }
+
+    #status.success {
+      background: rgba(34, 197, 94, 0.2);
+      color: #22c55e;
+      border: 1px solid #22c55e;
+    }
+
+    #status.error {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid #ef4444;
+    }
+
+    #results {
+      display: none;
+      margin: 12px 0;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    #results.show {
+      display: block;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .result-label {
+      opacity: 0.8;
+    }
+
+    .result-value {
+      font-weight: 700;
+    }
+
+    #history {
+      max-height: 150px;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 6px;
+      padding: 10px;
+      font-size: 12px;
+    }
+
+    .history-item {
+      padding: 8px;
+      margin-bottom: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      border-left: 2px solid rgba(255, 255, 255, 0.4);
+      word-break: break-all;
+    }
+
+    .history-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .history-url {
+      font-size: 11px;
+      opacity: 0.7;
+      margin: 4px 0 2px 0;
+    }
+
+    .history-score {
+      font-weight: 600;
+    }
+
+    .score-good { color: #86efac; }
+    .score-fair { color: #fbbf24; }
+    .score-poor { color: #f87171; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>WCAG Auditor</h1>
+      <p>One-click accessibility auditing</p>
+    </div>
+
+    <div class="section">
+      <button id="auditBtn" class="button" data-testid="button-start-audit">Start Audit</button>
+
+      <div id="loading">
+        <div class="spinner"></div>
+        <p style="font-size: 12px;">Scanning page...</p>
+      </div>
+
+      <div id="status" data-testid="text-status-message"></div>
+
+      <div id="results" data-testid="section-audit-results">
+        <div class="result-row">
+          <span class="result-label">Score</span>
+          <span class="result-value" id="scoreValue" data-testid="text-score">0%</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Issues</span>
+          <span class="result-value" id="issuesValue" data-testid="text-issues">0</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Passed</span>
+          <span class="result-value" id="passedValue" data-testid="text-passed">0</span>
+        </div>
+      </div>
+
+      <button id="reportBtn" class="button-secondary" data-testid="button-view-report" style="display: none;">View Full Report</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Recent Audits</div>
+      <div id="history" data-testid="list-audit-history">
+        <p style="opacity: 0.6; font-size: 11px;">No audits yet</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-title">Actions</div>
+      <button id="shareBtn" class="button-secondary" data-testid="button-share-audit">Share to Dashboard</button>
+      <button id="dashboardBtn" class="button-secondary" data-testid="button-open-dashboard">Open Dashboard</button>
+      <button id="clearBtn" class="button-secondary" data-testid="button-clear-history">Clear History</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

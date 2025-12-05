@@ -1,0 +1,593 @@
+openapi: 3.0.3
+info:
+  title: WCAG AI Platform API
+  description: |
+    # WCAG AI Platform API
+    
+    Comprehensive accessibility scanning and compliance testing platform powered by AI.
+    
+    ## Core Features
+    - 🔍 Automated WCAG 2.1 compliance scanning with Axe-core
+    - 🤖 AI-powered remediation suggestions via Claude
+    - 📊 Detailed compliance scoring and reporting
+    - ✉️ Automated email cadence with A/B testing
+    - 👥 Consultant marketplace with AI matching
+    - 📈 Real-time analytics dashboards
+    
+    ## Authentication
+    **No API key required for public endpoints.** For production deployment, add authentication middleware.
+    
+    Headers:
+    - `Content-Type: application/json`
+    - `Accept: application/json`
+    
+    ## Rate Limits
+    - **Development:** Unlimited
+    - **Production:** Contact support for tiered limits
+    
+    ## Base URLs
+    - **Production:** `https://wcagai.replit.dev`
+    - **Staging:** `http://localhost:5000`
+    
+    ## Support
+    - 📖 [Full Documentation](https://docs.wcagai.com)
+    - 📧 [Email Support](mailto:support@wcagai.com)
+    - 🐛 [GitHub Issues](https://github.com/your-org/wcag-ai-platform/issues)
+    
+  version: 1.0.0
+  contact:
+    name: WCAG AI Platform Support
+    email: support@wcagai.com
+    url: https://wcagai.com/support
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:5000
+    description: Local development
+  - url: https://wcagai.replit.dev
+    description: Production
+
+tags:
+  - name: Scans
+    description: WCAG accessibility scanning operations
+  - name: Intake
+    description: Lead capture and audit request workflows
+  - name: Blog
+    description: SEO-optimized content endpoints
+  - name: Social Media
+    description: Campaign content and templates
+  - name: Reports
+    description: Audit report generation and retrieval
+  - name: Analytics
+    description: Dashboard metrics and insights
+  - name: Health
+    description: System health and status
+
+paths:
+  /api/scan:
+    post:
+      tags:
+        - Scans
+      summary: Create accessibility scan
+      description: Initiate a new WCAG accessibility scan for the specified URL
+      operationId: createScan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScanRequest'
+            example:
+              url: "https://example.com"
+              wcagLevel: "AA"
+      responses:
+        '200':
+          description: Scan created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScanResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/scans:
+    get:
+      tags:
+        - Scans
+      summary: List all scans
+      operationId: listScans
+      responses:
+        '200':
+          description: List of scans
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scan'
+
+  /api/scans/{scanId}:
+    get:
+      tags:
+        - Scans
+      summary: Get scan details
+      operationId: getScan
+      parameters:
+        - name: scanId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Scan details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Scan'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/intake:
+    post:
+      tags:
+        - Intake
+      summary: Submit audit intake form
+      description: Submit a website for WCAG accessibility audit
+      operationId: submitIntake
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IntakeRequest'
+            example:
+              name: "John Doe"
+              email: "john@example.com"
+              website: "https://example.com"
+              companySize: "50-500"
+              concerns: "Color contrast and keyboard navigation"
+      responses:
+        '200':
+          description: Intake submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntakeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/intake/status/{intakeId}:
+    get:
+      tags:
+        - Intake
+      summary: Check intake status
+      operationId: getIntakeStatus
+      parameters:
+        - name: intakeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Intake status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IntakeStatus'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/blog:
+    get:
+      tags:
+        - Blog
+      summary: List blog posts
+      operationId: listBlogPosts
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of blog posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BlogPost'
+
+  /api/blog/{slug}:
+    get:
+      tags:
+        - Blog
+      summary: Get blog post
+      operationId: getBlogPost
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Blog post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlogPostDetail'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/social-media:
+    get:
+      tags:
+        - Social Media
+      summary: Get social media templates
+      operationId: getSocialMedia
+      parameters:
+        - name: platform
+          in: query
+          schema:
+            type: string
+            enum: [linkedin, twitter, instagram, facebook, reddit]
+      responses:
+        '200':
+          description: Social media content
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SocialMediaContent'
+
+  /api/reports/{reportId}:
+    get:
+      tags:
+        - Reports
+      summary: Get audit report
+      operationId: getReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Audit report
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Report'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/reports/{reportId}/pdf:
+    get:
+      tags:
+        - Reports
+      summary: Download report as PDF
+      operationId: downloadReport
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: PDF report
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/dashboard/metrics:
+    get:
+      tags:
+        - Analytics
+      summary: Get dashboard metrics
+      operationId: getDashboardMetrics
+      responses:
+        '200':
+          description: Dashboard metrics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardMetrics'
+
+  /api/activity/stats:
+    get:
+      tags:
+        - Analytics
+      summary: Get activity statistics
+      operationId: getActivityStats
+      responses:
+        '200':
+          description: Activity stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActivityStats'
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: System health check
+      operationId: healthCheck
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "ok"
+                  timestamp:
+                    type: string
+                    format: date-time
+
+  /metrics:
+    get:
+      tags:
+        - Health
+      summary: Prometheus metrics
+      operationId: getMetrics
+      responses:
+        '200':
+          description: Prometheus metrics
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    ScanRequest:
+      type: object
+      required:
+        - url
+        - wcagLevel
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL to scan
+          example: "https://example.com"
+        wcagLevel:
+          type: string
+          enum: ["A", "AA", "AAA"]
+          description: WCAG compliance level
+          default: "AA"
+        includeWarnings:
+          type: boolean
+          default: false
+        timeout:
+          type: integer
+          description: Timeout in milliseconds
+          default: 300000
+        industry:
+          type: string
+          description: Industry vertical for scoring
+          example: "healthcare"
+
+    ScanResponse:
+      type: object
+      properties:
+        scanId:
+          type: string
+          example: "scan_abc123xyz"
+        status:
+          type: string
+          enum: ["pending", "running", "completed", "failed"]
+        url:
+          type: string
+        wcagLevel:
+          type: string
+        estimatedCompletionTime:
+          type: integer
+        message:
+          type: string
+
+    Scan:
+      type: object
+      properties:
+        scanId:
+          type: string
+        url:
+          type: string
+        status:
+          type: string
+        complianceScore:
+          type: number
+          format: float
+        violations:
+          type: object
+          properties:
+            critical:
+              type: integer
+            priority:
+              type: integer
+            minor:
+              type: integer
+        createdAt:
+          type: string
+          format: date-time
+        completedAt:
+          type: string
+          format: date-time
+
+    IntakeRequest:
+      type: object
+      required:
+        - name
+        - email
+        - website
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          format: email
+        website:
+          type: string
+          format: uri
+        companySize:
+          type: string
+          enum: ["1-50", "50-500", "500+"]
+        concerns:
+          type: string
+
+    IntakeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        intake_id:
+          type: string
+        message:
+          type: string
+
+    IntakeStatus:
+      type: object
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: ["pending", "in_progress", "completed", "failed"]
+        message:
+          type: string
+        scanResults:
+          type: object
+          nullable: true
+
+    BlogPost:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        slug:
+          type: string
+        excerpt:
+          type: string
+        publishedAt:
+          type: string
+          format: date-time
+        author:
+          type: string
+
+    BlogPostDetail:
+      allOf:
+        - $ref: '#/components/schemas/BlogPost'
+        - type: object
+          properties:
+            content:
+              type: string
+            tags:
+              type: array
+              items:
+                type: string
+
+    SocialMediaContent:
+      type: object
+      properties:
+        id:
+          type: string
+        platform:
+          type: string
+        content:
+          type: string
+        hashtags:
+          type: array
+          items:
+            type: string
+        callToAction:
+          type: string
+
+    Report:
+      type: object
+      properties:
+        reportId:
+          type: string
+        scanId:
+          type: string
+        url:
+          type: string
+        complianceScore:
+          type: number
+        violations:
+          type: array
+          items:
+            type: object
+        recommendations:
+          type: array
+          items:
+            type: object
+
+    DashboardMetrics:
+      type: object
+      properties:
+        scansCompleted:
+          type: integer
+        averageComplianceScore:
+          type: number
+        violationsFound:
+          type: integer
+        intakesSubmitted:
+          type: integer
+
+    ActivityStats:
+      type: object
+      properties:
+        totalScans:
+          type: integer
+        totalIntakes:
+          type: integer
+        activeUsers:
+          type: integer
+        successRate:
+          type: number
+
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
