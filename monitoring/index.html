@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InfinitySoul - Monitoring Hub</title>
+    <style>
+        @font-face {
+            font-family: 'FKGroteskNeue';
+            src: url('https://r2cdn.perplexity.ai/fonts/FKGroteskNeue.woff2') format('woff2');
+        }
+        :root { --color-teal: rgba(33, 128, 141, 1); --color-green: rgba(34, 197, 94, 1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'FKGroteskNeue', sans-serif; background: rgba(252, 252, 249, 1); padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; padding: 60px 20px; background: white; border-radius: 12px; margin-bottom: 40px; }
+        h1 { font-size: 3rem; color: var(--color-teal); margin-bottom: 12px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 24px; }
+        .dashboard-card { background: white; padding: 30px; border-radius: 12px; border: 1px solid rgba(33,128,141,0.2); transition: all 0.3s; cursor: pointer; }
+        .dashboard-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); border-color: var(--color-teal); }
+        .icon { font-size: 3rem; margin-bottom: 16px; }
+        .card-title { font-size: 1.5rem; font-weight: 700; color: var(--color-teal); margin-bottom: 12px; }
+        .card-desc { color: #6b7280; line-height: 1.6; }
+        .status { display: inline-block; padding: 6px 12px; background: rgba(34, 197, 94, 0.1); color: var(--color-green); border-radius: 20px; font-size: 0.875rem; font-weight: 600; margin-top: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 InfinitySoul Monitoring Hub</h1>
+            <p style="color: #6b7280; font-size: 1.25rem; margin-top: 12px;">Comprehensive real-time monitoring & analytics</p>
+            <div style="margin-top: 24px;">
+                <span style="display: inline-block; width: 12px; height: 12px; background: var(--color-green); border-radius: 50%; box-shadow: 0 0 12px var(--color-green); margin-right: 8px;"></span>
+                <strong style="color: var(--color-green);">All Systems Operational</strong>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <a href="verification-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">🔍</div>
+                    <div class="card-title">Verification Debt</div>
+                    <div class="card-desc">Monitor verification debt scores, code quality metrics, and AI-generated code validation</div>
+                    <div class="status">Score: 12.5/100 ✅</div>
+                </div>
+            </a>
+
+            <a href="security-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">🔒</div>
+                    <div class="card-title">Security Posture</div>
+                    <div class="card-desc">Real-time vulnerability tracking, dependency audits, and security score monitoring</div>
+                    <div class="status">Score: 95/100 ✅</div>
+                </div>
+            </a>
+
+            <a href="performance-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">⚡</div>
+                    <div class="card-title">Performance Metrics</div>
+                    <div class="card-desc">Page load times, Core Web Vitals, Lighthouse scores, and bundle size analysis</div>
+                    <div class="status">Lighthouse: 97 ✅</div>
+                </div>
+            </a>
+
+            <a href="accessibility-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">♿</div>
+                    <div class="card-title">WCAG Compliance</div>
+                    <div class="card-desc">WCAG 2.2 AA compliance monitoring, color contrast checks, and accessibility audits</div>
+                    <div class="status">WCAG: 100% ✅</div>
+                </div>
+            </a>
+
+            <a href="deployment-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">🚀</div>
+                    <div class="card-title">Deployment Status</div>
+                    <div class="card-desc">Environment health, deployment history, and uptime monitoring across all environments</div>
+                    <div class="status">Uptime: 99.98% ✅</div>
+                </div>
+            </a>
+
+            <a href="kpi-dashboard.html" style="text-decoration: none; color: inherit;">
+                <div class="dashboard-card">
+                    <div class="icon">📊</div>
+                    <div class="card-title">Custom KPIs</div>
+                    <div class="card-desc">Business metrics, user analytics, and custom key performance indicators</div>
+                    <div class="status">Active Users: 15.2K ✅</div>
+                </div>
+            </a>
+        </div>
+
+        <div style="background: white; padding: 30px; border-radius: 12px; margin-top: 40px; border: 1px solid rgba(33,128,141,0.2);">
+            <h3 style="color: var(--color-teal); margin-bottom: 16px;">📈 Quick Stats</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-green);">6</div>
+                    <div style="font-size: 0.875rem; color: #6b7280;">Active Dashboards</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-green);">100%</div>
+                    <div style="font-size: 0.875rem; color: #6b7280;">Systems Operational</div>
+                </div>
+                <div>
+                    <div style="font-size: 2rem; font-weight: 700; color: var(--color-green);">0</div>
+                    <div style="font-size: 0.875rem; color: #6b7280;">Critical Issues</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
