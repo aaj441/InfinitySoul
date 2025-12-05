@@ -27,62 +27,46 @@
     "test:prisma": "jest tests/prisma-models.test.ts"
   },
   "dependencies": {
-<<<<<<< HEAD
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "uuid": "^9.0.1",
-    "axios": "^1.6.2",
+    "axios": "^1.6.7",
     "playwright": "^1.40.1",
-    "bullmq": "^4.15.0",
-    "ioredis": "^5.3.2",
-    "@prisma/client": "^5.7.0",
-    "next": "^14.0.4",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-=======
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
     "puppeteer": "^21.3.8",
     "axe-core": "^4.8.2",
-    "bullmq": "^4.12.2",
+    "bullmq": "^4.15.0",
     "ioredis": "^5.3.2",
     "@prisma/client": "^5.10.2",
     "ipfs-http-client": "^62.0.0",
     "javascript-opentimestamps": "^1.2.0",
     "pdfkit": "^0.16.0",
     "qrcode": "^1.5.3",
-    "@clerk/clerk-sdk-node": "^4.44.3",
+    "@clerk/clerk-sdk-node": "^5.0.0",
     "stripe": "^14.21.0",
     "openai": "^4.30.0",
     "@anthropic-ai/sdk": "^0.9.0",
     "pdf-parse": "^1.1.1",
     "tesseract.js": "^5.0.5",
     "diff": "^5.1.0",
-    "axios": "^1.6.7",
     "@octokit/rest": "^20.1.0",
-    "next": "latest",
->>>>>>> cde392cb8f36dc84a3acaaab9009fa224a5075cf
+    "next": "^14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "inflight": "^1.0.6",
     "glob": "^10.3.10",
     "node-domexception": "^2.0.0"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "typescript": "^5.2.2",
     "@types/express": "^4.17.21",
     "@types/cors": "^2.8.17",
     "@types/uuid": "^9.0.7",
     "@types/node": "^20.10.0",
-    "prisma": "^5.7.0",
+    "prisma": "^5.10.2",
     "ts-node": "^10.9.2",
     "@types/jest": "^29.5.11",
-    "jest": "^29.7.0"
-=======
-    "prisma": "^5.10.2",
     "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "typescript": "^5.2.2"
->>>>>>> cde392cb8f36dc84a3acaaab9009fa224a5075cf
+    "supertest": "^6.3.3"
   }
 }
