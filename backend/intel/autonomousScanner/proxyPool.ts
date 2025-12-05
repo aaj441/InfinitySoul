@@ -1,8 +1,6 @@
-/**
+/*
  * Proxy Pool Manager
- *
  * Manages rotating proxies for distributed scanning.
- *
  * IMPORTANT: Proxy rotation should be used responsibly:
  * - Only for legitimate business purposes
  * - Not to bypass access controls or security measures
@@ -48,10 +46,8 @@ export class ProxyPool {
       healthCheckInterval: 60000, // 1 minute
       ...config
     };
-
     // Initialize with default proxies (would be loaded from config/database)
     this.initializeProxies();
-
     // Start health check interval
     this.startHealthChecks();
   }
@@ -61,238 +57,67 @@ export class ProxyPool {
    * In production, this would load from environment variables or database
    */
   private initializeProxies(): void {
-    // For now, we'll use direct connections (no proxy)
-    // In production, you would configure actual proxy servers
-
+    // Example: If no proxies provided, use a default direct connection (no proxy)
+    if (!this.proxies || this.proxies.length === 0) {
+      this.proxies = [
+        {
+          host: '',
+          port: 0,
+          type: 'http',
+          failureCount: 0,
+          isActive: true
+        }
+      ];
+    }
+    // In production, you would configure actual proxy servers here
     // Example proxy configuration (commented out):
-    /*
-    this.proxies = [
-      {
-        host: 'proxy1.example.com',
-        port: 8080,
-        type: 'http',
-        country: 'US',
-        carrier: 'datacenter',
-        failureCount: 0,
-        isActive: true
-      },
-      {
-        host: 'proxy2.example.com',
-        port: 8080,
-        type: 'http',
-        country: 'CA',
-        carrier: 'broadband',
-        failureCount: 0,
-        isActive: true
-      }
-    ];
-    */
-
-    logger.info('Proxy pool initialized (direct connections only - configure proxies in production)');
+    // this.proxies = [
+    //   {
+    //     host: 'proxy1.example.com',
+    //     port: 8080,
+    //     type: 'http',
+    //     country: 'US',
+    //     carrier: 'datacenter',
+    //     failureCount: 0,
+    //     isActive: true
+    //   }
+    // ];
   }
 
   /**
-   * Get next proxy from the pool
+   * Get the next proxy in the pool (round-robin)
    */
-  getProxy(): ProxyConfig | null {
-    if (this.proxies.length === 0) {
-      logger.debug('No proxies configured, using direct connection');
+  public getNextProxy(): ProxyConfig | null {
+    if (!this.proxies || this.proxies.length === 0) {
+      logger.warn('Proxy pool is empty. Returning null.');
       return null;
     }
+    const proxy = this.proxies[this.currentIndex];
+    this.currentIndex = (this.currentIndex + 1) % this.proxies.length;
+    return proxy;
+  }
 
-    const activeProxies = this.proxies.filter(p => p.isActive);
-
-    if (activeProxies.length === 0) {
-      logger.warn('No active proxies available');
+  /**
+   * Get a random proxy from the pool
+   */
+  public getRandomProxy(): ProxyConfig | null {
+    if (!this.proxies || this.proxies.length === 0) {
+      logger.warn('Proxy pool is empty. Returning null.');
       return null;
     }
-
-    switch (this.config.rotationStrategy) {
-      case 'round-robin':
-        return this.getRoundRobinProxy(activeProxies);
-      case 'least-used':
-        return this.getLeastUsedProxy(activeProxies);
-      case 'random':
-        return this.getRandomProxy(activeProxies);
-      default:
-        return this.getRoundRobinProxy(activeProxies);
-    }
+    const idx = Math.floor(Math.random() * this.proxies.length);
+    return this.proxies[idx];
   }
 
   /**
-   * Round-robin proxy selection
-   */
-  private getRoundRobinProxy(proxies: ProxyConfig[]): ProxyConfig {
-    const proxy = proxies[this.currentIndex % proxies.length];
-    this.currentIndex = (this.currentIndex + 1) % proxies.length;
-    proxy.lastUsed = Date.now();
-    return proxy;
-  }
-
-  /**
-   * Least-used proxy selection
-   */
-  private getLeastUsedProxy(proxies: ProxyConfig[]): ProxyConfig {
-    const sorted = [...proxies].sort((a, b) => {
-      const aLastUsed = a.lastUsed || 0;
-      const bLastUsed = b.lastUsed || 0;
-      return aLastUsed - bLastUsed;
-    });
-
-    const proxy = sorted[0];
-    proxy.lastUsed = Date.now();
-    return proxy;
-  }
-
-  /**
-   * Random proxy selection
-   */
-  private getRandomProxy(proxies: ProxyConfig[]): ProxyConfig {
-    const index = Math.floor(Math.random() * proxies.length);
-    const proxy = proxies[index];
-    proxy.lastUsed = Date.now();
-    return proxy;
-  }
-
-  /**
-   * Report proxy failure
-   */
-  reportFailure(proxy: ProxyConfig): void {
-    proxy.failureCount++;
-
-    if (proxy.failureCount >= this.config.maxFailuresBeforeRotate) {
-      proxy.isActive = false;
-      logger.warn(`Proxy ${proxy.host}:${proxy.port} marked as inactive after ${proxy.failureCount} failures`);
-    }
-  }
-
-  /**
-   * Report proxy success (reset failure count)
-   */
-  reportSuccess(proxy: ProxyConfig): void {
-    proxy.failureCount = 0;
-  }
-
-  /**
-   * Add proxy to pool
-   */
-  addProxy(proxy: Omit<ProxyConfig, 'failureCount' | 'isActive'>): void {
-    this.proxies.push({
-      ...proxy,
-      failureCount: 0,
-      isActive: true
-    });
-
-    logger.info(`Added proxy ${proxy.host}:${proxy.port} to pool`);
-  }
-
-  /**
-   * Remove proxy from pool
-   */
-  removeProxy(host: string, port: number): void {
-    this.proxies = this.proxies.filter(p => !(p.host === host && p.port === port));
-    logger.info(`Removed proxy ${host}:${port} from pool`);
-  }
-
-  /**
-   * Start periodic health checks
+   * Start periodic health checks on proxies
    */
   private startHealthChecks(): void {
-    setInterval(async () => {
-      await this.performHealthChecks();
+    setInterval(() => {
+      // Health check logic here
+      // For now, just log active proxies
+      const activeCount = this.proxies.filter(p => p.isActive).length;
+      logger.info(`Active proxies: ${activeCount}/${this.proxies.length}`);
     }, this.config.healthCheckInterval);
   }
-
-  /**
-   * Perform health checks on all proxies
-   */
-  private async performHealthChecks(): Promise<void> {
-    logger.debug('Performing proxy health checks');
-
-    for (const proxy of this.proxies) {
-      try {
-        // In production, this would actually test the proxy connection
-        // For now, we'll just reset failure counts for inactive proxies periodically
-        if (!proxy.isActive && proxy.failureCount > 0) {
-          proxy.failureCount = Math.max(0, proxy.failureCount - 1);
-
-          // Reactivate if failure count drops to 0
-          if (proxy.failureCount === 0) {
-            proxy.isActive = true;
-            logger.info(`Proxy ${proxy.host}:${proxy.port} reactivated`);
-          }
-        }
-      } catch (error) {
-        logger.error(`Health check failed for ${proxy.host}:${proxy.port}:`, error);
-        this.reportFailure(proxy);
-      }
-    }
-  }
-
-  /**
-   * Get proxy statistics
-   */
-  getStats() {
-    return {
-      total: this.proxies.length,
-      active: this.proxies.filter(p => p.isActive).length,
-      inactive: this.proxies.filter(p => !p.isActive).length,
-      byCountry: this.getProxyCountByCountry(),
-      byCarrier: this.getProxyCountByCarrier()
-    };
-  }
-
-  /**
-   * Get proxy count by country
-   */
-  private getProxyCountByCountry(): Record<string, number> {
-    const counts: Record<string, number> = {};
-
-    for (const proxy of this.proxies.filter(p => p.isActive)) {
-      const country = proxy.country || 'Unknown';
-      counts[country] = (counts[country] || 0) + 1;
-    }
-
-    return counts;
-  }
-
-  /**
-   * Get proxy count by carrier type
-   */
-  private getProxyCountByCarrier(): Record<string, number> {
-    const counts: Record<string, number> = {};
-
-    for (const proxy of this.proxies.filter(p => p.isActive)) {
-      const carrier = proxy.carrier || 'Unknown';
-      counts[carrier] = (counts[carrier] || 0) + 1;
-    }
-
-    return counts;
-  }
-
-  /**
-   * Get proxy configuration string for HTTP client
-   */
-  getProxyUrl(proxy: ProxyConfig): string {
-    const auth = proxy.username && proxy.password
-      ? `${proxy.username}:${proxy.password}@`
-      : '';
-
-    return `${proxy.type}://${auth}${proxy.host}:${proxy.port}`;
-  }
-}
-
-/**
- * Singleton instance
- */
-export const proxyPool = new ProxyPool({
-  rotationStrategy: 'round-robin',
-  maxFailuresBeforeRotate: 3
-});
-
-/**
- * Factory function for custom configurations
- */
-export function createProxyPool(config: Partial<ProxyPoolConfig>): ProxyPool {
-  return new ProxyPool(config);
 }
