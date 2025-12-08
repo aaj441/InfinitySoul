@@ -970,6 +970,641 @@ This orchestral architecture is based on real orchestral and film scoring practi
 
 ---
 
+## Audio Production → LLM Processing: The Technical Map
+
+This isn't metaphor. These are direct functional equivalents.
+
+### The Recording Studio = The AI Runtime
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    RECORDING STUDIO → AI SYSTEM MAPPING                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   RECORDING STUDIO                    AI/LLM SYSTEM                         │
+│   ════════════════════════════════════════════════════════════════════════  │
+│                                                                              │
+│   Microphone ────────────────────►    Input Parser                          │
+│   (Captures raw sound)                (Captures raw user input)             │
+│                                                                              │
+│   Multi-track Recorder ──────────►    Promise.all([agents])                 │
+│   (Records all tracks simultaneously) (Runs all agents simultaneously)      │
+│                                                                              │
+│   Individual Tracks ─────────────►    Individual Agent Outputs              │
+│   (Isolated instrument recordings)    (Each agent's response)               │
+│                                                                              │
+│   Stems ─────────────────────────►    Grouped Agent Outputs                 │
+│   (Tracks grouped by section)         (Outputs grouped by function)         │
+│                                                                              │
+│   Mixing Console ────────────────►    Output Aggregator                     │
+│   (Adjusts levels, EQ, effects)       (Weights, filters, combines)          │
+│                                                                              │
+│   Master Bus ────────────────────►    Final Response Synthesizer            │
+│   (All stems → stereo output)         (All outputs → user response)         │
+│                                                                              │
+│   Speakers/Headphones ───────────►    Response Renderer                     │
+│   (Delivers audio to listener)        (Delivers text/UI to user)            │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Multi-track Recording = Parallel LLM Calls
+
+**In Audio Production:**
+```
+┌──────────────┐
+│   SESSION    │
+├──────────────┤
+│ Track 1: 🎸  │──► Recording simultaneously
+│ Track 2: 🥁  │──► Recording simultaneously
+│ Track 3: 🎹  │──► Recording simultaneously
+│ Track 4: 🎤  │──► Recording simultaneously
+└──────────────┘
+     All recording to the same timeline, same tempo (click track)
+```
+
+**In LLM Processing:**
+```typescript
+// This is LITERALLY how multi-track recording works, but with AI
+const session = await Promise.all([
+  architectAgent.process(sharedContext),    // Track 1
+  designerAgent.process(sharedContext),     // Track 2
+  ethicsAgent.process(sharedContext),       // Track 3
+  codeAgent.process(sharedContext),         // Track 4
+]);
+// All processing the same input, same context (click track)
+```
+
+**The parallel is exact:**
+| Audio | LLM |
+|-------|-----|
+| Same click track | Same shared context |
+| Different instruments | Different agent specializations |
+| Simultaneous recording | Concurrent API calls |
+| Individual track files | Individual response objects |
+
+---
+
+### Stems = Grouped Agent Outputs
+
+**In Audio Production:**
+```
+Individual Tracks:           Stems:
+─────────────────           ──────
+Kick Drum      ─┐
+Snare          ─┼──────►    DRUM_STEM
+Hi-Hat         ─┤
+Toms           ─┘
+
+Bass Guitar    ─────────►   BASS_STEM
+
+Guitar 1       ─┐
+Guitar 2       ─┼──────►    GUITAR_STEM
+Acoustic       ─┘
+
+Lead Vocal     ─┐
+Backing Vox    ─┼──────►    VOCAL_STEM
+Harmonies      ─┘
+```
+
+**In LLM Processing:**
+```typescript
+// Stems are just grouped outputs
+interface Stems {
+  INPUT_STEM: {
+    voiceTranslator: AgentOutput;
+    research: AgentOutput;
+  };
+  CORE_STEM: {
+    architect: AgentOutput;
+    designer: AgentOutput;
+    storyteller: AgentOutput;
+    code: AgentOutput;
+  };
+  COMPLIANCE_STEM: {
+    ethics: AgentOutput;
+  };
+  REVENUE_STEM: {
+    bizDev: AgentOutput;
+  };
+  VALIDATION_STEM: {
+    validator: AgentOutput;
+  };
+}
+```
+
+**Why stems exist (same reason in both):**
+- Easier to adjust entire sections at once
+- Can mute/solo a whole group
+- Simplifies final mixing decisions
+- Allows section-level effects
+
+---
+
+### The Mixing Console = Output Aggregation
+
+**In Audio Production:**
+
+The mixing console has:
+- **Faders** — Volume for each track/stem
+- **Pan knobs** — Left/right positioning
+- **EQ** — Boost/cut frequencies
+- **Sends** — Route to effects (reverb, delay)
+- **Mute/Solo** — Silence or isolate tracks
+- **Master fader** — Overall output level
+
+**In LLM Processing:**
+
+```typescript
+interface MixingConsole {
+  // Faders = Output weights
+  faders: {
+    architect: 0.8,      // 80% weight in final mix
+    designer: 0.9,       // 90% weight
+    ethics: 1.0,         // Full weight (never compromise)
+    bizDev: 0.6,         // 60% weight (support role)
+    code: 0.85,          // 85% weight
+  };
+
+  // EQ = Output filtering
+  eq: {
+    architect: (output) => removeBoilerplate(output),
+    storyteller: (output) => toneCheck(output),
+    code: (output) => lintAndFormat(output),
+  };
+
+  // Sends = Shared post-processing
+  sends: {
+    allOutputs: [
+      complianceCheck,   // Like sending to a reverb bus
+      qualityGate,
+      toneConsistency,
+    ]
+  };
+
+  // Mute/Solo = Conditional inclusion
+  mute: (agent, context) => {
+    if (context.tags.includes('QUICK') && agent === 'research') {
+      return true; // Skip research for quick queries
+    }
+    return false;
+  };
+}
+```
+
+---
+
+### EQ and Compression = Post-Processing Filters
+
+**In Audio Production:**
+
+| Tool | What It Does |
+|------|--------------|
+| **EQ** | Boosts or cuts specific frequencies |
+| **Compression** | Reduces dynamic range (loud→quieter, quiet→louder) |
+| **Limiting** | Hard ceiling on volume |
+| **De-esser** | Reduces harsh "s" sounds |
+| **Noise gate** | Silences signal below threshold |
+
+**In LLM Processing:**
+
+```typescript
+// EQ = Content filtering by type
+const eqOutput = (output: AgentOutput) => {
+  return {
+    ...output,
+    // Boost the "signal" (useful content)
+    content: extractKeyInsights(output.content),
+    // Cut the "noise" (boilerplate, hedging)
+    filtered: removeHedging(output.content),
+  };
+};
+
+// Compression = Normalize confidence levels
+const compressOutput = (output: AgentOutput) => {
+  // Agent too confident? Bring it down
+  if (output.confidence > 0.95) output.confidence = 0.9;
+  // Agent too uncertain? Bring it up (or flag for review)
+  if (output.confidence < 0.3) output.needsReview = true;
+  return output;
+};
+
+// Limiting = Hard constraints
+const limitOutput = (output: AgentOutput) => {
+  // Never exceed token limit
+  if (output.tokens > MAX_TOKENS) {
+    output.content = truncateIntelligently(output.content, MAX_TOKENS);
+  }
+  // Never include PII
+  output.content = redactPII(output.content);
+  return output;
+};
+
+// Noise gate = Silence low-value outputs
+const noiseGate = (output: AgentOutput, threshold: number) => {
+  if (output.confidence < threshold || output.relevance < threshold) {
+    return null; // Don't include in final mix
+  }
+  return output;
+};
+```
+
+---
+
+### Side-chain Compression = Agent Dependencies
+
+**In Audio Production:**
+
+Side-chain compression is when one track's volume affects another. Classic example: kick drum "ducking" the bass—every time the kick hits, the bass briefly gets quieter.
+
+```
+Kick:  █   █   █   █   █   █
+Bass:  ▄███▄███▄███▄███▄███▄███
+       ↑   ↑   ↑   ↑   ↑   ↑
+       Bass ducks when kick hits
+```
+
+**In LLM Processing:**
+
+```typescript
+// Ethics agent "ducks" other agents when it detects risk
+ethics.on('complianceRisk', (risk) => {
+  // When Ethics "hits," other agents duck
+  clickTrack.dynamics['designer'] = 'mp';  // Designer gets quieter
+  clickTrack.dynamics['code'] = 'p';       // Code gets quieter
+  clickTrack.dynamics['ethics'] = 'ff';    // Ethics dominates
+
+  // Other agents adjust their outputs based on Ethics signal
+  designer.adjustFor(risk);
+  code.adjustFor(risk);
+});
+
+// BizDev "ducks" when Ethics is loud
+bizDev.on('process', (context) => {
+  if (context.dynamics['ethics'] === 'ff') {
+    // Don't push sales angle when compliance is at risk
+    this.reduceSalesEmphasis();
+  }
+});
+```
+
+---
+
+### Buses and Aux Sends = Shared Processing Pipelines
+
+**In Audio Production:**
+
+Instead of adding reverb to every track individually, you send tracks to a shared "reverb bus":
+
+```
+Track 1 ──[send 30%]──►┐
+Track 2 ──[send 50%]──►├──► REVERB BUS ──► mixed back in
+Track 3 ──[send 20%]──►┘
+```
+
+**In LLM Processing:**
+
+```typescript
+// All outputs go through shared validation pipeline
+const validationBus = async (outputs: AgentOutput[]) => {
+  return outputs.map(output => ({
+    ...output,
+    // Shared processing applied to all
+    validated: await runValidation(output),
+    formatted: await applyStyleGuide(output),
+    compliant: await checkWCAG(output),
+  }));
+};
+
+// Some outputs get extra processing via "sends"
+const processSends = async (output: AgentOutput, sends: Send[]) => {
+  for (const send of sends) {
+    if (send.condition(output)) {
+      output = await send.process(output);
+    }
+  }
+  return output;
+};
+
+// Designer output gets sent to a11y check bus
+const designerSends = [
+  { condition: (o) => o.hasUIElements, process: checkColorContrast },
+  { condition: (o) => o.hasInteractive, process: checkKeyboardNav },
+];
+```
+
+---
+
+### Gain Staging = Token Budget Management
+
+**In Audio Production:**
+
+Gain staging is maintaining proper signal levels at every point in the chain. Too hot = distortion. Too quiet = noise floor issues.
+
+```
+Mic → Preamp → EQ → Compressor → Bus → Master
+     ↓        ↓      ↓           ↓      ↓
+   -18dB   -18dB  -18dB       -12dB   -6dB
+   (proper levels at each stage)
+```
+
+**In LLM Processing:**
+
+```typescript
+// Token budget at each stage
+const gainStaging = {
+  input: {
+    maxTokens: 4000,        // Raw input limit
+    targetTokens: 2000,     // Ideal input size
+  },
+  agentContext: {
+    systemPrompt: 1000,     // Fixed overhead
+    sharedContext: 2000,    // Shared state
+    agentSpecific: 1000,    // Agent's own context
+  },
+  agentOutput: {
+    maxTokens: 2000,        // Per-agent output limit
+    targetTokens: 500,      // Ideal concise output
+  },
+  stemMix: {
+    maxTokens: 8000,        // Combined stems
+  },
+  finalOutput: {
+    maxTokens: 4000,        // What user sees
+    targetTokens: 1000,     // Ideal response length
+  },
+};
+
+// "Clipping" = hitting token limits
+const preventClipping = (content: string, stage: Stage) => {
+  const limit = gainStaging[stage].maxTokens;
+  if (tokenCount(content) > limit) {
+    // Graceful limiting, not hard truncation
+    return intelligentSummarize(content, limit);
+  }
+  return content;
+};
+```
+
+---
+
+### Latency and Buffer Size = Response Time Tradeoffs
+
+**In Audio Production:**
+
+| Buffer Size | Latency | CPU Load | Use Case |
+|-------------|---------|----------|----------|
+| 32 samples | 0.7ms | High | Live recording |
+| 256 samples | 5.8ms | Medium | Mixing |
+| 1024 samples | 23ms | Low | Mastering |
+
+**In LLM Processing:**
+
+| Mode | Response Time | Quality | Use Case |
+|------|---------------|---------|----------|
+| Streaming | Immediate | Medium | Chat, real-time |
+| Batch | 2-5s | High | Complex analysis |
+| Deep analysis | 10-30s | Highest | Architecture decisions |
+
+```typescript
+// Buffer size = processing depth
+const processingModes = {
+  streaming: {
+    maxTokens: 500,
+    agents: ['voiceTranslator', 'quickResponse'],
+    parallel: false,
+    // Low latency, simpler output
+  },
+  standard: {
+    maxTokens: 2000,
+    agents: ['all'],
+    parallel: true,
+    // Balanced latency/quality
+  },
+  deep: {
+    maxTokens: 4000,
+    agents: ['all'],
+    parallel: true,
+    multiplePassses: true,
+    // Higher latency, best quality
+  },
+};
+```
+
+---
+
+### Automation = Dynamic Prompt Adjustment
+
+**In Audio Production:**
+
+Automation is recording fader/knob movements over time. The mix changes as the song progresses.
+
+```
+Time:    0:00 ────────────── 1:00 ────────────── 2:00
+Vocal:   ▁▂▃▄▅▆▇█▇▆▅▄▃▂▁▂▃▄▅▆▇████████████▇▆▅▄▃
+         quiet intro  │  loud chorus  │  quiet verse
+```
+
+**In LLM Processing:**
+
+```typescript
+// Automation = changing dynamics as processing progresses
+class ProcessingAutomation {
+  private timeline: Map<Checkpoint, DynamicsConfig>;
+
+  constructor() {
+    this.timeline = new Map([
+      ['INPUT', {
+        voiceTranslator: 'ff',
+        research: 'mf',
+        others: 'p'
+      }],
+      ['PROCESSING', {
+        architect: 'f',
+        designer: 'f',
+        code: 'mf',
+        ethics: 'mf'
+      }],
+      ['VALIDATION', {
+        validator: 'ff',
+        ethics: 'f',
+        others: 'p'
+      }],
+      ['OUTPUT', {
+        storyteller: 'ff',  // Polish the final narrative
+        code: 'f',          // Final implementation
+        others: 'p'
+      }],
+    ]);
+  }
+
+  getDynamicsAt(checkpoint: Checkpoint): DynamicsConfig {
+    return this.timeline.get(checkpoint);
+  }
+}
+```
+
+---
+
+### Bleed and Crosstalk = Context Pollution
+
+**In Audio Production:**
+
+Bleed is when one microphone picks up sound from another instrument. Drums bleeding into vocal mic. Guitar amp bleeding into everything.
+
+**In LLM Processing:**
+
+```typescript
+// Context pollution = agent outputs affecting others unexpectedly
+
+// BAD: Shared mutable context (causes "bleed")
+const sharedContext = { userRequest: "..." };
+agent1.process(sharedContext); // Modifies sharedContext
+agent2.process(sharedContext); // Sees agent1's modifications 😱
+
+// GOOD: Isolated contexts (like isolation rooms)
+const baseContext = Object.freeze({ userRequest: "..." });
+const agent1Context = { ...baseContext, agentSpecific: {} };
+const agent2Context = { ...baseContext, agentSpecific: {} };
+
+// Controlled bleed via explicit channels (like a talkback mic)
+const signalBus = new EventEmitter();
+agent1.on('insight', (signal) => signalBus.emit('agent1', signal));
+agent2.listenTo(signalBus, 'agent1'); // Explicitly opts in to hear agent1
+```
+
+---
+
+### The Master Bus = Final Response Synthesis
+
+**In Audio Production:**
+
+All stems route to the master bus. Final processing (mastering EQ, limiting, stereo enhancement) happens here before output.
+
+**In LLM Processing:**
+
+```typescript
+class MasterBus {
+  async process(stems: Stems): Promise<FinalOutput> {
+    // 1. Combine all stems
+    const combined = this.combineStems(stems);
+
+    // 2. Final EQ (tone consistency)
+    const eqd = this.applyToneConsistency(combined);
+
+    // 3. Final compression (confidence normalization)
+    const compressed = this.normalizeConfidence(eqd);
+
+    // 4. Final limiting (hard constraints)
+    const limited = this.applyConstraints(compressed);
+
+    // 5. Format for output (like dithering to 16-bit)
+    const formatted = this.formatForUser(limited);
+
+    return formatted;
+  }
+
+  private combineStems(stems: Stems): CombinedOutput {
+    return {
+      understanding: stems.INPUT_STEM,
+      deliverables: {
+        architecture: stems.CORE_STEM.architect,
+        designs: stems.CORE_STEM.designer,
+        copy: stems.CORE_STEM.storyteller,
+        code: stems.CORE_STEM.code,
+      },
+      compliance: stems.COMPLIANCE_STEM,
+      revenue: stems.REVENUE_STEM,
+      validation: stems.VALIDATION_STEM,
+    };
+  }
+}
+```
+
+---
+
+### The Complete Signal Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    COMPLETE SIGNAL FLOW: AUDIO → LLM                        │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  USER INPUT                                                                  │
+│       │                                                                      │
+│       ▼                                                                      │
+│  ┌─────────────┐                                                            │
+│  │   PREAMP    │  Input parsing, normalization                              │
+│  │  (Parser)   │  (Like preamp gain staging)                                │
+│  └──────┬──────┘                                                            │
+│         │                                                                    │
+│         ▼                                                                    │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                    MULTI-TRACK RECORDING                             │    │
+│  │                      (Promise.all)                                   │    │
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐      │    │
+│  │  │ Agent 1 │ │ Agent 2 │ │ Agent 3 │ │ Agent 4 │ │ Agent 5 │      │    │
+│  │  │  (Tk1)  │ │  (Tk2)  │ │  (Tk3)  │ │  (Tk4)  │ │  (Tk5)  │      │    │
+│  │  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘      │    │
+│  └───────┼──────────┼──────────┼──────────┼──────────┼───────────────┘    │
+│          │          │          │          │          │                      │
+│          ▼          ▼          ▼          ▼          ▼                      │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                         STEM GROUPING                                │    │
+│  │  ┌──────────────┐ ┌──────────────┐ ┌──────────────┐                │    │
+│  │  │  INPUT_STEM  │ │  CORE_STEM   │ │ COMPLY_STEM  │ ...            │    │
+│  │  └──────┬───────┘ └──────┬───────┘ └──────┬───────┘                │    │
+│  └─────────┼────────────────┼────────────────┼────────────────────────┘    │
+│            │                │                │                              │
+│            ▼                ▼                ▼                              │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                       MIXING CONSOLE                                 │    │
+│  │  ┌────────────────────────────────────────────────────────────────┐ │    │
+│  │  │  Faders (weights) │ EQ (filters) │ Sends (shared processing)  │ │    │
+│  │  └────────────────────────────────────────────────────────────────┘ │    │
+│  └──────────────────────────────┬──────────────────────────────────────┘    │
+│                                 │                                           │
+│                                 ▼                                           │
+│  ┌─────────────────────────────────────────────────────────────────────┐    │
+│  │                        MASTER BUS                                    │    │
+│  │  Final synthesis │ Tone consistency │ Constraints │ Formatting      │    │
+│  └──────────────────────────────┬──────────────────────────────────────┘    │
+│                                 │                                           │
+│                                 ▼                                           │
+│                          FINAL OUTPUT                                       │
+│                           (to user)                                         │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+### Quick Reference: Audio → LLM Glossary
+
+| Audio Term | LLM Equivalent | Function |
+|------------|----------------|----------|
+| Click track | Shared context | Keeps all agents synchronized |
+| Multi-track | Promise.all | Parallel processing |
+| Track | Agent output | Individual contribution |
+| Stem | Grouped outputs | Section-level grouping |
+| Fader | Weight | Output importance |
+| EQ | Filter | Shape output content |
+| Compression | Confidence normalization | Reduce extremes |
+| Limiting | Hard constraints | Token/content limits |
+| Side-chain | Agent dependencies | One affects another |
+| Bus/Aux | Shared pipeline | Common processing |
+| Gain staging | Token budgeting | Proper levels at each stage |
+| Latency | Response time | Speed vs. quality tradeoff |
+| Automation | Dynamic prompts | Changes over processing |
+| Bleed | Context pollution | Unwanted cross-influence |
+| Isolation room | Sandboxed agent | Prevents bleed |
+| Master bus | Final synthesizer | Combines everything |
+| Mastering | Output formatting | Final polish |
+
+---
+
 # Part 3: The Musical DNA
 
 ## 21 Years of Taste → Design System
