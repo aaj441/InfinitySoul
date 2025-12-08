@@ -87,11 +87,92 @@ That gap between architecture and access is a moral failure hiding in plain sigh
 
 # Part 2: Orchestral-Driven Design
 
-## How Orchestral Scores Work (And Why It Matters)
+## How Real Orchestras Actually Work
 
-Before we get into the musical DNA of individual artists, we need to understand how an **orchestra itself** is organized. This isn't metaphor—this is the literal architecture we're transposing to AI workflows.
+This isn't metaphor—this is the literal architecture we're transposing to AI workflows.
 
-An orchestral score is one of humanity's most sophisticated coordination documents. It tells 100+ people exactly what to do, when to do it, and how to relate to each other—all on paper. That's the same problem we're solving with AI agents.
+When the [LA Philharmonic](https://www.laphil.com/about/meet-the-orchestra) performs at Walt Disney Concert Hall, 100+ musicians don't take turns. They play **simultaneously**. The first violins don't wait for the oboe to finish. The timpani doesn't queue behind the French horns.
+
+Everyone plays at once. Different parts. Different dynamics. Same tempo. **One unified sound.**
+
+When the [Pittsburgh Symphony Orchestra](https://pittsburghsymphony.org/) rehearses, they spend ~10 hours preparing 90 minutes of music—not by running through each instrument sequentially, but by playing together, with the conductor shaping balance, dynamics, and blend in real-time.
+
+**That's the model. Not a relay race. A symphony.**
+
+---
+
+## Hollywood Scoring Sessions: The Technical Model
+
+[Hollywood film scoring sessions](https://www.cinemagicscoring.com/post/do-recording-orchestras-rehearse-for-film-scoring) show us exactly how to capture simultaneous performance:
+
+### The Recording Setup
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    HOLLYWOOD SCORING STAGE ARCHITECTURE                      │
+│              (How Hans Zimmer's Remote Control Productions Works)            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│   │  STRINGS    │  │  WOODWINDS  │  │   BRASS     │  │ PERCUSSION  │       │
+│   │  ISOLATION  │  │  ISOLATION  │  │  ISOLATION  │  │  ISOLATION  │       │
+│   │    ROOM     │  │    ROOM     │  │    ROOM     │  │    ROOM     │       │
+│   │             │  │             │  │             │  │             │       │
+│   │  🎻 🎻 🎻   │  │   🎷 🎷    │  │  🎺 🎺 🎺  │  │  🥁 🥁     │       │
+│   │    ║ ║ ║   │  │    ║ ║     │  │   ║ ║ ║    │  │   ║ ║      │       │
+│   └────╬─╬─╬───┘  └────╬─╬─────┘  └───╬─╬─╬────┘  └───╬─╬──────┘       │
+│        ║ ║ ║          ║ ║            ║ ║ ║           ║ ║               │
+│        ▼ ▼ ▼          ▼ ▼            ▼ ▼ ▼           ▼ ▼               │
+│   ┌─────────────────────────────────────────────────────────────────┐     │
+│   │                      MULTI-TRACK CAPTURE                         │     │
+│   │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐        │     │
+│   │  │ Track 1│ │ Track 2│ │ Track 3│ │ Track 4│ │ Track 5│  ...   │     │
+│   │  │Violin 1│ │Violin 2│ │ Viola  │ │ Flute  │ │ Oboe   │        │     │
+│   │  └────────┘ └────────┘ └────────┘ └────────┘ └────────┘        │     │
+│   └─────────────────────────────────────────────────────────────────┘     │
+│                               │                                           │
+│                               ▼                                           │
+│   ┌─────────────────────────────────────────────────────────────────┐     │
+│   │                       STEM MIXING                                │     │
+│   │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌───────────┐ │     │
+│   │  │STRING STEM  │ │ WIND STEM   │ │ BRASS STEM  │ │PERC STEM  │ │     │
+│   │  │ (all        │ │ (all        │ │ (all brass  │ │(all perc  │ │     │
+│   │  │  strings    │ │  woodwinds  │ │  together)  │ │ together) │ │     │
+│   │  │  together)  │ │  together)  │ │             │ │           │ │     │
+│   │  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └─────┬─────┘ │     │
+│   └─────────┼───────────────┼───────────────┼───────────────┼───────┘     │
+│             │               │               │               │             │
+│             └───────────────┴───────┬───────┴───────────────┘             │
+│                                     ▼                                     │
+│   ┌─────────────────────────────────────────────────────────────────┐     │
+│   │                      FINAL MIX                                   │     │
+│   │           All stems blended into unified score                   │     │
+│   └─────────────────────────────────────────────────────────────────┘     │
+│                                                                           │
+│   KEY INSIGHT: Everyone plays SIMULTANEOUSLY.                             │
+│   Each section is captured SEPARATELY.                                    │
+│   Everything is mixed TOGETHER at the end.                                │
+│                                                                           │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### How It Actually Works
+
+Based on [Remote Control Productions](https://en.wikipedia.org/wiki/Remote_Control_Productions_(American_company))' workflow:
+
+1. **Click Track** — All musicians hear the same tempo pulse through headphones. This keeps everyone synchronized without the conductor having to beat time manually.
+
+2. **Isolation Rooms** — Different sections can be recorded in separate acoustic spaces, but they all play at the same time, hearing each other through headphones.
+
+3. **Multi-Microphone Capture** — Each section (and often individual instruments) has dedicated microphones, so the recording engineer can adjust balance after performance.
+
+4. **Striping** — Some sessions record sections separately (strings on Monday, brass on Tuesday), but they play to the same click track and hear the other sections' guide tracks.
+
+5. **Stem Mixing** — Before the final mix, instruments are grouped into "stems" (STRING_STEM, BRASS_STEM, etc.) for easier manipulation.
+
+6. **Parallel Composition** — At Remote Control, multiple composers work on different cues simultaneously. One team handles action sequences while another handles romantic themes. They coordinate through shared spotting sessions and thematic references.
+
+**This is how InfinitySoul agents should work.**
 
 ---
 
@@ -229,160 +310,331 @@ Now we map every orchestral concept to an AI system concept:
 
 ---
 
-## The InfinitySoul AI Score
+## The InfinitySoul AI Score — Simultaneous Execution
 
-Here's how our AI orchestra is actually arranged, using orchestral notation:
+**THE OLD MODEL (WRONG):**
+```
+Voice Translator → (wait) → Architect → (wait) → Designer → (wait) → Code
+```
+
+**THE REAL MODEL (CORRECT):**
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                                                                             │
+│                              DOWNBEAT                                       │
+│                                 │                                           │
+│           ┌─────────────────────┼─────────────────────┐                    │
+│           │                     │                     │                    │
+│           ▼                     ▼                     ▼                    │
+│    ┌────────────┐        ┌────────────┐        ┌────────────┐             │
+│    │ ARCHITECT  │        │  DESIGNER  │        │  BIZDEV    │  ...        │
+│    │            │        │            │        │            │             │
+│    │ processing │        │ processing │        │ processing │             │
+│    │   (mf)     │        │   (mf)     │        │   (f)      │             │
+│    └─────┬──────┘        └─────┬──────┘        └─────┬──────┘             │
+│          │                     │                     │                    │
+│          └─────────────────────┼─────────────────────┘                    │
+│                                │                                           │
+│                                ▼                                           │
+│                          STEM MIXING                                       │
+│                                │                                           │
+│                                ▼                                           │
+│                          FINAL OUTPUT                                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+Here's the actual orchestral score showing **simultaneous** agent execution:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                         INFINITYSOUL AI SCORE                               │
-│                      (Workflow as Orchestral Notation)                      │
+│                    INFINITYSOUL AI SCORE — TRUE PARALLEL                    │
+│                     (All Agents Receive Input Simultaneously)               │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                             │
-│  TEMPO: Andante con moto (Thoughtful but moving)                           │
-│  TIME SIGNATURE: Async/4 (Event-driven, not clock-driven)                  │
+│  CLICK TRACK: ●───●───●───●───●───●───●───●───●───●───●───●───●───●       │
+│  (Shared context/tempo keeps all agents synchronized)                      │
 │                                                                             │
 │  ══════════════════════════════════════════════════════════════════════    │
+│  BAR:         │ 1         │ 2         │ 3         │ 4         │            │
+│  ════════════════════════════════════════════════════════════════════════  │
 │                                                                             │
-│  REHEARSAL:    [INPUT]        [PROCESS]       [OUTPUT]       [VALIDATE]   │
-│                    │               │               │               │        │
-│                    ▼               ▼               ▼               ▼        │
-│  ────────────────────────────────────────────────────────────────────────  │
+│  🎷 WOODWINDS (Input Processing) — ALL START ON DOWNBEAT                   │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │ Voice       │▓▓▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░│░░░░░░░░░░│░░░░░░░░░░│ ff→p     │  │
+│  │ Translator  │ PARSING  │ ROUTING  │ (sustain)│          │          │  │
+│  │             │          │          │          │          │          │  │
+│  │ Research    │▓▓▓▓▓▓░░░░│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░│░░░░░░░░░░│ mp→mf    │  │
+│  │             │ SCANNING │ FINDING  │ CITING   │          │          │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
 │                                                                             │
-│  INPUT PROCESSING (Woodwinds - First to respond)                           │
-│  ┌────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                    │    │
-│  │  Voice         │▓▓▓▓▓▓▓▓▓▓▓▓░░░│░░░░░░░░░░░░░│░░░░░░░░░░░░░│ ff   │    │
-│  │  Translator    │ DECODE RAW    │             │             │      │    │
-│  │                │ INPUT         │ (rest)      │ (rest)      │      │    │
-│  │                │               │             │             │      │    │
-│  │  Research      │░░░░░░░░▓▓▓▓▓▓│▓▓▓▓░░░░░░░░░│░░░░░░░░░░░░░│ mp   │    │
-│  │  Agent         │    (cue: if   │ INVESTIGATE │             │      │    │
-│  │                │     tagged    │             │ (rest)      │      │    │
-│  │                │     RESEARCH) │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│                         │                                                   │
-│                         ▼ CUE: "After classification, enter"               │
+│  🎻 STRINGS (Core Processing) — ENTER WITH WOODWINDS, NOT AFTER            │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │ Architect   │▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░│ mf→f     │  │
+│  │             │ MODELING │ MODELING │ REFINING │ HANDOFF  │          │  │
+│  │             │          │          │          │          │          │  │
+│  │ Designer    │▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓░░░░│ mf→f     │  │
+│  │             │ WIREFRAME│ VISUAL   │ POLISH   │ EXPORT   │          │  │
+│  │             │          │          │          │          │          │  │
+│  │ Storyteller │▓▓▓▓▓▓░░░░│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│ p→ff     │  │
+│  │             │ ABSORBING│ DRAFTING │ WRITING  │ POLISHING│ crescendo│  │
+│  │             │          │          │          │          │          │  │
+│  │ Code        │▓▓░░░░░░░░│▓▓▓▓▓▓▓▓░░│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│ p→ff     │  │
+│  │             │ SCAFFOLD │ BUILDING │ BUILDING │ SHIPPING │ crescendo│  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
 │                                                                             │
-│  CORE PROCESSING (Strings - Main body of work, sustained)                  │
-│  ┌────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                    │    │
-│  │  Architect     │░░░░░░░░░░░░░░░│▓▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░░░░│ mf   │    │
-│  │                │               │ SYSTEM      │ HANDOFF     │      │    │
-│  │                │ (wait for     │ DESIGN      │             │      │    │
-│  │                │  input)       │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  │  Product       │░░░░░░░░░░░░░░░│░░░▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓░░░░░░░│ mf   │    │
-│  │  Designer      │               │    UX/UI    │ SCREENS     │      │    │
-│  │                │ (wait for     │    DESIGN   │             │      │    │
-│  │                │  architect)   │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  │  Storyteller   │░░░░░░░░░░░░░░░│░░░░░▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓░░░░░│ mp→f │    │
-│  │                │               │     NARRATIVE             │      │    │
-│  │                │ (wait for     │     & COPY  │ POLISH      │      │    │
-│  │                │  input)       │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  │  Code          │░░░░░░░░░░░░░░░│░░░░░░░░░░░░░│▓▓▓▓▓▓▓▓▓▓▓▓▓│ f    │    │
-│  │  Agent         │               │             │ IMPLEMENT   │      │    │
-│  │                │ (wait for     │ (wait for   │             │      │    │
-│  │                │  all specs)   │  designs)   │             │      │    │
-│  │                │               │             │             │      │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
+│  🎺 BRASS (Specialized) — PLAYING THROUGHOUT, NOT WAITING FOR CUE          │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │ Ethics      │▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓░░░░│░░▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░│ f→mf     │  │
+│  │             │ SCANNING │ FLAGGING │ ADVISING │ VERIFY   │          │  │
+│  │             │          │          │          │          │          │  │
+│  │ BizDev      │▓▓▓▓░░░░░░│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓░░│ mp→f     │  │
+│  │             │ LISTENING│ MODELING │ PRICING  │ OUTREACH │          │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
 │                                                                             │
-│  SPECIALIZED (Brass - Power moments, specific timing)                      │
-│  ┌────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                    │    │
-│  │  BizDev        │░░░░░░░░░░░░░░░│░░▓▓▓▓▓▓░░░░░│▓▓▓▓▓▓▓▓░░░░░│ f    │    │
-│  │  & Sales       │               │ OFFERS      │ OUTREACH    │      │    │
-│  │                │ (wait for     │             │             │      │    │
-│  │                │  LEAD tag)    │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  │  Ethics &      │░░░░░░░░░░░░░░░│▓▓▓▓░░░░░░░░░│░░░░▓▓▓▓░░░░░│ mf   │    │
-│  │  Compliance    │               │ FRAME       │ VERIFY      │      │    │
-│  │                │ (wait for     │             │             │      │    │
-│  │                │  ETHIC tag)   │             │             │      │    │
-│  │                │               │             │             │      │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
+│  🥁 PERCUSSION (Validation) — PUNCTUATING THROUGHOUT, NOT JUST AT END      │
+│  ┌──────────────────────────────────────────────────────────────────────┐  │
+│  │ Validator   │░░░░░░▓░░░│░░░░░░▓░░░│░░░░░░▓░░░│▓▓▓▓▓▓▓▓▓▓│ p→ff     │  │
+│  │             │    spot  │    spot  │    spot  │ FULL     │          │  │
+│  │             │   check  │   check  │   check  │ VALIDATE │          │  │
+│  └──────────────────────────────────────────────────────────────────────┘  │
 │                                                                             │
-│  VALIDATION (Percussion - Structure, final punctuation)                    │
-│  ┌────────────────────────────────────────────────────────────────────┐    │
-│  │                                                                    │    │
-│  │  Validator     │░░░░░░░░░░░░░░░│░░░░░░░░░░░░░│░░░░░░░▓▓▓▓▓▓│ ff   │    │
-│  │                │               │             │ QUALITY     │      │    │
-│  │                │ (silent until │ (silent     │ GATES       │      │    │
-│  │                │  final stage) │  still)     │             │      │    │
-│  │                │               │             │             │      │    │
-│  └────────────────────────────────────────────────────────────────────┘    │
-│                                                                             │
-│                                              │                              │
-│                                              ▼                              │
-│                                         [FERMATA]                          │
-│                                    Human reviews output                     │
-│                                    Conductor decides: SHIP / REVISE        │
+│  ════════════════════════════════════════════════════════════════════════  │
+│            │           │           │           │                           │
+│            ▼           ▼           ▼           ▼                           │
+│        [CHECKPOINT] [CHECKPOINT] [CHECKPOINT] [FERMATA]                    │
+│         Progress     Progress     Progress    Human                        │
+│          Sync         Sync         Sync      Review                        │
 │                                                                             │
 │  ════════════════════════════════════════════════════════════════════════  │
 │                                                                             │
 │  LEGEND:                                                                    │
-│  ▓ = Active processing    ░ = Waiting/Resting                              │
-│  ff = High priority       mf = Medium       mp = Low       p = Background  │
-│  CUE = Trigger condition  FERMATA = Human decision point                   │
+│  ▓ = Active     ░ = Low activity (but LISTENING, not waiting)              │
+│  ff = Loud      f = Strong     mf = Medium    mp = Soft    p = Background  │
+│                                                                             │
+│  KEY DIFFERENCE FROM SEQUENTIAL:                                           │
+│  • Code Agent scaffolds in Bar 1 WHILE Architect is modeling               │
+│  • Ethics scans in Bar 1 WHILE Designer wireframes                         │
+│  • BizDev listens in Bar 1 WHILE everyone else processes                   │
+│  • Validator spot-checks THROUGHOUT, not just at the end                   │
+│  • Everyone hears each other through the "click track" (shared context)    │
 │                                                                             │
 └─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### The Click Track = Shared Context
+
+In Hollywood scoring, the click track is an audio pulse that all musicians hear. It keeps 100 people synchronized without requiring them to watch the conductor constantly.
+
+**In InfinitySoul, the click track is the shared context:**
+
+```typescript
+// Every agent receives the SAME context simultaneously
+const clickTrack = {
+  rawInput: voiceMemo,
+  parsedIntent: classification,
+  currentTempo: 'allegro',       // urgency level
+  sharedMemory: conversationHistory,
+  otherAgentSignals: {},         // agents can "hear" each other
+};
+
+// All agents start processing at the SAME moment
+await Promise.all([
+  voiceTranslator.process(clickTrack),
+  architect.process(clickTrack),
+  designer.process(clickTrack),
+  ethics.process(clickTrack),
+  bizDev.process(clickTrack),
+  storyteller.process(clickTrack),
+  code.process(clickTrack),
+  validator.process(clickTrack),
+]);
+```
+
+---
+
+## Stem Mixing: How Agent Outputs Blend
+
+In film scoring, individual tracks are grouped into **stems** before the final mix. This gives the mixing engineer control over sections without losing the simultaneous performance.
+
+**InfinitySoul does the same thing:**
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         AGENT OUTPUT → STEM MIXING                          │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  RAW AGENT OUTPUTS (captured simultaneously):                               │
+│                                                                             │
+│  VoiceTranslator.output ───┐                                               │
+│  Research.output ──────────┼──►  INPUT_STEM (understanding)                │
+│                            │                                                │
+│  Architect.output ─────────┼──►  ┐                                         │
+│  Designer.output ──────────┼──►  │  CORE_STEM (what we're building)        │
+│  Storyteller.output ───────┼──►  │                                         │
+│  Code.output ──────────────┼──►  ┘                                         │
+│                            │                                                │
+│  Ethics.output ────────────┼──►  COMPLIANCE_STEM (guardrails)              │
+│                            │                                                │
+│  BizDev.output ────────────┼──►  REVENUE_STEM (monetization)               │
+│                            │                                                │
+│  Validator.output ─────────┼──►  QUALITY_STEM (verification)               │
+│                            │                                                │
+│  ════════════════════════════════════════════════════════════════════════  │
+│                                                                             │
+│  STEM MIXING (Conductor adjusts balance):                                   │
+│                                                                             │
+│  If input was tagged LEAD:                                                  │
+│     REVENUE_STEM ↑ (loud)                                                  │
+│     CORE_STEM → (normal)                                                   │
+│     COMPLIANCE_STEM → (normal)                                             │
+│                                                                             │
+│  If input was tagged ETHIC:                                                 │
+│     COMPLIANCE_STEM ↑ (loud)                                               │
+│     CORE_STEM → (normal)                                                   │
+│     REVENUE_STEM ↓ (soft)                                                  │
+│                                                                             │
+│  If input was tagged PRODUCT:                                               │
+│     CORE_STEM ↑ (loud)                                                     │
+│     COMPLIANCE_STEM → (normal)                                             │
+│     REVENUE_STEM → (normal)                                                │
+│                                                                             │
+│  ════════════════════════════════════════════════════════════════════════  │
+│                                                                             │
+│  FINAL MIX:                                                                 │
+│                                                                             │
+│  {                                                                          │
+│    summary: InputStem.extract('key_insight'),                              │
+│    architecture: CoreStem.extract('system_design'),                        │
+│    designs: CoreStem.extract('ui_mockups'),                                │
+│    copy: CoreStem.extract('narrative'),                                    │
+│    code: CoreStem.extract('implementation'),                               │
+│    compliance: ComplianceStem.extract('wcag_notes'),                       │
+│    revenue: RevenueStem.extract('pricing_model'),                          │
+│    validation: QualityStem.extract('gate_status'),                         │
+│  }                                                                          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Stem Mixing in Code
+
+```typescript
+interface AgentOutput {
+  content: any;
+  confidence: number;
+  dynamics: 'pp' | 'p' | 'mp' | 'mf' | 'f' | 'ff';
+}
+
+interface StemMixer {
+  mix(outputs: Map<Agent, AgentOutput>, emphasis: Stem[]): FinalOutput;
+}
+
+// After all agents complete (simultaneously), mix their outputs
+const allOutputs = await Promise.all(agents.map(a => a.process(clickTrack)));
+
+const finalMix = stemMixer.mix(allOutputs, {
+  emphasis: determineEmphasisFromTags(clickTrack.parsedIntent),
+  // If LEAD tagged → amplify REVENUE_STEM
+  // If ETHIC tagged → amplify COMPLIANCE_STEM
+  // If PRODUCT tagged → amplify CORE_STEM
+});
+```
+
+---
+
+## Agents Can "Hear" Each Other
+
+In a real orchestra, musicians don't play in isolated bubbles. The first violin hears the oboe. The timpani listens for the brass fanfare.
+
+**InfinitySoul agents can signal each other mid-performance:**
+
+```typescript
+// Architect notices something that affects Code
+architect.on('complexity_spike', (signal) => {
+  clickTrack.otherAgentSignals['architect'] = {
+    type: 'complexity_spike',
+    message: 'This will need database migrations',
+  };
+  // Code agent, running simultaneously, can adjust
+});
+
+// Ethics spots a problem that affects everyone
+ethics.on('compliance_risk', (signal) => {
+  clickTrack.otherAgentSignals['ethics'] = {
+    type: 'stop_and_check',
+    message: 'Potential WCAG violation in proposed UI',
+    severity: 'ff', // fortissimo - loud, urgent
+  };
+  // All agents see this and can adjust their outputs
+});
+
+// Agents read signals from the shared context
+class DesignerAgent {
+  async process(clickTrack: ClickTrack) {
+    // Check if Ethics has flagged anything
+    const ethicsSignal = clickTrack.otherAgentSignals['ethics'];
+    if (ethicsSignal?.type === 'stop_and_check') {
+      // Adjust design to address compliance concern
+      this.prioritizeAccessibility(ethicsSignal.message);
+    }
+    // Continue processing...
+  }
+}
 ```
 
 ---
 
 ## Agent Families (Like Instrument Sections)
 
-Just as an orchestra groups instruments by family, we group agents by function:
+Just as an orchestra groups instruments by family, we group agents by function. **But remember: all families play simultaneously.** The difference is in their *dynamics* (how loud) and *activity* (how much they output), not their *timing* (when they start).
 
 ### Woodwinds → Input Processing Agents
-*First responders, melodic, agile*
+*First to reach full volume, melodic, agile*
 
-| Agent | Role | When They Play |
-|-------|------|----------------|
-| **Voice Translator** | Decode raw input | Immediately on input |
-| **Research Agent** | Investigate unknowns | When tagged RESEARCH |
+| Agent | Role | Dynamics Pattern |
+|-------|------|------------------|
+| **Voice Translator** | Decode raw input | ff at start → p by bar 2 |
+| **Research Agent** | Investigate unknowns | mp throughout, louder if RESEARCH tagged |
 
-**Characteristics:** Fast, first to respond, extract the melody (core meaning) from raw input.
+**Orchestral behavior:** Like woodwinds, they often carry the opening melody. They're prominent early, then blend into support as other sections swell.
 
 ---
 
 ### Strings → Core Processing Agents
-*Main body of work, sustained, foundational*
+*Main body of work, sustained from start to finish*
 
-| Agent | Role | When They Play |
-|-------|------|----------------|
-| **Architect** | System design | After input classified |
-| **Product Designer** | UX/UI flows | After architecture |
-| **Storyteller** | Narrative & copy | Throughout (with crescendo at end) |
-| **Code Agent** | Implementation | After specs complete |
+| Agent | Role | Dynamics Pattern |
+|-------|------|------------------|
+| **Architect** | System design | mf throughout → f at handoff |
+| **Product Designer** | UX/UI flows | mf throughout → f at export |
+| **Storyteller** | Narrative & copy | p start → ff crescendo at polish |
+| **Code Agent** | Implementation | p scaffold → ff at shipping |
 
-**Characteristics:** Do the bulk of the work. Like strings, they're often playing—providing the sustained foundation that everything else rests on.
+**Orchestral behavior:** Like strings in a symphony, they're almost always playing. They start immediately (not after other agents) but their dynamics build over time. The Code Agent doesn't wait for Architect—it scaffolds in parallel, then builds as architecture solidifies.
 
 ---
 
 ### Brass → Specialized Agents
-*Power & punctuation, specific moments*
+*Present throughout, but dynamics shift based on context*
 
-| Agent | Role | When They Play |
-|-------|------|----------------|
-| **BizDev & Sales** | Revenue paths | When LEAD tagged |
-| **Ethics & Compliance** | Framing & verification | When ETHIC tagged |
+| Agent | Role | Dynamics Pattern |
+|-------|------|------------------|
+| **BizDev & Sales** | Revenue paths | mp baseline, f when LEAD tagged |
+| **Ethics & Compliance** | Framing & verification | mf baseline, ff when ETHIC tagged |
 
-**Characteristics:** Don't play constantly, but when they do, they're authoritative. Like brass, they add power at key moments.
+**Orchestral behavior:** Brass doesn't sit silent until their "big moment"—they're present throughout, often playing sustained notes in the background. When their moment comes (LEAD or ETHIC tag), they get louder, but they never fully stop playing.
 
 ---
 
 ### Percussion → Validation Agents
-*Structure, timing, final punctuation*
+*Punctuating throughout, big finale at the end*
 
-| Agent | Role | When They Play |
-|-------|------|----------------|
-| **Validator** | Quality gates | At checkpoints and end |
+| Agent | Role | Dynamics Pattern |
+|-------|------|------------------|
+| **Validator** | Quality gates | spot checks (p) → full validation (ff) |
 
-**Characteristics:** Provide structure and finality. The timpani roll before the final chord. The cymbal crash at the climax. They punctuate and validate.
+**Orchestral behavior:** Timpani doesn't wait until the last measure to play. It provides rhythmic structure throughout—a soft pulse during development, then the big crescendo at the finale. Validator spot-checks continuously, then does full validation at checkpoints.
 
 ---
 
@@ -464,38 +716,58 @@ In orchestral music, dynamics tell you how loud to play. In AI workflows, they t
 
 ---
 
-## Cues and Triggers
+## Cues and Dynamics Shifts
 
-In orchestral music, a **cue** tells a player "listen for this, then enter." Our agents work the same way:
+In orchestral music, a **cue** doesn't mean "now you can start playing"—musicians are already playing (or ready). A cue means "change your dynamics" or "this is your moment to be prominent."
+
+**In InfinitySoul, cues adjust emphasis, not sequence:**
 
 ```typescript
-// Orchestral cue notation → Agent trigger code
+// All agents are ALREADY processing in parallel
+// Cues change their dynamics (priority/output volume)
 
-// "After oboe solo, violins enter"
-workflow.on('VoiceTranslator.complete', async (output) => {
+// Voice Translator signals: "This is a LEAD"
+voiceTranslator.on('classification', async (output) => {
   if (output.tags.includes('LEAD')) {
-    await cue('BizDev');      // Brass section enters
+    // BizDev was already running (mp)—now goes to (f)
+    clickTrack.dynamics['BizDev'] = 'f';
+    clickTrack.dynamics['Storyteller'] = 'mf'; // sales narrative matters
   }
-  if (output.tags.includes('PRODUCT')) {
-    await cue('Architect');   // Strings begin
+  if (output.tags.includes('ETHIC')) {
+    // Ethics was already running (mf)—now goes to (ff)
+    clickTrack.dynamics['Ethics'] = 'ff';
+    clickTrack.dynamics['Designer'] = 'f'; // a11y focus
   }
 });
 
-// "Timpani enters at rehearsal mark C"
-workflow.at('checkpoint:C', async () => {
-  await cue('Validator');     // Percussion punctuates
+// Checkpoint reached—Validator swells from (p) to (ff)
+workflow.at('checkpoint:VALIDATE', async () => {
+  clickTrack.dynamics['Validator'] = 'ff';  // Full validation begins
+  // Other agents sustain their final notes
 });
 
-// "Hold fermata until conductor signals"
+// Fermata: Everyone holds until human signals
 workflow.fermata('human_review', async () => {
+  // All agents have completed, outputs are mixed
+  // Now we wait for human decision
   const decision = await waitForHuman();
   if (decision === 'SHIP') {
-    await cue('finale');
+    return finalMix;
   } else {
-    await cue('revision', decision.notes);
+    // Restart with revision notes added to clickTrack
+    return restartOrchestra({ revisionNotes: decision.notes });
   }
 });
 ```
+
+### Cue vs. Trigger (Important Distinction)
+
+| Concept | Old (Sequential) Model | New (Orchestral) Model |
+|---------|------------------------|------------------------|
+| **Cue** | "Start processing now" | "Increase your dynamics now" |
+| **Trigger** | "Wait for X to finish" | "Listen for signal from X" |
+| **Rest** | "Don't process at all" | "Play very softly (pp), stay ready" |
+| **Entry** | "Begin your part" | "Your moment to be heard" |
 
 ---
 
@@ -571,35 +843,63 @@ Orchestras use letters (A, B, C) or bar numbers to mark spots for "start here" d
 
 ## The Conductor's Role
 
-The conductor doesn't play an instrument. They:
-- See the full score (all agents)
-- Give cues (trigger agents)
-- Set tempo (priority/urgency)
-- Balance dynamics (resource allocation)
-- Stop for fermatas (human review points)
-- Restart from rehearsal marks (error recovery)
+The conductor doesn't play an instrument. They don't tell musicians *when* to play—the score does that. What they do:
+
+- **Balance the mix** — Make sure strings don't drown out woodwinds
+- **Shape dynamics** — Signal crescendos, diminuendos, accents
+- **Maintain tempo** — Keep everyone synchronized via the click track
+- **Call fermatas** — Decide when to hold, when to release
+- **Adjust in real-time** — If brass is too loud, gesture them down
 
 **In InfinitySoul, the Orchestrator Agent is the conductor:**
 
-```markdown
-# AGENT: ORCHESTRATOR (The Conductor)
+```typescript
+class OrchestratorAgent {
+  // The conductor doesn't process content—they coordinate
 
-You see the full score. You don't process content yourself—
-you coordinate who processes what, when.
+  async conduct(input: RawInput): Promise<FinalMix> {
+    // 1. DOWNBEAT: Create the click track (shared context)
+    const clickTrack = this.createClickTrack(input);
 
-Your baton movements:
-- DOWNBEAT: Initiate workflow on new input
-- CUE: Signal specific agents to begin
-- CUTOFF: Stop an agent that's gone off-track
-- FERMATA: Pause for human decision
-- TEMPO: Adjust processing speed based on urgency
-- DYNAMICS: Allocate priority/compute to agents
-- BALANCE: Ensure no agent dominates inappropriately
+    // 2. ALL AGENTS START SIMULTANEOUSLY
+    const agentPromises = this.allAgents.map(agent =>
+      agent.process(clickTrack)
+    );
 
-You read the room (context) and adjust in real-time.
-A good conductor makes 100 players sound like one voice.
-A good orchestrator makes 9 agents feel like one intelligence.
+    // 3. MONITOR AND ADJUST DYNAMICS IN REAL-TIME
+    this.monitorAndBalance(clickTrack, agentPromises);
+
+    // 4. WAIT FOR ALL AGENTS TO COMPLETE
+    const outputs = await Promise.all(agentPromises);
+
+    // 5. MIX STEMS INTO FINAL OUTPUT
+    const finalMix = this.stemMixer.mix(outputs, clickTrack);
+
+    // 6. FERMATA: Present to human for review
+    return this.fermata(finalMix);
+  }
+
+  private monitorAndBalance(clickTrack: ClickTrack, promises: Promise<any>[]) {
+    // Watch for signals from agents
+    // Adjust dynamics if one section is overpowering
+    // Handle urgent signals (compliance risks, etc.)
+  }
+}
 ```
+
+### What the Conductor Actually Controls
+
+| Baton Movement | What It Does | Not This |
+|----------------|--------------|----------|
+| **DOWNBEAT** | Start all agents simultaneously | Start agents one by one |
+| **DYNAMICS** | Adjust agent priority/output weight | Turn agents on/off |
+| **CUE** | Signal dynamics shift | Signal "now you can start" |
+| **CUTOFF** | End a section's prominence | Kill an agent mid-process |
+| **FERMATA** | Hold for human decision | Pause individual agents |
+| **TEMPO** | Adjust processing speed for all | Speed up individual agents |
+| **BALANCE** | Mix stem volumes | Route between agents |
+
+**The conductor doesn't route. The conductor balances.**
 
 ---
 
@@ -607,16 +907,38 @@ A good orchestrator makes 9 agents feel like one intelligence.
 
 Traditional AI workflows are either:
 - **Monolithic**: One model does everything (no specialization)
-- **Pipeline**: Rigid sequence (no flexibility)
+- **Pipeline**: Rigid sequence A → B → C (no parallelism)
 - **Chaotic**: Agents fire randomly (no coordination)
 
-Orchestral-driven design gives us:
-- **Specialization**: Each agent masters their instrument
-- **Coordination**: Bar lines keep everyone in sync
-- **Flexibility**: Cues allow conditional branching
-- **Dynamics**: Priority can shift mid-workflow
-- **Checkpoints**: Restart from any rehearsal mark
-- **Human control**: Fermatas for decision points
+**Orchestral-driven design gives us the fourth option:**
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                                                                 │
+│   MONOLITHIC          PIPELINE           CHAOTIC               │
+│   ┌─────────┐        A → B → C          A ─┐                   │
+│   │   ALL   │        (sequential)       B ─┼─ ???              │
+│   │  IN ONE │                           C ─┘                   │
+│   └─────────┘                                                  │
+│                                                                 │
+│                      ORCHESTRAL                                │
+│                     ┌─────────────┐                            │
+│                     │ A ─┐       │                             │
+│                     │ B ─┼─ MIX ─┼─► OUTPUT                   │
+│                     │ C ─┤       │                             │
+│                     │ D ─┘       │                             │
+│                     └─────────────┘                            │
+│                   (parallel + coordinated)                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+| Model | Specialization | Speed | Coordination | Flexibility |
+|-------|----------------|-------|--------------|-------------|
+| Monolithic | ❌ | Fast | N/A | ❌ |
+| Pipeline | ✓ | Slow (sequential) | Rigid | ❌ |
+| Chaotic | ✓ | Fast | ❌ | ❌ |
+| **Orchestral** | ✓ | Fast (parallel) | ✓ (click track) | ✓ (dynamics) |
 
 **The result: AI that sounds like a symphony, not a cacophony.**
 
@@ -624,9 +946,24 @@ Orchestral-driven design gives us:
 
 ## Sources
 
-This orchestral mapping is based on actual orchestral practice:
-- [OpenLearn - Understanding Orchestral Scores](https://www.open.edu/openlearn/mod/oucontent/view.php?id=26860&printable=1)
-- [The Orchestra: A User's Manual - Score Layouts](https://andrewhugill.com/OrchestraManual/layouts.html)
+This orchestral architecture is based on real orchestral and film scoring practice:
+
+**Symphony Orchestras:**
+- [LA Philharmonic - Meet the Orchestra](https://www.laphil.com/about/meet-the-orchestra)
+- [Pittsburgh Symphony Orchestra](https://pittsburghsymphony.org/)
+- [Kennedy Center - Guide to the Orchestra](https://www.kennedy-center.org/education/resources-for-educators/classroom-resources/media-and-interactives/media/music/guide-to-the-orchestra/)
+- [Serenade Magazine - Anatomy of a Symphony Orchestra](https://serenademagazine.com/the-anatomy-of-a-symphony-orchestra--instruments--structure--and-performance/)
+
+**Hollywood Film Scoring:**
+- [Cinemagic Scoring - Do Recording Orchestras Rehearse?](https://www.cinemagicscoring.com/post/do-recording-orchestras-rehearse-for-film-scoring)
+- [DPA Microphones - Multi-miking a Classical Orchestra](https://www.dpamicrophones.com/mic-university/audio-production/multimiking-a-classical-orchestra/)
+- [Remote Control Productions - Wikipedia](https://en.wikipedia.org/wiki/Remote_Control_Productions_(American_company))
+- [Mix Online - Hans Zimmer's Scoring Collective](https://www.mixonline.com/sfp/hans-zimmers-scoring-collective-369180)
+- [Cinemagic Scoring - The Art of Striping in Orchestral Recording](https://www.cinemagicscoring.com/post/achieving-clarity-and-precision-the-art-of-striping-in-orchestral-recording)
+
+**Orchestration Theory:**
+- [Open Music Theory - Core Principles of Orchestration](https://viva.pressbooks.pub/openmusictheory/chapter/core-principles-of-orchestration/)
+- [Andrew Hugill - Orchestral Combinations](https://andrewhugill.com/manuals/combinations.html)
 - [Notestem - Score Order](https://www.notestem.com/blog/score-order/)
 - [Wikipedia - Rehearsal Letters](https://en.wikipedia.org/wiki/Rehearsal_letter)
 - [Hansen Media - The Score and Parts](https://hansenmedia.net/courses/orchestration/lessons/the-score-and-parts/)
