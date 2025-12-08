@@ -27,15 +27,17 @@
 # Table of Contents
 
 1. [The Manifesto](#part-1-the-manifesto)
-2. [The Musical DNA](#part-2-the-musical-dna)
-3. [The Design System](#part-3-the-design-system)
-4. [The Component Library](#part-4-the-component-library)
-5. [The AI Orchestra](#part-5-the-ai-orchestra)
-6. [The Agent Playbooks](#part-6-the-agent-playbooks)
-7. [The Voice Protocol](#part-7-the-voice-protocol)
-8. [The Business Model](#part-8-the-business-model)
-9. [The Technical Architecture](#part-9-the-technical-architecture)
-10. [Quick Reference](#part-10-quick-reference)
+2. [Orchestral-Driven Design](#part-2-orchestral-driven-design)
+3. [The Musical DNA](#part-3-the-musical-dna)
+4. [The Design System](#part-4-the-design-system)
+5. [The Component Library](#part-5-the-component-library)
+6. [The AI Orchestra](#part-6-the-ai-orchestra)
+7. [The Agent Playbooks](#part-7-the-agent-playbooks)
+8. [The Voice Protocol](#part-8-the-voice-protocol)
+9. [The Business Model](#part-9-the-business-model)
+10. [The Technical Architecture](#part-10-the-technical-architecture)
+11. [Quick Reference](#part-11-quick-reference)
+12. [The Feedback Loop](#part-12-the-feedback-loop)
 
 ---
 
@@ -83,7 +85,555 @@ That gap between architecture and access is a moral failure hiding in plain sigh
 
 ---
 
-# Part 2: The Musical DNA
+# Part 2: Orchestral-Driven Design
+
+## How Orchestral Scores Work (And Why It Matters)
+
+Before we get into the musical DNA of individual artists, we need to understand how an **orchestra itself** is organized. This isn't metaphor—this is the literal architecture we're transposing to AI workflows.
+
+An orchestral score is one of humanity's most sophisticated coordination documents. It tells 100+ people exactly what to do, when to do it, and how to relate to each other—all on paper. That's the same problem we're solving with AI agents.
+
+---
+
+## The Anatomy of an Orchestral Score
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         ORCHESTRAL SCORE LAYOUT                             │
+│                    (How Conductors See the Music)                           │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  REHEARSAL MARK ──────────────────────────► [A]         [B]         [C]    │
+│  (Checkpoint)                                │           │           │      │
+│                                              ▼           ▼           ▼      │
+│  ════════════════════════════════════════════════════════════════════════  │
+│                                                                             │
+│  WOODWINDS (First responders - melodic, agile)                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Flute      │▓▓▓░░░▓▓▓▓░░░░▓▓░░│░░░░▓▓▓▓▓░░░│▓▓▓▓░░░░░░▓▓│ pp → mf │   │
+│  │ Oboe       │░░░▓▓░░░░▓▓░░░░░░│▓▓▓░░░░░▓▓▓░│░░░░▓▓▓▓░░░░│ mp      │   │
+│  │ Clarinet   │▓▓░░░░▓▓░░░░▓▓▓░░│░░▓▓▓░░░░░▓▓│▓▓░░░░▓▓▓░░░│ p       │   │
+│  │ Bassoon    │░░░░░░░░▓▓▓▓░░░░░│▓▓░░░░▓▓░░░░│░░▓▓▓░░░░▓▓▓│ mf      │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  BRASS (Power & punctuation - authoritative, specific moments)             │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Horn       │░░░░░░░░░░░░░░▓▓▓│▓▓▓▓▓░░░░░░░│░░░░░░▓▓▓▓▓▓│ f        │   │
+│  │ Trumpet    │░░░░░░░░░░░░░░░░░│░░░░░░░░░▓▓▓│▓▓▓▓▓▓░░░░░░│ ff       │   │
+│  │ Trombone   │░░░░░░░░░░░░░░░░░│░░░░░░▓▓▓░░░│▓▓░░░░░░▓▓▓▓│ f        │   │
+│  │ Tuba       │░░░░░░░░░░░░░░░░░│░░░░░░░░░░░░│▓▓▓▓░░░░░░░░│ ff       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  PERCUSSION (Structure & punctuation - timing-critical)                    │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Timpani    │░░░░░░░░░░░░░░░░░│▓░░░░░░░░▓░░│▓▓▓░░░░░░▓▓▓│ mf → ff  │   │
+│  │ Cymbals    │░░░░░░░░░░░░░░░░░│░░░░░░░░░░░░│░░░▓░░░░░░░░│ ff       │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│                                                                             │
+│  STRINGS (Core body of work - sustained, foundational)                     │
+│  ┌─────────────────────────────────────────────────────────────────────┐   │
+│  │ Violin I   │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│ mp → ff  │   │
+│  │ Violin II  │▓▓▓▓▓▓▓▓▓▓░░▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│ mp → f   │   │
+│  │ Viola      │▓▓▓▓░░░░▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│ p → mf   │   │
+│  │ Cello      │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│ p → f    │   │
+│  │ Bass       │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓▓▓▓▓│ p → mf   │   │
+│  └─────────────────────────────────────────────────────────────────────┘   │
+│         │                       │             │             │              │
+│         ▼                       ▼             ▼             ▼              │
+│      BAR LINE               BAR LINE      BAR LINE      BAR LINE          │
+│   (Sync Point)            (Sync Point)  (Sync Point)  (Sync Point)        │
+│                                                                             │
+│  ▓ = Playing    ░ = Resting    pp/p/mp/mf/f/ff = Dynamics                 │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+### Key Score Elements
+
+| Score Element | What It Does | Musical Example |
+|---------------|--------------|-----------------|
+| **Staff** | One instrument's part | Flute line |
+| **Bar Lines** | Vertical sync points | Everyone aligns here |
+| **Rehearsal Marks** | Named checkpoints (A, B, C) | "Start from B" |
+| **Dynamics** | Volume/intensity (pp to ff) | Soft → Loud |
+| **Tempo** | Speed (Allegro, Andante) | Fast, walking pace |
+| **Cues** | "Listen for X, then enter" | "After oboe solo, play" |
+| **Rests** | Intentional silence | Wait 8 bars, then enter |
+| **Fermata** | Pause, hold indefinitely | Conductor decides when to continue |
+| **Divisi** | Section splits into parts | Half the violins play A, half play B |
+
+---
+
+## Transposing to AI/LLM Workflows
+
+Now we map every orchestral concept to an AI system concept:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                    ORCHESTRAL → AI WORKFLOW MAPPING                         │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  ORCHESTRAL CONCEPT          AI/LLM EQUIVALENT                             │
+│  ═══════════════════════════════════════════════════════════════════════   │
+│                                                                             │
+│  Conductor ──────────────►   ORCHESTRATOR AGENT                            │
+│                              (Sees full workflow, gives cues,              │
+│                               balances resources, sets tempo)              │
+│                                                                             │
+│  Full Score ─────────────►   WORKFLOW DEFINITION                           │
+│                              (Master document showing all agents           │
+│                               and their coordination)                      │
+│                                                                             │
+│  Individual Parts ───────►   AGENT PROMPTS                                 │
+│                              (Each agent only needs their instructions,    │
+│                               but aligned to shared checkpoints)           │
+│                                                                             │
+│  Instrument Families ────►   AGENT CATEGORIES                              │
+│                              Woodwinds = Input Processing                  │
+│                              Strings = Core Processing                     │
+│                              Brass = Specialized/Powerful Tasks            │
+│                              Percussion = Validation/Structure             │
+│                                                                             │
+│  Bar Lines ──────────────►   SYNC POINTS                                   │
+│                              (All agents align before proceeding)          │
+│                                                                             │
+│  Rehearsal Marks (A,B,C) ►   CHECKPOINTS                                   │
+│                              (Named stages for debugging/restart)          │
+│                                                                             │
+│  Dynamics (pp → ff) ─────►   PRIORITY / DEPTH                              │
+│                              pp = Background, minimal compute              │
+│                              ff = High priority, full attention            │
+│                                                                             │
+│  Tempo (Allegro/Andante) ►   PROCESSING SPEED                              │
+│                              Allegro = Fast, real-time                     │
+│                              Andante = Thoughtful, careful                 │
+│                                                                             │
+│  Cues ───────────────────►   AGENT TRIGGERS                                │
+│                              "After VoiceTranslator completes,             │
+│                               cue Architect to begin"                      │
+│                                                                             │
+│  Rests ──────────────────►   AGENT SILENCE                                 │
+│                              (Knowing when NOT to process—                 │
+│                               not every agent responds to every input)     │
+│                                                                             │
+│  Fermata (𝄐) ────────────►   HUMAN-IN-THE-LOOP PAUSE                       │
+│                              (Workflow pauses until human decides          │
+│                               when to continue)                            │
+│                                                                             │
+│  Divisi ─────────────────►   PARALLEL PROCESSING                           │
+│                              (Same agent type splits into                  │
+│                               multiple parallel instances)                 │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## The InfinitySoul AI Score
+
+Here's how our AI orchestra is actually arranged, using orchestral notation:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         INFINITYSOUL AI SCORE                               │
+│                      (Workflow as Orchestral Notation)                      │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  TEMPO: Andante con moto (Thoughtful but moving)                           │
+│  TIME SIGNATURE: Async/4 (Event-driven, not clock-driven)                  │
+│                                                                             │
+│  ══════════════════════════════════════════════════════════════════════    │
+│                                                                             │
+│  REHEARSAL:    [INPUT]        [PROCESS]       [OUTPUT]       [VALIDATE]   │
+│                    │               │               │               │        │
+│                    ▼               ▼               ▼               ▼        │
+│  ────────────────────────────────────────────────────────────────────────  │
+│                                                                             │
+│  INPUT PROCESSING (Woodwinds - First to respond)                           │
+│  ┌────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                    │    │
+│  │  Voice         │▓▓▓▓▓▓▓▓▓▓▓▓░░░│░░░░░░░░░░░░░│░░░░░░░░░░░░░│ ff   │    │
+│  │  Translator    │ DECODE RAW    │             │             │      │    │
+│  │                │ INPUT         │ (rest)      │ (rest)      │      │    │
+│  │                │               │             │             │      │    │
+│  │  Research      │░░░░░░░░▓▓▓▓▓▓│▓▓▓▓░░░░░░░░░│░░░░░░░░░░░░░│ mp   │    │
+│  │  Agent         │    (cue: if   │ INVESTIGATE │             │      │    │
+│  │                │     tagged    │             │ (rest)      │      │    │
+│  │                │     RESEARCH) │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│                         │                                                   │
+│                         ▼ CUE: "After classification, enter"               │
+│                                                                             │
+│  CORE PROCESSING (Strings - Main body of work, sustained)                  │
+│  ┌────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                    │    │
+│  │  Architect     │░░░░░░░░░░░░░░░│▓▓▓▓▓▓▓▓▓▓▓▓▓│▓▓▓▓░░░░░░░░░│ mf   │    │
+│  │                │               │ SYSTEM      │ HANDOFF     │      │    │
+│  │                │ (wait for     │ DESIGN      │             │      │    │
+│  │                │  input)       │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  │  Product       │░░░░░░░░░░░░░░░│░░░▓▓▓▓▓▓▓▓▓▓│▓▓▓▓▓▓░░░░░░░│ mf   │    │
+│  │  Designer      │               │    UX/UI    │ SCREENS     │      │    │
+│  │                │ (wait for     │    DESIGN   │             │      │    │
+│  │                │  architect)   │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  │  Storyteller   │░░░░░░░░░░░░░░░│░░░░░▓▓▓▓▓▓▓▓│▓▓▓▓▓▓▓▓░░░░░│ mp→f │    │
+│  │                │               │     NARRATIVE             │      │    │
+│  │                │ (wait for     │     & COPY  │ POLISH      │      │    │
+│  │                │  input)       │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  │  Code          │░░░░░░░░░░░░░░░│░░░░░░░░░░░░░│▓▓▓▓▓▓▓▓▓▓▓▓▓│ f    │    │
+│  │  Agent         │               │             │ IMPLEMENT   │      │    │
+│  │                │ (wait for     │ (wait for   │             │      │    │
+│  │                │  all specs)   │  designs)   │             │      │    │
+│  │                │               │             │             │      │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│  SPECIALIZED (Brass - Power moments, specific timing)                      │
+│  ┌────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                    │    │
+│  │  BizDev        │░░░░░░░░░░░░░░░│░░▓▓▓▓▓▓░░░░░│▓▓▓▓▓▓▓▓░░░░░│ f    │    │
+│  │  & Sales       │               │ OFFERS      │ OUTREACH    │      │    │
+│  │                │ (wait for     │             │             │      │    │
+│  │                │  LEAD tag)    │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  │  Ethics &      │░░░░░░░░░░░░░░░│▓▓▓▓░░░░░░░░░│░░░░▓▓▓▓░░░░░│ mf   │    │
+│  │  Compliance    │               │ FRAME       │ VERIFY      │      │    │
+│  │                │ (wait for     │             │             │      │    │
+│  │                │  ETHIC tag)   │             │             │      │    │
+│  │                │               │             │             │      │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│  VALIDATION (Percussion - Structure, final punctuation)                    │
+│  ┌────────────────────────────────────────────────────────────────────┐    │
+│  │                                                                    │    │
+│  │  Validator     │░░░░░░░░░░░░░░░│░░░░░░░░░░░░░│░░░░░░░▓▓▓▓▓▓│ ff   │    │
+│  │                │               │             │ QUALITY     │      │    │
+│  │                │ (silent until │ (silent     │ GATES       │      │    │
+│  │                │  final stage) │  still)     │             │      │    │
+│  │                │               │             │             │      │    │
+│  └────────────────────────────────────────────────────────────────────┘    │
+│                                                                             │
+│                                              │                              │
+│                                              ▼                              │
+│                                         [FERMATA]                          │
+│                                    Human reviews output                     │
+│                                    Conductor decides: SHIP / REVISE        │
+│                                                                             │
+│  ════════════════════════════════════════════════════════════════════════  │
+│                                                                             │
+│  LEGEND:                                                                    │
+│  ▓ = Active processing    ░ = Waiting/Resting                              │
+│  ff = High priority       mf = Medium       mp = Low       p = Background  │
+│  CUE = Trigger condition  FERMATA = Human decision point                   │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Agent Families (Like Instrument Sections)
+
+Just as an orchestra groups instruments by family, we group agents by function:
+
+### Woodwinds → Input Processing Agents
+*First responders, melodic, agile*
+
+| Agent | Role | When They Play |
+|-------|------|----------------|
+| **Voice Translator** | Decode raw input | Immediately on input |
+| **Research Agent** | Investigate unknowns | When tagged RESEARCH |
+
+**Characteristics:** Fast, first to respond, extract the melody (core meaning) from raw input.
+
+---
+
+### Strings → Core Processing Agents
+*Main body of work, sustained, foundational*
+
+| Agent | Role | When They Play |
+|-------|------|----------------|
+| **Architect** | System design | After input classified |
+| **Product Designer** | UX/UI flows | After architecture |
+| **Storyteller** | Narrative & copy | Throughout (with crescendo at end) |
+| **Code Agent** | Implementation | After specs complete |
+
+**Characteristics:** Do the bulk of the work. Like strings, they're often playing—providing the sustained foundation that everything else rests on.
+
+---
+
+### Brass → Specialized Agents
+*Power & punctuation, specific moments*
+
+| Agent | Role | When They Play |
+|-------|------|----------------|
+| **BizDev & Sales** | Revenue paths | When LEAD tagged |
+| **Ethics & Compliance** | Framing & verification | When ETHIC tagged |
+
+**Characteristics:** Don't play constantly, but when they do, they're authoritative. Like brass, they add power at key moments.
+
+---
+
+### Percussion → Validation Agents
+*Structure, timing, final punctuation*
+
+| Agent | Role | When They Play |
+|-------|------|----------------|
+| **Validator** | Quality gates | At checkpoints and end |
+
+**Characteristics:** Provide structure and finality. The timpani roll before the final chord. The cymbal crash at the climax. They punctuate and validate.
+
+---
+
+## Dynamics as Priority Levels
+
+In orchestral music, dynamics tell you how loud to play. In AI workflows, they tell you how much compute/attention to allocate:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    DYNAMICS → PRIORITY MAPPING                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  MUSICAL          AI EQUIVALENT           WHEN TO USE           │
+│  ════════════════════════════════════════════════════════════  │
+│                                                                 │
+│  pp (pianissimo)  BACKGROUND             Logging, metrics       │
+│                   Minimal compute        Non-blocking tasks     │
+│                                                                 │
+│  p  (piano)       LOW PRIORITY           Nice-to-have outputs   │
+│                   Light processing       Optional enrichment    │
+│                                                                 │
+│  mp (mezzo-piano) NORMAL                 Standard processing    │
+│                   Default allocation     Most agent work        │
+│                                                                 │
+│  mf (mezzo-forte) ELEVATED               Important outputs      │
+│                   Extra attention        User-facing content    │
+│                                                                 │
+│  f  (forte)       HIGH PRIORITY          Critical decisions     │
+│                   Full compute           Revenue-impacting      │
+│                                                                 │
+│  ff (fortissimo)  MAXIMUM                Validation gates       │
+│                   All resources          Error recovery         │
+│                   Block until complete   Human-in-loop moments  │
+│                                                                 │
+│  sfz (sforzando)  SPIKE                  Sudden high priority   │
+│                   Interrupt others       Error handling         │
+│                   Immediate response     Urgent user request    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Tempo as Processing Mode
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    TEMPO → PROCESSING MODE                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  TEMPO MARKING      AI MODE              USE CASE               │
+│  ════════════════════════════════════════════════════════════  │
+│                                                                 │
+│  Prestissimo        STREAMING            Real-time chat         │
+│  (very fast)        Token-by-token       Live UI updates        │
+│                                                                 │
+│  Allegro            FAST                 Quick scans            │
+│  (fast)             Parallel agents      Batch processing       │
+│                     Minimal validation   Draft outputs          │
+│                                                                 │
+│  Andante            THOUGHTFUL           Standard workflow      │
+│  (walking pace)     Sequential agents    Quality outputs        │
+│                     Full validation      Production work        │
+│                                                                 │
+│  Adagio             CAREFUL              Complex decisions      │
+│  (slow)             Deep analysis        High-stakes outputs    │
+│                     Multiple passes      Legal/compliance       │
+│                                                                 │
+│  Largo              DELIBERATE           Architecture decisions │
+│  (very slow)        Extended reasoning   Strategy documents     │
+│                     Human checkpoints    Foundational work      │
+│                                                                 │
+│  Fermata (𝄐)        PAUSE                Human approval needed  │
+│  (hold)             Wait for input       Decision point         │
+│                     No timeout           Founder review         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Cues and Triggers
+
+In orchestral music, a **cue** tells a player "listen for this, then enter." Our agents work the same way:
+
+```typescript
+// Orchestral cue notation → Agent trigger code
+
+// "After oboe solo, violins enter"
+workflow.on('VoiceTranslator.complete', async (output) => {
+  if (output.tags.includes('LEAD')) {
+    await cue('BizDev');      // Brass section enters
+  }
+  if (output.tags.includes('PRODUCT')) {
+    await cue('Architect');   // Strings begin
+  }
+});
+
+// "Timpani enters at rehearsal mark C"
+workflow.at('checkpoint:C', async () => {
+  await cue('Validator');     // Percussion punctuates
+});
+
+// "Hold fermata until conductor signals"
+workflow.fermata('human_review', async () => {
+  const decision = await waitForHuman();
+  if (decision === 'SHIP') {
+    await cue('finale');
+  } else {
+    await cue('revision', decision.notes);
+  }
+});
+```
+
+---
+
+## Rests Are Not Silence—They're Intentional
+
+In music, a rest isn't nothing. It's **intentional silence**. The same applies to agents:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    WHEN AGENTS SHOULD REST                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  AGENT              RESTS WHEN...                               │
+│  ════════════════════════════════════════════════════════════  │
+│                                                                 │
+│  BizDev             Input isn't tagged LEAD                     │
+│                     No revenue angle identified                 │
+│                                                                 │
+│  Ethics             Input isn't tagged ETHIC                    │
+│                     No compliance implications                  │
+│                                                                 │
+│  Code Agent         Specs aren't complete                       │
+│                     Still in ideation phase                     │
+│                                                                 │
+│  Research           Question is already answered                │
+│                     Input is actionable as-is                   │
+│                                                                 │
+│  Validator          Not at checkpoint                           │
+│                     Intermediate outputs (don't validate yet)   │
+│                                                                 │
+│  ALL AGENTS         Input is just a greeting                    │
+│                     Human is venting (just listen)              │
+│                     Question is rhetorical                      │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+Rule: An agent that plays on every input is like a musician
+who never rests—exhausting and muddy. Know when to be silent.
+```
+
+---
+
+## Rehearsal Marks as Checkpoints
+
+Orchestras use letters (A, B, C) or bar numbers to mark spots for "start here" during rehearsal. We use named checkpoints:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    INFINITYSOUL CHECKPOINTS                     │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  [INPUT]     Raw input received, Voice Translator begins        │
+│              ↓                                                  │
+│  [DECODED]   Input cleaned, classified, routed                  │
+│              ↓                                                  │
+│  [DESIGNED]  Architecture + UX complete, ready for build        │
+│              ↓                                                  │
+│  [DRAFTED]   All outputs drafted, ready for validation          │
+│              ↓                                                  │
+│  [VALIDATED] Quality gates passed, ready for human review       │
+│              ↓                                                  │
+│  [FERMATA]   Human decision point (SHIP / REVISE / KILL)        │
+│              ↓                                                  │
+│  [SHIPPED]   Output delivered, feedback loop triggered          │
+│                                                                 │
+│  Usage: "Resume from [DESIGNED]" = Skip input processing,       │
+│         start with build phase using existing specs             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## The Conductor's Role
+
+The conductor doesn't play an instrument. They:
+- See the full score (all agents)
+- Give cues (trigger agents)
+- Set tempo (priority/urgency)
+- Balance dynamics (resource allocation)
+- Stop for fermatas (human review points)
+- Restart from rehearsal marks (error recovery)
+
+**In InfinitySoul, the Orchestrator Agent is the conductor:**
+
+```markdown
+# AGENT: ORCHESTRATOR (The Conductor)
+
+You see the full score. You don't process content yourself—
+you coordinate who processes what, when.
+
+Your baton movements:
+- DOWNBEAT: Initiate workflow on new input
+- CUE: Signal specific agents to begin
+- CUTOFF: Stop an agent that's gone off-track
+- FERMATA: Pause for human decision
+- TEMPO: Adjust processing speed based on urgency
+- DYNAMICS: Allocate priority/compute to agents
+- BALANCE: Ensure no agent dominates inappropriately
+
+You read the room (context) and adjust in real-time.
+A good conductor makes 100 players sound like one voice.
+A good orchestrator makes 9 agents feel like one intelligence.
+```
+
+---
+
+## Why This Matters
+
+Traditional AI workflows are either:
+- **Monolithic**: One model does everything (no specialization)
+- **Pipeline**: Rigid sequence (no flexibility)
+- **Chaotic**: Agents fire randomly (no coordination)
+
+Orchestral-driven design gives us:
+- **Specialization**: Each agent masters their instrument
+- **Coordination**: Bar lines keep everyone in sync
+- **Flexibility**: Cues allow conditional branching
+- **Dynamics**: Priority can shift mid-workflow
+- **Checkpoints**: Restart from any rehearsal mark
+- **Human control**: Fermatas for decision points
+
+**The result: AI that sounds like a symphony, not a cacophony.**
+
+---
+
+## Sources
+
+This orchestral mapping is based on actual orchestral practice:
+- [OpenLearn - Understanding Orchestral Scores](https://www.open.edu/openlearn/mod/oucontent/view.php?id=26860&printable=1)
+- [The Orchestra: A User's Manual - Score Layouts](https://andrewhugill.com/OrchestraManual/layouts.html)
+- [Notestem - Score Order](https://www.notestem.com/blog/score-order/)
+- [Wikipedia - Rehearsal Letters](https://en.wikipedia.org/wiki/Rehearsal_letter)
+- [Hansen Media - The Score and Parts](https://hansenmedia.net/courses/orchestration/lessons/the-score-and-parts/)
+
+---
+
+# Part 3: The Musical DNA
 
 ## 21 Years of Taste → Design System
 
@@ -182,7 +732,7 @@ Accessibility is the same. It's the foundation everything rests on.
 
 ---
 
-# Part 3: The Design System
+# Part 4: The Design System
 
 ## Token Architecture
 
@@ -417,7 +967,7 @@ const narrativeStates = {
 
 ---
 
-# Part 4: The Component Library
+# Part 5: The Component Library
 
 ## Soul Components
 
@@ -687,7 +1237,7 @@ For ADHD users: dopamine architecture with micro-celebrations, predictable patte
 
 ---
 
-# Part 5: The AI Orchestra
+# Part 6: The AI Orchestra
 
 ## Concept: Multi-Agent Product Development
 
@@ -759,7 +1309,7 @@ Every idea gets tagged:
 
 ---
 
-# Part 6: The Agent Playbooks
+# Part 7: The Agent Playbooks
 
 ## Master Conductor Prompt
 
@@ -1167,7 +1717,7 @@ answers with receipts."
 
 ---
 
-# Part 7: The Voice Protocol
+# Part 8: The Voice Protocol
 
 ## Standard Operating Procedure
 
@@ -1253,7 +1803,7 @@ the same welcome. Would a 15-minute call be useful?
 
 ---
 
-# Part 8: The Business Model
+# Part 9: The Business Model
 
 ## Revenue Streams
 
@@ -1320,7 +1870,7 @@ Use for: Budget-conscious, skeptical buyers
 
 ---
 
-# Part 9: The Technical Architecture
+# Part 10: The Technical Architecture
 
 ## System Overview
 
@@ -1495,7 +2045,7 @@ infinitysoul/
 
 ---
 
-# Part 10: Quick Reference
+# Part 11: Quick Reference
 
 ## Commands Cheat Sheet
 
@@ -1619,7 +2169,7 @@ I can show you exactly what's wrong and how to fix it.
 
 ---
 
-# Part 11: The Feedback Loop — Checks, Balances & Infinite Growth
+# Part 12: The Feedback Loop — Checks, Balances & Infinite Growth
 
 ## The Soul Food Standard
 
