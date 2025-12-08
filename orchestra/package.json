@@ -1,0 +1,36 @@
+{
+  "name": "@infinitysoul/orchestra",
+  "version": "1.0.0",
+  "description": "Multi-agent orchestration system for translating founder vision into technical reality",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./master_conductor": "./master_conductor.js",
+    "./voice_memo_processor": "./voice_memo_processor.js",
+    "./orchestration_engine": "./orchestration_engine.js"
+  },
+  "scripts": {
+    "demo": "node demo.js",
+    "process-voice": "node cli.js process-voice",
+    "orchestrate": "node cli.js orchestrate",
+    "test": "node --test tests/*.test.js"
+  },
+  "dependencies": {
+    "uuid": "^9.0.0"
+  },
+  "peerDependencies": {
+    "openai": "^4.0.0"
+  },
+  "keywords": [
+    "ai",
+    "multi-agent",
+    "orchestration",
+    "accessibility",
+    "wcag",
+    "voice-memo",
+    "llm"
+  ],
+  "author": "InfinitySoul",
+  "license": "MIT"
+}
