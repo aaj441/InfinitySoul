@@ -1721,6 +1721,838 @@ export const IMPRESSION_BOSSTONES: THPSSong = {
 };
 
 // =============================================================================
+// THUG (2003) - THE GOLDEN ERA
+// =============================================================================
+
+/**
+ * "Separation of Church and Skate" - NOFX (THUG, 2003)
+ * Fat Mike's anti-establishment anthem. Peak political punk.
+ */
+export const SEPARATION_CHURCH_SKATE_NOFX: THPSSong = {
+  title: 'Separation of Church and Skate',
+  artist: 'NOFX',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Punk Rock', 'Skate Punk', 'Political Punk'],
+  isIconic: true,
+  genome: {
+    tempo: 188,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.2,
+    songLength: 142,                  // 2:22 - short and fast
+    structuralPredictability: 0.75,
+
+    key: 'G major',
+    mode: 'major',
+    harmonicComplexity: 0.35,
+    dissonanceLevel: 0.25,
+    chromaticism: 0.25,
+
+    melodicRange: 0.6,
+    melodicContour: 'varied',
+    melodicComplexity: 0.45,
+    hookStrength: 0.8,
+
+    rhythmicDensity: 0.85,
+    syncopation: 0.35,
+    groove: 0.7,
+    polyrhythmicComplexity: 0.2,
+
+    brightness: 0.75,
+    warmth: 0.45,
+    density: 0.7,
+    organicVsSynthetic: 0.1,
+
+    dynamicRange: 0.45,
+    buildIntensity: 0.6,
+    releasePattern: 0.5,
+    overallEnergy: 0.9,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'raspy',              // Fat Mike's sneer
+    vocalEmotionality: 0.75,
+    lyricDensity: 0.8,
+    lyricAbstractness: 0.35,          // Direct political
+
+    valence: 0.55,
+    arousal: 0.88,
+    tension: 0.5,
+    nostalgia: 0.25,
+    spirituality: 0.15,               // Ironic religious critique
+
+    productionEra: '2000s punk',
+    productionPolish: 0.65,
+    spatialWidth: 0.55,
+    reverbAmount: 0.25,
+    experimentalism: 0.3,
+
+    genrePurity: 0.9,
+    mainstreamness: 0.35,
+    culturalSpecificity: 0.75,        // Fat Wreck scene
+    temporalAnchoring: 0.6
+  }
+};
+
+/**
+ * "I Against I" - Mos Def & Massive Attack (THUG, 2003)
+ * Hip-hop meets trip-hop. Blade II soundtrack crossover.
+ */
+export const I_AGAINST_I_MOS_DEF: THPSSong = {
+  title: 'I Against I',
+  artist: 'Mos Def & Massive Attack',
+  game: 'THUG',
+  year: 2002,
+  genre: ['Trip Hop', 'Alternative Hip Hop', 'Electronic'],
+  isIconic: true,
+  genome: {
+    tempo: 85,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.25,
+    songLength: 258,                  // 4:18
+    structuralPredictability: 0.6,
+
+    key: 'D minor',
+    mode: 'minor',
+    harmonicComplexity: 0.55,
+    dissonanceLevel: 0.35,
+    chromaticism: 0.4,
+
+    melodicRange: 0.55,
+    melodicContour: 'varied',
+    melodicComplexity: 0.5,
+    hookStrength: 0.82,
+
+    rhythmicDensity: 0.65,
+    syncopation: 0.6,
+    groove: 0.85,                     // Deep groove
+    polyrhythmicComplexity: 0.5,
+
+    brightness: 0.4,
+    warmth: 0.6,
+    density: 0.7,
+    organicVsSynthetic: 0.5,          // Electronic + organic blend
+
+    dynamicRange: 0.6,
+    buildIntensity: 0.65,
+    releasePattern: 0.55,
+    overallEnergy: 0.72,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'clean',              // Mos Def's flow
+    vocalEmotionality: 0.75,
+    lyricDensity: 0.85,
+    lyricAbstractness: 0.5,
+
+    valence: 0.35,
+    arousal: 0.65,
+    tension: 0.6,
+    nostalgia: 0.3,
+    spirituality: 0.35,               // Conscious hip-hop
+
+    productionEra: '2000s trip-hop',
+    productionPolish: 0.85,
+    spatialWidth: 0.8,
+    reverbAmount: 0.55,
+    experimentalism: 0.6,
+
+    genrePurity: 0.45,                // Genre fusion
+    mainstreamness: 0.5,
+    culturalSpecificity: 0.7,
+    temporalAnchoring: 0.55
+  }
+};
+
+/**
+ * "Story of My Life" - Social Distortion (THUG, 2003)
+ * Punk rock Americana. Mike Ness's autobiography.
+ */
+export const STORY_OF_MY_LIFE_SOCIAL_D: THPSSong = {
+  title: 'Story of My Life',
+  artist: 'Social Distortion',
+  game: 'THUG',
+  year: 1990,
+  genre: ['Punk Rock', 'Cowpunk', 'Roots Rock'],
+  isIconic: true,
+  genome: {
+    tempo: 118,
+    tempoVariability: 0.1,
+    timeSignatureComplexity: 0.1,
+    songLength: 270,                  // 4:30
+    structuralPredictability: 0.85,
+
+    key: 'G major',
+    mode: 'major',
+    harmonicComplexity: 0.35,
+    dissonanceLevel: 0.15,
+    chromaticism: 0.2,
+
+    melodicRange: 0.6,
+    melodicContour: 'varied',
+    melodicComplexity: 0.4,
+    hookStrength: 0.88,               // Classic hook
+
+    rhythmicDensity: 0.6,
+    syncopation: 0.3,
+    groove: 0.75,
+    polyrhythmicComplexity: 0.15,
+
+    brightness: 0.6,
+    warmth: 0.7,                      // Warm roots tone
+    density: 0.6,
+    organicVsSynthetic: 0.05,
+
+    dynamicRange: 0.55,
+    buildIntensity: 0.55,
+    releasePattern: 0.5,
+    overallEnergy: 0.7,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'raspy',              // Mike Ness's gravel
+    vocalEmotionality: 0.9,           // Deeply emotional
+    lyricDensity: 0.65,
+    lyricAbstractness: 0.25,          // Direct storytelling
+
+    valence: 0.45,                    // Bittersweet
+    arousal: 0.65,
+    tension: 0.4,
+    nostalgia: 0.85,                  // VERY nostalgic
+    spirituality: 0.25,
+
+    productionEra: '1990s alt-rock',
+    productionPolish: 0.7,
+    spatialWidth: 0.6,
+    reverbAmount: 0.35,
+    experimentalism: 0.2,
+
+    genrePurity: 0.7,
+    mainstreamness: 0.55,
+    culturalSpecificity: 0.8,         // SoCal punk/Americana
+    temporalAnchoring: 0.75
+  }
+};
+
+/**
+ * "The Metro" - Alkaline Trio (THUG, 2003)
+ * Berlin cover. Dark pop-punk perfection.
+ */
+export const THE_METRO_ALKALINE_TRIO: THPSSong = {
+  title: 'The Metro',
+  artist: 'Alkaline Trio',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Pop Punk', 'Dark Punk', 'Post-Punk Revival'],
+  isIconic: true,
+  genome: {
+    tempo: 132,
+    tempoVariability: 0.1,
+    timeSignatureComplexity: 0.15,
+    songLength: 220,                  // 3:40
+    structuralPredictability: 0.8,
+
+    key: 'B minor',
+    mode: 'minor',
+    harmonicComplexity: 0.45,
+    dissonanceLevel: 0.3,
+    chromaticism: 0.35,
+
+    melodicRange: 0.65,
+    melodicContour: 'ascending',
+    melodicComplexity: 0.5,
+    hookStrength: 0.9,                // Massive hook
+
+    rhythmicDensity: 0.7,
+    syncopation: 0.4,
+    groove: 0.75,
+    polyrhythmicComplexity: 0.25,
+
+    brightness: 0.5,
+    warmth: 0.45,
+    density: 0.7,
+    organicVsSynthetic: 0.2,
+
+    dynamicRange: 0.6,
+    buildIntensity: 0.7,
+    releasePattern: 0.6,
+    overallEnergy: 0.8,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'clean',
+    vocalEmotionality: 0.85,
+    lyricDensity: 0.7,
+    lyricAbstractness: 0.45,
+
+    valence: 0.35,                    // Dark, melancholic
+    arousal: 0.75,
+    tension: 0.55,
+    nostalgia: 0.6,
+    spirituality: 0.15,
+
+    productionEra: '2000s punk',
+    productionPolish: 0.75,
+    spatialWidth: 0.65,
+    reverbAmount: 0.4,
+    experimentalism: 0.35,
+
+    genrePurity: 0.7,
+    mainstreamness: 0.5,
+    culturalSpecificity: 0.6,
+    temporalAnchoring: 0.65
+  }
+};
+
+/**
+ * "Castaway" - Face to Face (THUG, 2003)
+ * California melodic punk. Fat Wreck classic.
+ */
+export const CASTAWAY_FACE_TO_FACE: THPSSong = {
+  title: 'Castaway',
+  artist: 'Face to Face',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Melodic Punk', 'Pop Punk', 'Skate Punk'],
+  isIconic: true,
+  genome: {
+    tempo: 175,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.15,
+    songLength: 165,                  // 2:45
+    structuralPredictability: 0.8,
+
+    key: 'A major',
+    mode: 'major',
+    harmonicComplexity: 0.35,
+    dissonanceLevel: 0.2,
+    chromaticism: 0.2,
+
+    melodicRange: 0.65,
+    melodicContour: 'ascending',
+    melodicComplexity: 0.45,
+    hookStrength: 0.82,
+
+    rhythmicDensity: 0.8,
+    syncopation: 0.35,
+    groove: 0.7,
+    polyrhythmicComplexity: 0.2,
+
+    brightness: 0.75,
+    warmth: 0.5,
+    density: 0.7,
+    organicVsSynthetic: 0.1,
+
+    dynamicRange: 0.5,
+    buildIntensity: 0.6,
+    releasePattern: 0.5,
+    overallEnergy: 0.85,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'clean',
+    vocalEmotionality: 0.7,
+    lyricDensity: 0.7,
+    lyricAbstractness: 0.35,
+
+    valence: 0.6,
+    arousal: 0.82,
+    tension: 0.4,
+    nostalgia: 0.35,
+    spirituality: 0.1,
+
+    productionEra: '2000s punk',
+    productionPolish: 0.7,
+    spatialWidth: 0.55,
+    reverbAmount: 0.25,
+    experimentalism: 0.2,
+
+    genrePurity: 0.85,
+    mainstreamness: 0.4,
+    culturalSpecificity: 0.7,
+    temporalAnchoring: 0.6
+  }
+};
+
+/**
+ * "Backslider" - Less Than Jake (THUG, 2003)
+ * Ska-punk energy. Gainesville scene.
+ */
+export const BACKSLIDER_LESS_THAN_JAKE: THPSSong = {
+  title: 'Backslider',
+  artist: 'Less Than Jake',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Ska Punk', 'Pop Punk', 'Third Wave Ska'],
+  isIconic: true,
+  genome: {
+    tempo: 165,
+    tempoVariability: 0.2,
+    timeSignatureComplexity: 0.25,
+    songLength: 178,                  // 2:58
+    structuralPredictability: 0.7,
+
+    key: 'E major',
+    mode: 'major',
+    harmonicComplexity: 0.4,
+    dissonanceLevel: 0.2,
+    chromaticism: 0.25,
+
+    melodicRange: 0.6,
+    melodicContour: 'varied',
+    melodicComplexity: 0.45,
+    hookStrength: 0.8,
+
+    rhythmicDensity: 0.8,
+    syncopation: 0.7,                 // Ska upbeats
+    groove: 0.85,
+    polyrhythmicComplexity: 0.4,
+
+    brightness: 0.8,
+    warmth: 0.55,
+    density: 0.75,
+    organicVsSynthetic: 0.1,          // Horns
+
+    dynamicRange: 0.55,
+    buildIntensity: 0.65,
+    releasePattern: 0.55,
+    overallEnergy: 0.88,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'clean',
+    vocalEmotionality: 0.65,
+    lyricDensity: 0.75,
+    lyricAbstractness: 0.35,
+
+    valence: 0.7,
+    arousal: 0.85,
+    tension: 0.35,
+    nostalgia: 0.3,
+    spirituality: 0.1,
+
+    productionEra: '2000s ska-punk',
+    productionPolish: 0.7,
+    spatialWidth: 0.65,
+    reverbAmount: 0.3,
+    experimentalism: 0.3,
+
+    genrePurity: 0.75,
+    mainstreamness: 0.5,
+    culturalSpecificity: 0.65,        // Florida ska scene
+    temporalAnchoring: 0.6
+  }
+};
+
+/**
+ * "Positive Contact" - Deltron 3030 (THUG, 2003)
+ * Futuristic hip-hop. Del + Dan the Automator + Kid Koala.
+ */
+export const SEARCHIN_DELTRON: THPSSong = {
+  title: 'Positive Contact',
+  artist: 'Deltron 3030',
+  game: 'THUG',
+  year: 2000,
+  genre: ['Alternative Hip Hop', 'Sci-Fi Hip Hop', 'Underground Hip Hop'],
+  isIconic: true,
+  genome: {
+    tempo: 90,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.3,
+    songLength: 270,                  // 4:30
+    structuralPredictability: 0.6,
+
+    key: 'F minor',
+    mode: 'minor',
+    harmonicComplexity: 0.6,
+    dissonanceLevel: 0.35,
+    chromaticism: 0.45,
+
+    melodicRange: 0.5,
+    melodicContour: 'varied',
+    melodicComplexity: 0.55,
+    hookStrength: 0.78,
+
+    rhythmicDensity: 0.7,
+    syncopation: 0.65,
+    groove: 0.85,
+    polyrhythmicComplexity: 0.55,
+
+    brightness: 0.45,
+    warmth: 0.55,
+    density: 0.65,
+    organicVsSynthetic: 0.55,         // Sci-fi production
+
+    dynamicRange: 0.55,
+    buildIntensity: 0.6,
+    releasePattern: 0.5,
+    overallEnergy: 0.72,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'clean',
+    vocalEmotionality: 0.6,
+    lyricDensity: 0.92,               // Dense sci-fi rap
+    lyricAbstractness: 0.7,           // Futuristic concepts
+
+    valence: 0.5,
+    arousal: 0.68,
+    tension: 0.45,
+    nostalgia: 0.2,
+    spirituality: 0.25,
+
+    productionEra: '2000s alt-hip-hop',
+    productionPolish: 0.8,
+    spatialWidth: 0.75,
+    reverbAmount: 0.45,
+    experimentalism: 0.75,            // Very experimental
+
+    genrePurity: 0.5,
+    mainstreamness: 0.25,
+    culturalSpecificity: 0.75,        // Bay Area underground
+    temporalAnchoring: 0.45           // Timeless/futuristic
+  }
+};
+
+/**
+ * "Like Glue" - Sean Paul (THUG, 2003)
+ * Dancehall crossover. Global party anthem.
+ */
+export const LIKE_GLUE_SEAN_PAUL: THPSSong = {
+  title: 'Like Glue',
+  artist: 'Sean Paul',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Dancehall', 'Reggae Fusion', 'Pop'],
+  isIconic: true,
+  genome: {
+    tempo: 95,
+    tempoVariability: 0.1,
+    timeSignatureComplexity: 0.2,
+    songLength: 215,                  // 3:35
+    structuralPredictability: 0.8,
+
+    key: 'C minor',
+    mode: 'minor',
+    harmonicComplexity: 0.35,
+    dissonanceLevel: 0.15,
+    chromaticism: 0.25,
+
+    melodicRange: 0.55,
+    melodicContour: 'varied',
+    melodicComplexity: 0.4,
+    hookStrength: 0.9,                // MASSIVE hook
+
+    rhythmicDensity: 0.75,
+    syncopation: 0.8,                 // Dancehall riddim
+    groove: 0.95,                     // Maximum groove
+    polyrhythmicComplexity: 0.45,
+
+    brightness: 0.65,
+    warmth: 0.7,
+    density: 0.65,
+    organicVsSynthetic: 0.45,
+
+    dynamicRange: 0.45,
+    buildIntensity: 0.55,
+    releasePattern: 0.5,
+    overallEnergy: 0.82,
+
+    vocalPresence: 0.9,
+    vocalStyle: 'mixed',              // Patois delivery
+    vocalEmotionality: 0.7,
+    lyricDensity: 0.7,
+    lyricAbstractness: 0.3,
+
+    valence: 0.8,                     // Party vibes
+    arousal: 0.78,
+    tension: 0.2,
+    nostalgia: 0.25,
+    spirituality: 0.15,
+
+    productionEra: '2000s dancehall',
+    productionPolish: 0.85,
+    spatialWidth: 0.7,
+    reverbAmount: 0.4,
+    experimentalism: 0.3,
+
+    genrePurity: 0.75,
+    mainstreamness: 0.85,             // Radio hit
+    culturalSpecificity: 0.85,        // Jamaican dancehall
+    temporalAnchoring: 0.7
+  }
+};
+
+/**
+ * "All Hail Me" - Veruca Salt (THUG, 2003)
+ * 90s alt-rock revival. Grrl power.
+ */
+export const ALL_HAIL_ME_VERUCA_SALT: THPSSong = {
+  title: 'All Hail Me',
+  artist: 'Veruca Salt',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Alternative Rock', 'Grunge', 'Indie Rock'],
+  isIconic: false,
+  genome: {
+    tempo: 128,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.2,
+    songLength: 195,                  // 3:15
+    structuralPredictability: 0.75,
+
+    key: 'E minor',
+    mode: 'minor',
+    harmonicComplexity: 0.45,
+    dissonanceLevel: 0.4,
+    chromaticism: 0.35,
+
+    melodicRange: 0.7,
+    melodicContour: 'varied',
+    melodicComplexity: 0.45,
+    hookStrength: 0.75,
+
+    rhythmicDensity: 0.7,
+    syncopation: 0.4,
+    groove: 0.7,
+    polyrhythmicComplexity: 0.25,
+
+    brightness: 0.55,
+    warmth: 0.45,
+    density: 0.75,
+    organicVsSynthetic: 0.1,
+
+    dynamicRange: 0.65,
+    buildIntensity: 0.7,
+    releasePattern: 0.6,
+    overallEnergy: 0.78,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'clean',
+    vocalEmotionality: 0.75,
+    lyricDensity: 0.6,
+    lyricAbstractness: 0.45,
+
+    valence: 0.4,
+    arousal: 0.75,
+    tension: 0.55,
+    nostalgia: 0.4,
+    spirituality: 0.1,
+
+    productionEra: '2000s alt-rock',
+    productionPolish: 0.7,
+    spatialWidth: 0.65,
+    reverbAmount: 0.4,
+    experimentalism: 0.35,
+
+    genrePurity: 0.7,
+    mainstreamness: 0.45,
+    culturalSpecificity: 0.55,
+    temporalAnchoring: 0.6
+  }
+};
+
+/**
+ * "Flesh and Bone" - Burning Brides (THUG, 2003)
+ * Heavy blues rock. Garage rock revival.
+ */
+export const FLESH_AND_BONE_BURNING_BRIDES: THPSSong = {
+  title: 'Flesh and Bone',
+  artist: 'Burning Brides',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Garage Rock', 'Blues Rock', 'Hard Rock'],
+  isIconic: false,
+  genome: {
+    tempo: 135,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.15,
+    songLength: 185,                  // 3:05
+    structuralPredictability: 0.75,
+
+    key: 'E minor',
+    mode: 'minor',
+    harmonicComplexity: 0.35,
+    dissonanceLevel: 0.45,
+    chromaticism: 0.3,
+
+    melodicRange: 0.55,
+    melodicContour: 'varied',
+    melodicComplexity: 0.35,
+    hookStrength: 0.72,
+
+    rhythmicDensity: 0.75,
+    syncopation: 0.4,
+    groove: 0.8,
+    polyrhythmicComplexity: 0.2,
+
+    brightness: 0.5,
+    warmth: 0.55,
+    density: 0.8,
+    organicVsSynthetic: 0.05,         // Raw garage
+
+    dynamicRange: 0.55,
+    buildIntensity: 0.65,
+    releasePattern: 0.55,
+    overallEnergy: 0.85,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'raspy',
+    vocalEmotionality: 0.75,
+    lyricDensity: 0.55,
+    lyricAbstractness: 0.4,
+
+    valence: 0.4,
+    arousal: 0.82,
+    tension: 0.6,
+    nostalgia: 0.35,
+    spirituality: 0.1,
+
+    productionEra: '2000s garage',
+    productionPolish: 0.5,            // Raw
+    spatialWidth: 0.55,
+    reverbAmount: 0.35,
+    experimentalism: 0.3,
+
+    genrePurity: 0.75,
+    mainstreamness: 0.3,
+    culturalSpecificity: 0.55,
+    temporalAnchoring: 0.55
+  }
+};
+
+/**
+ * "Cracking the Whip" - Quasimoto (THUG, 2003)
+ * Madlib's alter-ego. Underground abstract hip-hop.
+ */
+export const CRACKING_WHIP_QUASIMOTO: THPSSong = {
+  title: 'Cracking the Whip',
+  artist: 'Quasimoto',
+  game: 'THUG',
+  year: 2000,
+  genre: ['Abstract Hip Hop', 'Underground Hip Hop', 'Experimental'],
+  isIconic: true,
+  genome: {
+    tempo: 88,
+    tempoVariability: 0.2,
+    timeSignatureComplexity: 0.35,
+    songLength: 195,                  // 3:15
+    structuralPredictability: 0.5,
+
+    key: 'D minor',
+    mode: 'minor',
+    harmonicComplexity: 0.6,
+    dissonanceLevel: 0.4,
+    chromaticism: 0.5,
+
+    melodicRange: 0.45,
+    melodicContour: 'varied',
+    melodicComplexity: 0.5,
+    hookStrength: 0.68,
+
+    rhythmicDensity: 0.7,
+    syncopation: 0.75,
+    groove: 0.85,
+    polyrhythmicComplexity: 0.6,
+
+    brightness: 0.4,
+    warmth: 0.65,
+    density: 0.6,
+    organicVsSynthetic: 0.35,         // Sample-based
+
+    dynamicRange: 0.5,
+    buildIntensity: 0.5,
+    releasePattern: 0.45,
+    overallEnergy: 0.68,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'mixed',              // Pitched-up alter ego
+    vocalEmotionality: 0.55,
+    lyricDensity: 0.8,
+    lyricAbstractness: 0.75,          // Very abstract
+
+    valence: 0.45,
+    arousal: 0.6,
+    tension: 0.5,
+    nostalgia: 0.35,
+    spirituality: 0.2,
+
+    productionEra: '2000s underground',
+    productionPolish: 0.55,           // Lo-fi aesthetic
+    spatialWidth: 0.6,
+    reverbAmount: 0.4,
+    experimentalism: 0.85,            // VERY experimental
+
+    genrePurity: 0.4,
+    mainstreamness: 0.1,              // Deep underground
+    culturalSpecificity: 0.8,         // Stones Throw/LA beat scene
+    temporalAnchoring: 0.4
+  }
+};
+
+/**
+ * "Riot Radio" - The Dead 60s (THUG, 2003)
+ * Post-punk revival. Liverpool energy.
+ */
+export const RIOT_RADIO_DEAD_60S: THPSSong = {
+  title: 'Riot Radio',
+  artist: 'The Dead 60s',
+  game: 'THUG',
+  year: 2003,
+  genre: ['Post-Punk Revival', 'Dub', 'New Wave'],
+  isIconic: false,
+  genome: {
+    tempo: 140,
+    tempoVariability: 0.15,
+    timeSignatureComplexity: 0.25,
+    songLength: 210,                  // 3:30
+    structuralPredictability: 0.7,
+
+    key: 'E minor',
+    mode: 'minor',
+    harmonicComplexity: 0.45,
+    dissonanceLevel: 0.35,
+    chromaticism: 0.35,
+
+    melodicRange: 0.55,
+    melodicContour: 'varied',
+    melodicComplexity: 0.4,
+    hookStrength: 0.78,
+
+    rhythmicDensity: 0.75,
+    syncopation: 0.6,                 // Dub influence
+    groove: 0.82,
+    polyrhythmicComplexity: 0.45,
+
+    brightness: 0.55,
+    warmth: 0.5,
+    density: 0.7,
+    organicVsSynthetic: 0.2,
+
+    dynamicRange: 0.55,
+    buildIntensity: 0.65,
+    releasePattern: 0.55,
+    overallEnergy: 0.8,
+
+    vocalPresence: 0.85,
+    vocalStyle: 'raspy',
+    vocalEmotionality: 0.7,
+    lyricDensity: 0.65,
+    lyricAbstractness: 0.45,
+
+    valence: 0.45,
+    arousal: 0.78,
+    tension: 0.55,
+    nostalgia: 0.45,
+    spirituality: 0.15,
+
+    productionEra: '2000s post-punk',
+    productionPolish: 0.7,
+    spatialWidth: 0.65,
+    reverbAmount: 0.5,
+    experimentalism: 0.45,
+
+    genrePurity: 0.65,
+    mainstreamness: 0.4,
+    culturalSpecificity: 0.75,        // UK post-punk
+    temporalAnchoring: 0.55
+  }
+};
+
+// =============================================================================
 // THPS SONG COLLECTION
 // =============================================================================
 
@@ -1754,9 +2586,21 @@ export const THPS_ICONIC_SONGS: THPSSong[] = [
   SHIMMY_SOAD,
   TNT_ACDC,
 
-  // THUG (2003)
+  // THUG (2003) - THE PEAK
   DRUNKEN_LULLABIES_FM,
   DIG_IT_SKINNY_PUPPY,
+  SEPARATION_CHURCH_SKATE_NOFX,
+  I_AGAINST_I_MOS_DEF,
+  STORY_OF_MY_LIFE_SOCIAL_D,
+  THE_METRO_ALKALINE_TRIO,
+  CASTAWAY_FACE_TO_FACE,
+  BACKSLIDER_LESS_THAN_JAKE,
+  SEARCHIN_DELTRON,
+  LIKE_GLUE_SEAN_PAUL,
+  ALL_HAIL_ME_VERUCA_SALT,
+  FLESH_AND_BONE_BURNING_BRIDES,
+  CRACKING_WHIP_QUASIMOTO,
+  RIOT_RADIO_DEAD_60S,
 
   // THPS 1+2 Remaster (2020)
   BLAME_IT_ON_GIRLS_MIKA
