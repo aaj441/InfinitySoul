@@ -1,67 +1,33 @@
-# InfinitySol: Enterprise Accessibility Compliance Platform
+# InfinitySoul: Ethical Behavioral Risk & Accessibility Intelligence Platform
 
-**Tagline:** "We document the liability so you can fix it before you're liable."
+**"We turn soundtracks into signals for support, not tools of control."**
 
-InfinitySol is an accessibility compliance platform that combines:
-1. **Technical auditing** (WCAG 2.2 scanning)
-2. **Public litigation intelligence** (court-ready risk assessment)
-3. **Compliance scoring** (like FICO for accessibility)
-4. **Real-time news aggregation** (tracking industry trends)
+## What InfinitySoul Is
 
-All grounded in **public data only**. No threats. No legal advice. Just facts.
+InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges three worlds:
 
-**📱 Now with Mobile-First Design**: Our platform is optimized for iPhone and all mobile devices with touch-friendly interactions, responsive layouts, and smooth animations. See [MOBILE_FIRST_GUIDE.md](./MOBILE_FIRST_GUIDE.md) for details.
+1. **Accessibility & Compliance** (WCAG 2.2 scanning, litigation intelligence, Infinity8 scoring)
+2. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
+3. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
 
----
-
-## What This Platform Does
-
-### ✅ What We Do
-
-- **Scan public code** for WCAG violations using open-source tools (axe-core)
-- **Aggregate public litigation data** from PACER, RECAP, court filings, and news
-- **Generate technical audits** that are court-admissible and blockchain-verified
-- **Calculate risk assessments** based on comparable public cases
-- **Score compliance** (Infinity8: 0-1000 like FICO)
-- **Track plaintiff activity** from public records
-- **Provide crisis response** (24-hour deployment when lawsuits happen)
-
-### ❌ What We Don't Do
-
-- Provide legal advice or legal conclusions
-- Access private systems (respect `robots.txt`, login walls, rate limits)
-- Make threats or coerce action
-- Practice law (we're expert witnesses, not attorneys)
-- Provide confidential legal opinions
+**Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
+**Secondary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
 
-## The Ethical Positioning
+## Core Systems
 
-InfinitySol operates on a clear principle:
+### 1. Accessibility Compliance Platform
 
-**Show public facts. Let prospects draw conclusions.**
+**What it does:** WCAG 2.2 scanning, public litigation intelligence, compliance scoring (Infinity8: 0-1000), real-time news aggregation.
 
-### How This Works
-
-When we reach out to a prospect, we present:
-
-1. **Technical findings** (audit results of their public code)
-2. **Comparable cases** (public litigation data from federal courts)
-3. **Industry benchmarking** (where they rank vs. competitors)
-4. **Plaintiff tracking** (who's actively filing cases in their industry)
-
-We don't say: *"You will be sued."*
-We say: *"Companies like yours have been sued. Here's the public record."*
-
-We don't say: *"Pay us or face liability."*
-We say: *"Here's how to fix it. Your timeline. Your choice."*
-
-This is **heavy-handed but legally bulletproof**.
+- **Location:** `services/wcagScanner.ts`, `services/litigationDatabase.ts`, `services/infinity8Score.ts`
+- **Grounded in:** Public data only—PACER, RECAP, court records, open accessibility standards
+- **Value prop:** "We document the liability so you can fix it before you're liable."
 
 ---
 
-## Legal Posture
+## Legal Posture & Ethical Framework
 
 ### Van Buren Compliance (CFAA Safety)
 
@@ -85,293 +51,242 @@ All our outputs are **technical, not legal**:
 
 **We're expert witnesses, not attorneys.** We can testify about accessibility violations and remediation. We can't advise on settlement strategy or liability.
 
-### Tortious Interference Insurance
+### The "Carson Clause" (Self-Protection)
 
-Our client contract includes (the "Carson Clause"):
+Every service agreement must include:
 
 ```
-Client acknowledges that InfinitySol:
+Client acknowledges that InfinitySoul:
 (a) Performs technical audits only
 (b) Does not provide legal advice
 (c) May publish anonymized audit results for industry benchmarking
 (d) Will cooperate with any court's request for technical testimony
 
 Client waives any claim of tortious interference or defamation
-arising from InfinitySol's publication of public data.
-```
-
-**We're transparent.** If our audit is used against you, that's the point. Our job is making inaccessible sites uninteresting to plaintiffs.
-
----
-
-## Core Architecture
-
-```
-InfinitySol/
-├── services/
-│   ├── wcagScanner.ts          # WCAG violation detection
-│   ├── litigationDatabase.ts   # Public court data
-│   ├── riskAssessment.ts       # Statistical risk calculation
-│   ├── infinity8Score.ts       # Compliance credit scoring
-│   ├── emailTemplates.ts       # Fact-based outreach emails
-│   └── newsAggregator.ts       # Litigation tracking feed
-├── types/
-│   └── index.ts                # Domain models
-├── api/                        # API routes (Next.js or Express)
-├── components/                 # Frontend dashboard
-└── README.md                   # This file
-```
-
-### Key Services
-
-#### 1. WCAG Scanner (`wcagScanner.ts`)
-- Wraps axe-core for WCAG 2.2 scanning
-- Maps violations to WCAG criteria + litigation frequency
-- Estimates remediation time and cost
-- Outputs: `AccessibilityAudit`
-
-#### 2. Litigation Database (`litigationDatabase.ts`)
-- Public cases from PACER, RECAP, court records
-- Tracks settlement amounts, violation types, outcomes
-- Provides comparable case matching
-- Calculates industry benchmarks
-- Outputs: `LitigationCase[]`, `RiskAssessment`
-
-#### 3. Risk Assessment (`riskAssessment.ts`)
-- Statistical risk calculation (NOT legal opinions)
-- Litigation probability based on comparable cases
-- Estimated settlement/legal fee exposure
-- Remediation impact analysis
-- Outputs: `RiskAssessment`
-
-#### 4. Infinity8 Score (`infinity8Score.ts`)
-- Compliance credit rating (0-1000)
-- Grades A+ through F
-- Factors: WCAG compliance + litigation risk + remediation velocity + industry rank + validation
-- Shows market impact (insurance, RFP, partnerships)
-- Outputs: `Infinity8Score`
-
-#### 5. Email Templates (`emailTemplates.ts`)
-- Cold prospect emails (show audit + comparable cases)
-- High-risk prospect emails (show plaintiff patterns)
-- Post-remediation emails (show impact)
-- All template-based with personalization fields
-- All claims cited to public sources
-- Outputs: `EmailTemplate`
-
-#### 6. News Aggregator (`newsAggregator.ts`)
-- Tracks accessibility litigation news
-- Federal DOJ enforcement actions
-- State-level accessibility law updates
-- Precedent-setting court decisions
-- Plaintiff activity tracking
-- Outputs: `AccessibilityNews[]`, threat reports
-
----
-
-## How to Position This (The "Heavy-Handed" Way)
-
-### Email Opening
-```
-[Name],
-
-On {{date}}, we scanned {{domain}}. This is what we found in your public code:
-
-- {{violation_count}} WCAG 2.2 AA violations
-- {{critical_count}} critical gaps (WCAG Level A)
-- Color contrast failures on {{contrast_count}} elements
-- Keyboard traps preventing navigation
-
-These aren't opinions. These are reproducible failures against the WCAG standard.
-
-Here's what matters: Companies with similar violation patterns appear in federal litigation at a {{litigation_probability}}% rate. The average settlement: ${{avg_settlement}}. Plus ${{legal_fees}} in legal fees.
-
-[Link to comparable case from public court records]
-
-We're not attorneys. We're accessibility technologists. What we're saying: your code has problems. What you conclude from that is your business.
-
-Want to talk about fixing it?
-```
-
-### Key Messaging
-- **"We document liability"** (not create it)
-- **"Public facts"** (all sourced and cited)
-- **"Before you're liable"** (proactive vs. reactive)
-- **"Court-ready audits"** (admissible evidence)
-- **"Serial plaintiff tracking"** (show who's hunting)
-
----
-
-## The "Carson Clause" (Self-Protection)
-
-Every service agreement must include:
-
-```
-7.3 Acknowledgment and Waiver
-
-Client acknowledges that InfinitySol:
-
-(a) Is NOT a law firm and does not provide legal advice
-(b) Performs technical accessibility audits only
-(c) May publish anonymized, de-identified audit results and industry
-    benchmarking data
-(d) Will cooperate with any court's request for technical testimony,
-    regardless of which party subpoenas us
-(e) Maintains no attorney-client privilege
-
-Client WAIVES any claim of:
-- Tortious interference with contractual relations
-- Defamation (all claims are technical, not legal)
-- Unauthorized practice of law
-- Privacy violations (all data is from public sources)
-
-Client further acknowledges that InfinitySol's purpose is to make
-accessibility non-compliance unprofitable for serial plaintiffs through
-transparency and documentation.
-```
-
-**Translation:** "We'll audit you. We'll benchmark you. If you get sued, we'll testify against you if asked. Don't like it? Fix your site."
-
----
-
-## Implementation Roadmap
-
-### Phase 1: Core Platform (Current)
-- [x] WCAG scanner wrapper
-- [x] Litigation database structure
-- [x] Risk assessment engine
-- [x] Infinity8 scoring system
-- [x] Email template generator
-- [x] News aggregator
-- [ ] API routes
-- [ ] Dashboard frontend
-- [ ] Blockchain audit logging
-- [ ] Webhook integration for scans
-
-### Phase 2: Sales Weaponization
-- Cold outreach campaign (fact-based emails)
-- Prospect targeting (high-risk industries)
-- LinkedIn profile optimization
-- Case study generation
-- Industry report publication
-- Plaintiff activity tracking dashboard
-
-### Phase 3: Enterprise Features
-- Crisis response protocol (24-hour deployment)
-- Parametric insurance integration
-- Court-ready report generation
-- Expert witness testimony preparation
-- Compliance score API (for partners)
-- Automated scanning scheduler
-
-### Phase 4: Platform Monetization
-- API access (law firms, insurance)
-- News feed subscription (risk intelligence)
-- Crisis response retainer
-- Insurance partnership (premium reduction)
-- Expert witness contract
-
----
-
-## Running Locally
-
-```bash
-# Install dependencies
-npm install
-
-# Run dev server
-npm run dev
-
-# Type checking
-npm run type-check
-
-# Scan a URL
-npm run scanner -- --domain example.com
-
-# Sync litigation database from public sources
-npm run litigation-sync
+arising from InfinitySoul's publication of public data.
 ```
 
 ---
 
-## Deployment
+## Core Systems (Expanded)
 
-This is designed to run on your own infrastructure:
-- Next.js app (Vercel, AWS, self-hosted)
-- PostgreSQL for litigation data
-- Blockchain logging (Ethereum, Polygon, or private chain)
-- Job queue for background scans (Bull, RQ)
-- Email service for campaigns (SendGrid, Mailgun)
+### 2. Music Behavior Risk Engine (Soul Fingerprint)
 
-**Why your own infrastructure?** You're not dependent on cloud providers who can shut you down. You're data-sovereign.
+**What it does:** Transforms long-run listening data (21 years from Last.fm/Spotify) into **volatility, resilience, social engagement, and impulsivity bands** for early-warning wellness systems.
 
----
+- **Science basis:** Big Five personality correlations with music preferences (Greenberg et al., Rentfrow & Gosling)
+- **Innovation:** Adapts Pandora's Music Genome Project (450 attributes) into actuarial risk factors
+- **Primary use:** Opt-in student wellness pilots at CSUDH—flags students at risk for burnout, isolation, mental health crises **before** grades or attendance show it
+- **Secondary use:** Tightly sandboxed actuarial research (no direct premium increases without ethics review, regulator approval, and demonstrated community benefit)
 
-## Data Sources & Transparency
+**Key outputs:**
+- Volatility index (emotional stability under stress)
+- Resilience index (recovery time after setbacks)
+- Social engagement stability (platform use vs. withdrawal/manic spikes)
+- Impulsivity band (skip rate, playlist variety, repeat intensity)
 
-All data comes from public sources:
+**Location:** `services/soulFingerprint/`, `backend/intel/riskDistribution/musicBehaviorRiskEngine.ts`
 
-1. **WCAG Standard:** https://www.w3.org/WAI/WCAG22/quickref/
-2. **PACER:** https://pacer.uscourts.gov/
-3. **CourtListener/RECAP:** https://www.courtlistener.com/
-4. **DOJ Press Releases:** https://justice.gov/
-5. **State Accessibility Laws:** State legislative databases
-6. **Public News:** News archives, SEC filings, press releases
+**Case study:** "Get Real Get Right" (Sufjan Stevens) analysis demonstrates that music about mortality predicts **lower** behavioral risk—people who consciously engage with death tend to live more carefully.
 
-**No confidential information is used.** All litigation data is public record.
+[See `docs/MUSIC_BEHAVIOR_RISK.md` for full methodology]
 
 ---
 
-## Ethical Guidelines
+### 3. Universal Risk Distribution Framework
 
-### What Makes This Defensible
+**What it does:** Unifies code risk + human risk + organizational culture risk into a single actuarial engine with tradeable, poolable risk units.
 
-✅ **Transparency:** All claims are sourced and cited
-✅ **Facts:** No legal conclusions, only technical findings
-✅ **Public Data:** All sources are publicly available
-✅ **Professional:** Positioned as expert analysis, not intimidation
-✅ **Accountability:** We'll testify in court about our work
+**Components:**
 
-### What Would Make This Indefensible
+- **Universal Risk Taxonomy** (`universalRiskTaxonomy.ts`) - "Periodic Table of Risk" organizing all risk types
+- **Risk Tokenization Engine** (`riskTokenizationEngine.ts`) - Converts risks into atomic `RiskToken` and `RiskPool` units
+- **Genetic Risk Pool** (`geneticRiskPool.ts`) - Evolutionary algorithm optimizing risk distribution across holders
+- **LLM Risk Oracle Network** (`llmRiskOracleNetwork.ts`) - Multi-LLM consensus + divergence detection for AI risk assessment
+- **Data-as-Collateral Engine** (`dataAsCollateral.ts`) - Treats behavioral datasets as mineable, valued collateral with intrinsic/utility/option value
 
-❌ **Threats:** "Pay us or you'll be sued"
-❌ **False Claims:** Audit errors or misrepresentation
-❌ **Coercion:** Demanding payment as condition of not sharing audit
-❌ **Unauthorized Access:** Bypassing security to test accessibility
-❌ **Legal Advice:** Telling them what to do legally
+**Location:** `backend/intel/riskDistribution/`
 
-**We stay on the green side of this line.**
+**Orchestrator:** `index.ts` wires all engines together into a unified `RiskDistributionOrchestrator`
+
+[See `docs/RISK_DISTRIBUTION_ARCHITECTURE.md` for deep technical dive]
 
 ---
 
-## The Real Competitive Advantage
+### 4. Campus Early-Warning Service (CSUDH-First)
 
-Your competitors are afraid to be aggressive about accessibility because they don't understand the legal framework.
+**What it does:** Delivers **cohort-level risk bands and accessibility risk dashboards** for university departments (Counseling, Student Affairs, IT/Disability Services, Institutional Research).
 
-You understand it.
+**Never:** Individual deterministic scores.  
+**Always:** Aggregate, anonymized bands with **support-first framing** ("mental health weather report," not "behavioral credit score").
 
-**Your competitive advantage isn't speed or price.** It's clarity: You show prospects exactly what they're facing, back it with public data, and let them decide. That confidence converts better than any sales tactic.
+**Location:** `backend/services/campus/CampusEarlyWarningService.ts`
 
-Serial plaintiffs respect preparation. They avoid well-documented compliance efforts. By giving prospects a roadmap that *would withstand* plaintiff scrutiny, you're making them less interesting targets.
+**GTM:** Start with CSUDH Behavioral Science / Student Success / Counseling as pilot, validate ethical use, scale across CSU system.
 
----
-
-## Questions?
-
-**For technical questions:** See `/docs/architecture.md`
-**For sales strategy:** See `/docs/positioning.md`
-**For legal analysis:** See `/docs/legal-framework.md` (consult your attorney)
-**For data sources:** See `/docs/data-sources.md`
-
-**For general inquiries and support:** Contact [aaroninfinity8@gmail.com](mailto:aaroninfinity8@gmail.com)
+[See `docs/CSUDH_GTM_ONEPAGER.md` for full pilot strategy]
 
 ---
 
-**Version:** 1.0.0
-**Last Updated:** {{date}}
-**Author:** [Your Name], InfinitySol
-**License:** [Your Choice]
+### 5. Ethical Use Policy (Hard-Coded)
+
+**All behavioral/music data usage is gated by:**
+
+- **Permitted uses:** Wellness triage, student success analytics, aggregate research, tightly sandboxed actuarial experiments with IRB-style review
+- **Prohibited uses (code throws):** Direct premium increases, disciplinary decisions, genre/platform as demographic proxy
+- **Required for any actuarial experiment:** Ethics approval ID, sandbox environment, documented net benefit to insured populations
+
+**Location:** `backend/intel/ethics/ethicalUsePolicy.ts` (enforced by orchestrator)
+
+[See `docs/ETHICAL_USE_POLICY.md` and `ETHICS_CHARTER.md`]
 
 ---
 
-*InfinitySol: Making inaccessible websites unprofitable, one audit at a time.*
+## Why This Matters: The "Mental Health Weather Report" Framing
+
+Traditional actuarial models price people **after** they fail.  
+InfinitySoul's behavioral engine surfaces **early-warning signals** 4-6 months before crises show up in grades, attendance, or claims.
+
+**Example use case at CSUDH:**
+- Counseling center opts student cohort into music + engagement pilot
+- Engine detects volatility spike + social withdrawal pattern in subset of students
+- System routes **support resources** (check-ins, mentoring, mental health referrals), not punitive actions
+- Outcome: earlier intervention, better retention, documented case study for scaling
+
+**The paradox:** Music about death/mortality often predicts **lower** risk because it signals conscious engagement with existential themes, which correlates with careful, intentional living.
+
+---
+
+## Architecture Overview
+
+```
+InfinitySoul/
+├── ETHICS_CHARTER.md                    # Information ethics + open-access principles
+├── EXECUTIVE_SUMMARY.md                 # InfinitySoul Nexus vision
+├── README.md                            # This file
+│
+├── docs/
+│   ├── MUSIC_BEHAVIOR_RISK.md           # Music genome methodology
+│   ├── CSUDH_GTM_ONEPAGER.md            # Campus pilot strategy
+│   ├── AI_INSURANCE_VISION.md           # Long-term actuarial roadmap
+│   ├── ETHICAL_USE_POLICY.md            # Behavioral data red-lines
+│   └── RISK_DISTRIBUTION_ARCHITECTURE.md # Actuarial deep-dive
+│
+├── backend/intel/
+│   ├── riskDistribution/
+│   │   ├── index.ts                     # RiskDistributionOrchestrator
+│   │   ├── universalRiskTaxonomy.ts     # Periodic Table of Risk
+│   │   ├── riskTokenizationEngine.ts    # Atomic risk units
+│   │   ├── geneticRiskPool.ts           # Evolutionary optimization
+│   │   ├── llmRiskOracleNetwork.ts      # Multi-LLM risk consensus
+│   │   ├── dataAsCollateral.ts          # Data-backed risk positions
+│   │   └── musicBehaviorRiskEngine.ts   # Music → behavioral risk
+│   │
+│   └── ethics/
+│       └── ethicalUsePolicy.ts          # Behavioral data governor
+│
+├── backend/services/
+│   ├── campus/
+│   │   └── CampusEarlyWarningService.ts # CSUDH wellness dashboards
+│   │
+│   ├── soulFingerprint/
+│   │   ├── lastFmIntegration.ts         # 21-year listening data ingest
+│   │   ├── musicGenomeRisk.ts           # Pandora attributes → risk factors
+│   │   └── examples/
+│   │       └── sufjanStevens_getRealGetRight.ts  # Mortality salience case study
+│   │
+│   ├── wcagScanner.ts                   # WCAG 2.2 compliance scanning
+│   ├── litigationDatabase.ts            # Public court data aggregation
+│   ├── riskAssessment.ts                # Statistical risk calculation
+│   └── infinity8Score.ts                # Accessibility compliance scoring
+│
+└── research/
+    └── dissertation/                     # Music × behavioral risk thesis framework
+```
+
+---
+
+## Five Revenue Streams
+
+### 1. University Wellness & Student Success Pilots (CSUDH First)
+- **Offer:** Opt-in behavioral early-warning dashboards for Counseling, Student Affairs, Advising
+- **Revenue:** SaaS fees per department or per-campus ($50-150K/year per campus pilot)
+
+### 2. Accessibility & Digital Risk Audits for Higher Ed
+- **Offer:** WCAG 2.2 scans + "accessibility risk" scoring + remediation plans
+- **Revenue:** Fixed-fee audits + recurring retainers for monitoring ($25-100K/engagement)
+
+### 3. Behavioral Risk Analytics for Insurers (Research & Pilots)
+- **Offer:** Joint pilots using anonymized campus data to validate ethical behavioral risk scoring
+- **Revenue:** Proof-of-concept contracts, API licensing as AI-insurance spending scales
+
+### 4. Agentic AI-Insurance Products (Medium-Term)
+- **Offer:** InfinitySoul as the **risk brain** for AI agent insurance, LLM ops coverage, autonomous workflow policies
+- **Revenue:** Per-policy or per-agent usage fees in a market projected to hit billions in premiums by 2030
+
+### 5. Labs, Grants, Academic–Industry Consortia
+- **Offer:** Formal CSUDH/CSULB/CSU research lab on ethical behavioral risk + AI insurance
+- **Revenue:** Sponsored research, grants, institutional contracts validating InfinitySoul as the academic standard
+
+---
+
+## Go-To-Market: CSUDH Baby Steps (Start Tomorrow)
+
+**Phase 1: Non-Controversial Pilots (Weeks 1-12)**
+- Approach Counseling/Behavioral Science/Student Affairs with "opt-in wellness radar" proposal
+- Pair music signals + LMS engagement → early-warning flags routed to counseling teams
+- Run accessibility audits on CSUDH public sites + student portals → deliver remediation dashboards
+
+**Phase 2: Data & Actuarial Programs (Weeks 13-24)**
+- Position InfinitySoul as "living lab" for CSUDH Math/Business/CS programs
+- Co-teach or guest-lecture on fairness in AI risk modeling, using real campus data
+- Publish anonymized case study: "How CSUDH used music + engagement data to improve student retention"
+
+**Phase 3: Insurance Pilots (Weeks 25+)**
+- Use CSUDH case studies to approach insurers, reinsurers for simulated behavioral insurance pilots
+- Keep all pricing/underwriting in **sandbox mode** with documented ethics review
+
+[See full strategy in `docs/CSUDH_GTM_ONEPAGER.md`]
+
+---
+
+## Ethical Positioning: "Support, Not Punishment"
+
+InfinitySoul explicitly rejects:
+- Using behavioral scores to **raise premiums** without IRB-style review, regulator approval, and demonstrated community benefit
+- Treating music genre or platform engagement as proxies for race, class, disability, immigration status
+- Any model that appears to penalize rap, trap, drill, or other Black musical forms more harshly—such models are **automatically rejected as structurally biased**
+
+InfinitySoul embraces:
+- **Early intervention** → resource routing, not exclusion
+- **Transparency** → all models audited for fairness, calibration, stability across demographic groups
+- **Community benefit** → CSUDH and CSU campuses as home base, not extraction targets
+- **Open access** → research outputs published, core infrastructure eventually open-sourced
+
+[See `ETHICS_CHARTER.md` for full framework]
+
+---
+
+## Repository Atlas (Everything in One Place)
+
+- **Product vision & GTM** — `EXECUTIVE_SUMMARY.md`, `GO_TO_MARKET_STRATEGY.md`, `AI_INSURANCE_VISION.md`, `CULTURAL_GEOMETRY_CITIES.md`, `INFINITYSOUL_MEGALOPOLIS.md`, `SALES_WEAPONIZATION_COMPLETE.md`
+- **Activation & deployment** — `30DAY_EXECUTION_PLAYBOOK.md`, `DAY1_ACTIVATION_GUIDE.md`, `DEPLOYMENT.md`, `DEPLOYMENT_GUIDE.md`, `DEPLOYMENT_READY.md`, `DEPLOY_CHECKLIST.md`, `DEPLOY_NOW.md`
+- **Ethics, legal, compliance** — `ETHICS_CHARTER.md`, `ETHICAL_USE_POLICY.md`, `LEGAL.md`, `UPL_COMPLIANCE.md`, `CARSON_CLAUSE.md`, `COMPLIANCE_SAFEGUARDS.md`, `WCAG_AI_PLATFORM_PITFALLS.md`, `PRE_LAUNCH_AUDIT.md`, `VERIFICATION_DEBT_PREVENTION.md`, `legal/`
+- **Risk, research, underwriting** — `docs/MUSIC_BEHAVIOR_RISK.md`, `docs/RISK_DISTRIBUTION_ARCHITECTURE.md`, `research/BEHAVIORAL_RISK_AI_SYNTHESIS.md`, `research/DISSERTATION_FRAMEWORK.md`, `PHASE_III_RISK_UNDERWRITING.md`, `PHASE_V_DOCUMENTATION.md`, `PHASE_VI_IMPLEMENTATION_GUIDE.md`
+- **Backend** — `backend/server.ts`, `backend/worker.ts`, `backend/routes/` (automation, consultant, evidence, intel), `backend/services/` (WCAG scanner, litigation DB, soul fingerprint, campus early-warning), `backend/intel/` (riskDistribution, autonomousScanner, lawsuitMonitor, portfolio, prediction), `prisma/schema.prisma`
+- **Frontend** — `frontend/` Next.js app (`pages/`, `components/`, `design/`, `intel/`, `lib/`, Tailwind config)
+- **APIs & automation** — `api/routes.ts`, `automation/ai-email-generator.ts`, `automation/vpat-generator.ts`, `automation/insurance_lead_import.py`, scripts: `runGlobalScan.ts`, `pre-launch-check.ts`, `setup-railway-env.sh`, `stress-test.sh`, `test-ai-consistency.ts`, `test-single-lead.sh`, `updatePlaintiffMap.ts`, `worker-intel.ts`, `worker-scanner.ts`
+- **Data, evidence, testing** — `test-data/`, `tests/`, `evidence-vault/attestations|reports|scans/`, `TESTING_GUIDE.md`, `TEST_SUMMARY.md`, `TESTING_REPORT.md`, `PRELAUNCH_IMPROVEMENTS.md`
+- **Ops, infra, monitoring** — `Dockerfile`, `docker-compose.yml`, `nixpacks.toml`, `railway.json`, `Procfile`, `vercel.json`, `nginx.conf`, `monitoring/` dashboards, `config/environment.ts`, `deploy.sh`, `cleanup_repo.sh`
+- **Governance & automation** — `.github/workflows/`, `.verification/` (config, dashboards, hooks, scripts), `.gitattributes`, `.gitignore`, `.env.example`, `.vscode/`
+- **Aux/marketing** — `LINKEDIN_POST_CONSTRUCTION.md`, `INTEGRATION_GUIDE.md`, `MOBILE_FIRST_GUIDE.md`, `INFINITYSOL_CONSOLIDATION.sh`, `CULTURAL_GEOMETRY_CITIES.md`
+- **Archived/backup** — `.consolidation_backup_*/`, `WCAGAIPlatform/` (placeholder)
+- **Backend** — `backend/server.ts`, `backend/worker.ts`, `backend/routes/` (automation, consultant, evidence, intel), `backend/services/` (WCAG scanner, litigation DB, soul fingerprint, campus early-warning), `backend/intel/` (riskDistribution, autonomousScanner, lawsuitMonitor, portfolio, prediction), `backend/config/environment.ts`, `prisma/schema.prisma`
+- **Frontend** — `frontend/` Next.js app (`pages/`, `components/`, `design/`, `intel/`, `lib/`, Tailwind config)
+- **APIs & automation** — `api/routes.ts`, `automation/ai-email-generator.ts`, `automation/vpat-generator.ts`, `automation/insurance_lead_import.py`, scripts: `runGlobalScan.ts`, `pre-launch-check.ts`, `setup-railway-env.sh`, `stress-test.sh`, `test-ai-consistency.ts`, `test-single-lead.sh`, `updatePlaintiffMap.ts`, `worker-intel.ts`, `worker-scanner.ts`
+- **Data, evidence, testing** — `test-data/`, `tests/`, `evidence-vault/attestations|reports|scans/`, `TESTING_GUIDE.md`, `TEST_SUMMARY.md`, `TESTING_REPORT.md`, `PRELAUNCH_IMPROVEMENTS.md`
+- **Shared libs** — `types/`, `utils/` (`errorTracking.ts`, `logger.ts`, disabled variants), `config/environment.ts`
+- **Ops, infra, monitoring** — `Dockerfile`, `docker-compose.yml`, `nixpacks.toml`, `railway.json`, `Procfile`, `vercel.json`, `nginx.conf`, `monitoring/` dashboards, `deploy.sh`, `cleanup_repo.sh`
+- **Governance & automation** — `.github/workflows/`, `.verification/` (config, dashboards, hooks, scripts), `.gitattributes`, `.gitignore`, `.env.example`, `.vscode/`
+- **Aux/marketing** — `LINKEDIN_POST_CONSTRUCTION.md`, `INTEGRATION_GUIDE.md`, `MOBILE_FIRST_GUIDE.md`, `INFINITYSOL_CONSOLIDATION.sh`, `CULTURAL_GEOMETRY_CITIES.md`
+- **Archived/backup** — `.consolidation_backup_*/`, `WCAGAIPlatform/` (placeholder)
