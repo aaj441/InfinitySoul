@@ -19,7 +19,8 @@ async function main() {
     console.error("Usage: scan-domain --domain=example.com");
     process.exit(1);
   }
-  const domain = domainArg.split("=")[1];
+  // Use substring instead of split to handle domains with '=' characters
+  const domain = domainArg.substring(domainArg.indexOf("=") + 1);
 
   if (!domain || domain.trim() === "") {
     console.error("Error: Domain cannot be empty");

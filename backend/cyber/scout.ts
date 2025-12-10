@@ -91,6 +91,9 @@ async function checkHttpEndpoint(
  * Scan common ports (shallow scan only)
  */
 async function scanCommonPorts(host: string): Promise<number[]> {
+  // Common ports checked:
+  // 21=FTP, 22=SSH, 23=Telnet, 25=SMTP, 80=HTTP, 443=HTTPS,
+  // 3389=RDP, 5432=PostgreSQL, 3306=MySQL, 27017=MongoDB
   const commonPorts = [21, 22, 23, 25, 80, 443, 3389, 5432, 3306, 27017];
   const openPorts: number[] = [];
   

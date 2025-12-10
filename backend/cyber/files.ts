@@ -30,11 +30,15 @@ async function ensureDirectory(dir: string): Promise<void> {
 
 /**
  * Generate filename with timestamp and domain
+ * Includes milliseconds to prevent collisions from concurrent scans
  */
 function generateFilename(domain: string, extension: string): string {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  const now = new Date();
+  const timestamp = now.toISOString().replace(/[:.]/g, "-");
   const safeDomain = domain.replace(/[^a-z0-9.-]/gi, "_");
-  return `${timestamp}-${safeDomain}.${extension}`;
+  // Add extra entropy with milliseconds to prevent collisions
+  const ms = now.getMilliseconds().toString().padStart(3, "0");
+  return `${timestamp}-${ms}-${safeDomain}.${extension}`;
 }
 
 /**
