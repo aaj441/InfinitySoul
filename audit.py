@@ -106,7 +106,10 @@ class CyberAudit:
     def check_ssl_certificate(self) -> Tuple[bool, str]:
         """Check SSL certificate validity"""
         try:
+            # Create SSL context with secure defaults (TLSv1.2+ only, no weak ciphers)
             context = ssl.create_default_context()
+            # Explicitly set minimum TLS version to 1.2 for extra security
+            context.minimum_version = ssl.TLSVersion.TLSv1_2
             with socket.create_connection((self.domain, 443), timeout=5) as sock:
                 with context.wrap_socket(sock, server_hostname=self.domain) as ssock:
                     cert = ssock.getpeercert()
