@@ -1,5 +1,7 @@
 {
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/out",
-  "devCommand": "cd frontend && npm run dev"
+  "buildCommand": "cd InfinitySoul-AIS/frontend && npm install && npm run build",
+  "outputDirectory": "InfinitySoul-AIS/frontend/.next",
+  "devCommand": "cd InfinitySoul-AIS/frontend && npm run dev",
+  "framework": "nextjs",
+  "regions": ["iad1"]
 }
