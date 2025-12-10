@@ -24,3 +24,8 @@ coverage/
 # Consolidation backup directories
 .consolidation_backup_*/
 consolidation.log
+
+# Cyber scan output directories
+evidence/
+reports/
+leads/
