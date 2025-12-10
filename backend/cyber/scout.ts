@@ -4,6 +4,11 @@
  * 
  * Responsibility: Collect raw technical data about a domain
  * Does NOT: analyze, format, or persist data
+ * 
+ * SECURITY NOTE: This module intentionally disables SSL certificate validation
+ * when scanning domains. This is necessary to scan sites with expired or 
+ * self-signed certificates and report on their security issues. This scanner
+ * only collects data and never transmits sensitive information to scanned sites.
  */
 
 import { ScoutResult } from "./types";
@@ -89,6 +94,8 @@ export async function runScout(domain: string): Promise<ScoutResult> {
 
 /**
  * Check if HTTP endpoint is reachable
+ * Note: This is a security scanner, so we intentionally accept invalid certs
+ * to scan sites that have certificate issues. The analyst will flag cert problems.
  */
 async function checkHttpReachability(domain: string, protocol: 'http' | 'https'): Promise<boolean> {
   return new Promise((resolve) => {
@@ -99,7 +106,10 @@ async function checkHttpReachability(domain: string, protocol: 'http' | 'https')
       path: '/',
       method: 'HEAD',
       timeout: 5000,
-      rejectUnauthorized: false, // Don't fail on self-signed certs
+      // Security Note: We disable cert validation for scanning purposes.
+      // This allows us to scan sites with expired/self-signed certs and report on them.
+      // This scanner only collects data; it never sends sensitive information.
+      rejectUnauthorized: false,
     };
 
     const req = client.request(options, (res) => {
@@ -121,6 +131,8 @@ async function checkHttpReachability(domain: string, protocol: 'http' | 'https')
 
 /**
  * Check HTTPS reachability and collect security headers
+ * Note: This is a security scanner, so we intentionally accept invalid certs
+ * to scan sites that have certificate issues. The analyst will flag cert problems.
  */
 async function checkHttpsAndHeaders(domain: string): Promise<{ reachable: boolean; headers: Record<string, string | undefined> }> {
   return new Promise((resolve) => {
@@ -130,7 +142,10 @@ async function checkHttpsAndHeaders(domain: string): Promise<{ reachable: boolea
       path: '/',
       method: 'HEAD',
       timeout: 5000,
-      rejectUnauthorized: false, // Don't fail on self-signed certs
+      // Security Note: We disable cert validation for scanning purposes.
+      // This allows us to scan sites with expired/self-signed certs and report on them.
+      // This scanner only collects data; it never sends sensitive information.
+      rejectUnauthorized: false,
     };
 
     const req = https.request(options, (res) => {
