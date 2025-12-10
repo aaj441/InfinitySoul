@@ -31,12 +31,6 @@ class CyberAudit:
     def check_rdp_port(self) -> Tuple[bool, str]:
         """Check if RDP port 3389 is exposed"""
         try:
-            # First, try to resolve the domain
-            try:
-                socket.getaddrinfo(self.domain, 3389, socket.AF_INET, socket.SOCK_STREAM)
-            except socket.gaierror:
-                return False, "⚠️ Could not resolve domain for RDP check"
-            
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(3)
             result = sock.connect_ex((self.domain, 3389))
@@ -112,12 +106,6 @@ class CyberAudit:
     def check_ssl_certificate(self) -> Tuple[bool, str]:
         """Check SSL certificate validity"""
         try:
-            # First, try to resolve the domain
-            try:
-                socket.getaddrinfo(self.domain, 443, socket.AF_INET, socket.SOCK_STREAM)
-            except socket.gaierror:
-                return False, "⚠️ Could not resolve domain for SSL check"
-            
             context = ssl.create_default_context()
             with socket.create_connection((self.domain, 443), timeout=5) as sock:
                 with context.wrap_socket(sock, server_hostname=self.domain) as ssock:

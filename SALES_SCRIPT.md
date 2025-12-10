@@ -23,7 +23,7 @@ Great. What's your domain? (e.g., yourbusiness.com)
 **Open terminal on your phone or laptop:**
 
 ```bash
-cd ~/path/to/InfinitySoul
+cd ~/path/to/infinitysoul
 python audit.py --domain theirdomain.com
 ```
 
