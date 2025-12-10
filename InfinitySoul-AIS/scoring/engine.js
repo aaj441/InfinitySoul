@@ -10,9 +10,9 @@ module.exports = async (data) => {
   const score = 
     (data.aiData.biasScore * weights.ai) +
     (data.accessibility.wcagScore * weights.accessibility) +
-    (data.security.sslValid ? 100 : 0 * weights.security) +
+    ((data.security.sslValid ? 100 : 0) * weights.security) +
     (data.stress.jailbreakResistance * weights.stress) +
-    (data.nist.govern === "Complete" ? 100 : 50 * weights.nist);
+    ((data.nist.govern === "Complete" ? 100 : 50) * weights.nist);
 
   return {
     overall: Math.floor(score),
