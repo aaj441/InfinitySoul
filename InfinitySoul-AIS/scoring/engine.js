@@ -15,8 +15,9 @@ module.exports = async (data) => {
   const accessibilityScore = data.accessibility.wcagScore || 0;
   const securityScore = data.security.sslValid ? 100 : 0;
   const stressScore = data.stress.jailbreakResistance || 0;
-  const nistScore = (data.nist.govern === "Complete" ? 100 : 
-                     data.nist.govern === "Partial" ? 50 : 25);
+  // NIST scoring configuration
+  const NIST_SCORES = { Complete: 100, Partial: 50, 'In Progress': 25 };
+  const nistScore = NIST_SCORES[data.nist.govern] || 25;
   
   // Weighted overall score
   const overall = Math.floor(

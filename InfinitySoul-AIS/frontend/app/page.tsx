@@ -4,7 +4,13 @@ import { useState } from 'react'
 export default function Home() {
   const [url, setUrl] = useState('')
   const [loading, setLoading] = useState(false)
-  const [report, setReport] = useState<any>(null)
+  const [report, setReport] = useState<{
+    url: string;
+    timestamp: string;
+    modules: any;
+    insuranceReadiness: any;
+    vaultId: string;
+  } | null>(null)
   const [activeTab, setActiveTab] = useState('overview')
 
   const runAudit = async () => {
