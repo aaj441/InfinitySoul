@@ -19,6 +19,7 @@
  */
 
 import { MusicDerivedTraits, MusicBehaviorRiskIndicators } from './musicSignals';
+import { DigitalWellnessTraits } from './digitalWellnessSignals';
 
 /**
  * Base risk factor (traditional actuarial)
@@ -55,8 +56,19 @@ export interface BehavioralRiskFactors {
   routineConsistencyScore: number; // 0-1; higher = more consistent routines
   sleepHygieneScore: number; // 0-1; higher = better sleep patterns
 
+  // Digital wellness (NEW: incentivizes healthy digital boundaries)
+  digitalBoundarySkills?: number; // 0-1; higher = better digital boundaries
+  intentionalDigitalUse?: number; // 0-1; higher = more intentional, less mindless
+  realWorldSocialPriority?: number; // 0-1; higher = prioritizes IRL over digital
+  emotionalRegulationDevelopment?: number; // 0-1; higher = improving self-soothing without digital escape
+
+  // Digital wellness risk factors (NEW: disincentivizes harmful patterns)
+  socialMediaOverconsumption?: number; // 0-1; higher = worse (>120 min/day)
+  digitalIsolationPattern?: boolean; // true = high digital use + low IRL connection
+  doomScrollingPattern?: boolean; // true = late-night passive consumption after distress
+
   // Metadata
-  derivedFrom: 'music' | 'engagement' | 'composite';
+  derivedFrom: 'music' | 'engagement' | 'digital_wellness' | 'composite';
   confidenceLevel: number; // 0-1; how confident are we in these scores?
   fairnessAuditPassed: boolean;
 }
@@ -172,6 +184,165 @@ export function musicTraitsToBehavioralFactors(traits: MusicDerivedTraits): Beha
 }
 
 /**
+ * Convert digital wellness traits into behavioral risk factors
+ *
+ * This explicitly INCENTIVIZES pro-social digital behaviors (intentional use,
+ * digital boundaries, real-world social priority, emotional regulation development)
+ * and DISINCENTIVIZES harmful patterns (social media overconsumption, doom-scrolling,
+ * digital isolation).
+ *
+ * Research basis: See digitalWellnessSignals.ts for peer-reviewed sources
+ * (Haidt 2024, Twenge & Campbell 2018, Hunt et al. 2018)
+ *
+ * @param traits Digital wellness traits
+ * @returns Behavioral risk factors (soft modifiers)
+ */
+export function digitalWellnessToBehavioralFactors(traits: DigitalWellnessTraits): BehavioralRiskFactors {
+  // Map digital wellness traits to existing behavioral factor framework
+
+  // Affect regulation: boosted by emotional regulation development
+  const affectRegulationScore = traits.emotionalRegulationDevelopment;
+
+  // Emotional stability: inverse of social comparison vulnerability
+  const emotionalStabilityScore = Math.max(0, Math.min(1, 1 - traits.socialComparisonVulnerability));
+
+  // Stress resilience: inverse of sleep disruption (healthy sleep = better stress response)
+  const stressResilienceScore = Math.max(0, Math.min(1, 1 - traits.sleepDisruptionFromDigital));
+
+  // Social connectedness: real-world social ratio
+  const socialConnectednessScore = traits.realWorldSocialRatio;
+
+  // Community engagement: active vs. passive ratio (creating/connecting vs. consuming)
+  const communityEngagementScore = traits.activeVsPassiveRatio;
+
+  // Sensation seeking: not directly measured by digital wellness (use neutral default)
+  const sensationSeekingScore = 0.5;
+
+  // Impulsivity: inverse of intentional use (mindless consumption = impulsive)
+  const impulsivityScore = Math.max(0, Math.min(1, 1 - traits.intentionalUseScore));
+
+  // Routine consistency: digital boundary skills (consistent boundaries = consistent routines)
+  const routineConsistencyScore = traits.digitalBoundarySkills;
+
+  // Sleep hygiene: inverse of sleep disruption + late-night use
+  const sleepHygieneScore = Math.max(
+    0,
+    Math.min(1, 1 - traits.sleepDisruptionFromDigital)
+  );
+
+  return {
+    affectRegulationScore,
+    emotionalStabilityScore,
+    stressResilienceScore,
+    socialConnectednessScore,
+    communityEngagementScore,
+    sensationSeekingScore,
+    impulsivityScore,
+    routineConsistencyScore,
+    sleepHygieneScore,
+
+    // Digital wellness specific fields
+    digitalBoundarySkills: traits.digitalBoundarySkills,
+    intentionalDigitalUse: traits.intentionalUseScore,
+    realWorldSocialPriority: traits.realWorldSocialRatio,
+    emotionalRegulationDevelopment: traits.emotionalRegulationDevelopment,
+    socialMediaOverconsumption: traits.socialMediaOverconsumptionIndex,
+    digitalIsolationPattern: traits.digitalIsolationPattern,
+    doomScrollingPattern: traits.doomScrollingDetected,
+
+    derivedFrom: 'digital_wellness',
+    confidenceLevel: traits.confidenceLevel,
+    fairnessAuditPassed: traits.fairnessAuditPassed,
+  };
+}
+
+/**
+ * Combine music and digital wellness traits into composite behavioral factors
+ *
+ * This creates a holistic behavioral profile that rewards:
+ * - Emotional regulation skills (from both music AND digital patterns)
+ * - Pro-social behaviors (real-world connection, intentional digital use)
+ * - Healthy boundaries (sleep hygiene, digital curfews)
+ *
+ * And penalizes:
+ * - Social media overconsumption (>120 min/day)
+ * - Digital isolation patterns
+ * - Doom-scrolling and other compulsive patterns
+ *
+ * @param musicTraits Music-derived behavioral traits
+ * @param digitalTraits Digital wellness traits
+ * @returns Composite behavioral risk factors
+ */
+export function combineMultimodalBehavioralFactors(
+  musicTraits: MusicDerivedTraits,
+  digitalTraits: DigitalWellnessTraits
+): BehavioralRiskFactors {
+  const musicFactors = musicTraitsToBehavioralFactors(musicTraits);
+  const digitalFactors = digitalWellnessToBehavioralFactors(digitalTraits);
+
+  // Weighted average with confidence-based weighting
+  const musicWeight = musicFactors.confidenceLevel;
+  const digitalWeight = digitalFactors.confidenceLevel;
+  const totalWeight = musicWeight + digitalWeight;
+
+  // If one source is much more confident, weight it more heavily
+  const musicRatio = musicWeight / totalWeight;
+  const digitalRatio = digitalWeight / totalWeight;
+
+  return {
+    // Core behavioral factors (weighted average)
+    affectRegulationScore:
+      musicFactors.affectRegulationScore * musicRatio +
+      digitalFactors.affectRegulationScore * digitalRatio,
+
+    emotionalStabilityScore:
+      musicFactors.emotionalStabilityScore * musicRatio +
+      digitalFactors.emotionalStabilityScore * digitalRatio,
+
+    stressResilienceScore:
+      musicFactors.stressResilienceScore * musicRatio +
+      digitalFactors.stressResilienceScore * digitalRatio,
+
+    socialConnectednessScore:
+      musicFactors.socialConnectednessScore * musicRatio +
+      digitalFactors.socialConnectednessScore * digitalRatio,
+
+    communityEngagementScore:
+      musicFactors.communityEngagementScore * musicRatio +
+      digitalFactors.communityEngagementScore * digitalRatio,
+
+    sensationSeekingScore:
+      musicFactors.sensationSeekingScore * musicRatio +
+      digitalFactors.sensationSeekingScore * digitalRatio,
+
+    impulsivityScore:
+      musicFactors.impulsivityScore * musicRatio +
+      digitalFactors.impulsivityScore * digitalRatio,
+
+    routineConsistencyScore:
+      musicFactors.routineConsistencyScore * musicRatio +
+      digitalFactors.routineConsistencyScore * digitalRatio,
+
+    sleepHygieneScore:
+      musicFactors.sleepHygieneScore * musicRatio +
+      digitalFactors.sleepHygieneScore * digitalRatio,
+
+    // Digital wellness specific fields (from digital traits only)
+    digitalBoundarySkills: digitalFactors.digitalBoundarySkills,
+    intentionalDigitalUse: digitalFactors.intentionalDigitalUse,
+    realWorldSocialPriority: digitalFactors.realWorldSocialPriority,
+    emotionalRegulationDevelopment: digitalFactors.emotionalRegulationDevelopment,
+    socialMediaOverconsumption: digitalFactors.socialMediaOverconsumption,
+    digitalIsolationPattern: digitalFactors.digitalIsolationPattern,
+    doomScrollingPattern: digitalFactors.doomScrollingPattern,
+
+    derivedFrom: 'composite',
+    confidenceLevel: Math.max(musicFactors.confidenceLevel, digitalFactors.confidenceLevel),
+    fairnessAuditPassed: musicFactors.fairnessAuditPassed && digitalFactors.fairnessAuditPassed,
+  };
+}
+
+/**
  * Combine base actuarial factors with behavioral modifiers
  *
  * IMPORTANT: Behavioral factors provide small adjustments (±5-10%), NOT primary pricing.
@@ -239,18 +410,55 @@ function calculateBehavioralAdjustment(
   useCase: 'campus_wellness' | 'wellness_coaching' | 'research' | 'underwriting_sandbox'
 ): number {
   // Protective factors (reduce risk)
-  const protectiveScore =
-    (factors.affectRegulationScore +
-      factors.emotionalStabilityScore +
-      factors.stressResilienceScore +
-      factors.socialConnectednessScore +
-      factors.communityEngagementScore +
-      factors.routineConsistencyScore +
-      factors.sleepHygieneScore) /
-    7;
+  let protectiveCount = 7;
+  let protectiveSum =
+    factors.affectRegulationScore +
+    factors.emotionalStabilityScore +
+    factors.stressResilienceScore +
+    factors.socialConnectednessScore +
+    factors.communityEngagementScore +
+    factors.routineConsistencyScore +
+    factors.sleepHygieneScore;
+
+  // Add digital wellness protective factors if available
+  if (factors.digitalBoundarySkills !== undefined) {
+    protectiveSum += factors.digitalBoundarySkills;
+    protectiveCount++;
+  }
+  if (factors.intentionalDigitalUse !== undefined) {
+    protectiveSum += factors.intentionalDigitalUse;
+    protectiveCount++;
+  }
+  if (factors.realWorldSocialPriority !== undefined) {
+    protectiveSum += factors.realWorldSocialPriority;
+    protectiveCount++;
+  }
+  if (factors.emotionalRegulationDevelopment !== undefined) {
+    protectiveSum += factors.emotionalRegulationDevelopment;
+    protectiveCount++;
+  }
+
+  const protectiveScore = protectiveSum / protectiveCount;
 
   // Risk factors (increase risk)
-  const riskScore = (factors.sensationSeekingScore + factors.impulsivityScore) / 2;
+  let riskCount = 2;
+  let riskSum = factors.sensationSeekingScore + factors.impulsivityScore;
+
+  // Add digital wellness risk factors if available
+  if (factors.socialMediaOverconsumption !== undefined) {
+    riskSum += factors.socialMediaOverconsumption;
+    riskCount++;
+  }
+  if (factors.digitalIsolationPattern !== undefined) {
+    riskSum += factors.digitalIsolationPattern ? 0.8 : 0; // High penalty for isolation pattern
+    riskCount++;
+  }
+  if (factors.doomScrollingPattern !== undefined) {
+    riskSum += factors.doomScrollingPattern ? 0.7 : 0; // High penalty for doom-scrolling
+    riskCount++;
+  }
+
+  const riskScore = riskSum / riskCount;
 
   // Net adjustment: protective - risk (range: -1 to +1)
   const netAdjustment = protectiveScore - riskScore;
