@@ -13,7 +13,15 @@ module.exports = async (data) => {
   // Calculate individual scores
   const aiScore = data.aiData.biasScore || 0;
   const accessibilityScore = data.accessibility.wcagScore || 0;
-  const securityScore = data.security.sslValid ? 100 : 0;
+  
+  // Enhanced security scoring: considers SSL, encryption type, and data protection
+  let securityScore = 0;
+  if (data.security.sslValid) securityScore += 60;  // Base SSL score
+  if (data.security.encryption === 'TLS 1.3') securityScore += 20;  // Modern encryption
+  if (data.security.dataProtection?.hasEncryptionAtRest) securityScore += 10;
+  if (data.security.dataProtection?.hasAccessControls) securityScore += 10;
+  securityScore = Math.min(100, securityScore);  // Cap at 100
+  
   const stressScore = data.stress.jailbreakResistance || 0;
   // NIST scoring configuration
   const NIST_SCORES = { Complete: 100, Partial: 50, 'In Progress': 25 };

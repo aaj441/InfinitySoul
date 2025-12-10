@@ -31,14 +31,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       {/* Header */}
-      <header className="border-b border-purple-500/20 backdrop-blur-sm">
+      <header className="border-b border-blue-500/20 backdrop-blur-sm">
         <div className="container mx-auto px-6 py-4">
           <h1 className="text-3xl font-bold text-white">
             Infinity Soul AIS v1.2
           </h1>
-          <p className="text-purple-300 mt-1">
+          <p className="text-blue-300 mt-1">
             AI Insurance System Risk Assessment Platform
           </p>
         </div>
@@ -48,13 +48,13 @@ export default function Home() {
       <main className="container mx-auto px-6 py-12">
         {/* Input Section */}
         <div className="max-w-3xl mx-auto mb-12">
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30">
+          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-blue-500/30">
             <label className="block text-white text-sm font-medium mb-3">
               AI System URL or Name
             </label>
             <input
               type="text"
-              className="w-full px-4 py-3 bg-white/5 border border-purple-500/30 rounded-lg text-white placeholder-purple-300/50 focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="w-full px-4 py-3 bg-white/5 border border-blue-500/30 rounded-lg text-white placeholder-blue-300/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter AI system URL to audit..."
               value={url}
               onChange={(e) => setUrl(e.target.value)}
@@ -64,7 +64,7 @@ export default function Home() {
             <button
               onClick={runAudit}
               disabled={loading || !url}
-              className="mt-4 w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:cursor-not-allowed"
+              className="mt-4 w-full bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 disabled:from-gray-600 disabled:to-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 disabled:cursor-not-allowed"
             >
               {loading ? 'Running Comprehensive Audit...' : 'Run Risk Audit'}
             </button>
@@ -82,8 +82,8 @@ export default function Home() {
                   onClick={() => setActiveTab(tab)}
                   className={`px-6 py-3 rounded-lg font-medium transition-all ${
                     activeTab === tab
-                      ? 'bg-purple-600 text-white'
-                      : 'bg-white/10 text-purple-300 hover:bg-white/20'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white/10 text-blue-300 hover:bg-white/20'
                   }`}
                 >
                   {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -92,7 +92,7 @@ export default function Home() {
             </div>
 
             {/* Tab Content */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-purple-500/30">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-blue-500/30">
               {activeTab === 'overview' && (
                 <div>
                   <h2 className="text-2xl font-bold text-white mb-6">
@@ -100,7 +100,7 @@ export default function Home() {
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="bg-white/5 rounded-xl p-6">
-                      <div className="text-purple-300 text-sm font-medium mb-2">
+                      <div className="text-blue-300 text-sm font-medium mb-2">
                         Overall Score
                       </div>
                       <div className="text-4xl font-bold text-white">
@@ -117,7 +117,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="bg-white/5 rounded-xl p-6">
-                      <div className="text-purple-300 text-sm font-medium mb-2">
+                      <div className="text-blue-300 text-sm font-medium mb-2">
                         Vault ID
                       </div>
                       <div className="text-lg font-mono text-white truncate">
@@ -125,7 +125,7 @@ export default function Home() {
                       </div>
                     </div>
                     <div className="bg-white/5 rounded-xl p-6">
-                      <div className="text-purple-300 text-sm font-medium mb-2">
+                      <div className="text-blue-300 text-sm font-medium mb-2">
                         Timestamp
                       </div>
                       <div className="text-sm text-white">
@@ -147,7 +147,7 @@ export default function Home() {
                         <h3 className="text-lg font-semibold text-white mb-3">
                           Module {key.toUpperCase()}
                         </h3>
-                        <pre className="text-purple-300 text-sm overflow-auto">
+                        <pre className="text-blue-300 text-sm overflow-auto">
                           {JSON.stringify(value, null, 2)}
                         </pre>
                       </div>
@@ -195,26 +195,26 @@ export default function Home() {
                     <div className="space-y-6">
                       <div className="bg-white/5 rounded-xl p-6">
                         <div className="flex justify-between items-center mb-4">
-                          <span className="text-purple-300">Overall Score</span>
+                          <span className="text-blue-300">Overall Score</span>
                           <span className="text-2xl font-bold text-white">
                             {report.insuranceReadiness.overall}/100
                           </span>
                         </div>
                         <div className="w-full bg-white/10 rounded-full h-3">
                           <div
-                            className="bg-gradient-to-r from-purple-600 to-blue-600 h-3 rounded-full transition-all duration-500"
+                            className="bg-gradient-to-r from-blue-600 to-blue-600 h-3 rounded-full transition-all duration-500"
                             style={{ width: `${report.insuranceReadiness.overall}%` }}
                           />
                         </div>
                       </div>
                       <div className="bg-white/5 rounded-xl p-6">
-                        <div className="text-purple-300 mb-2">Risk Tier</div>
+                        <div className="text-blue-300 mb-2">Risk Tier</div>
                         <div className="text-2xl font-bold text-white">
                           {report.insuranceReadiness.riskTier}
                         </div>
                       </div>
                       <div className="bg-white/5 rounded-xl p-6">
-                        <div className="text-purple-300 mb-2">
+                        <div className="text-blue-300 mb-2">
                           Cyber Insurance Eligibility
                         </div>
                         <div className="text-xl font-semibold text-white">

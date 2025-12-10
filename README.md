@@ -49,8 +49,8 @@ InfinitySoulAIS/
 
 ```bash
 # Clone the repository
-git clone https://github.com/aaj441/InfinitySoulAIS.git
-cd InfinitySoulAIS
+git clone https://github.com/aaj441/InfinitySoul.git
+cd InfinitySoul
 
 # Navigate to the AIS system
 cd InfinitySoul-AIS

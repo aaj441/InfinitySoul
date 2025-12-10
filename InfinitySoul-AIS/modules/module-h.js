@@ -2,9 +2,9 @@
 module.exports = async (auditData) => {
   console.log('Module H: Storing evidence in vault');
   
-  // Check if Supabase is configured (test values stored in constants)
-  const TEST_URL = 'https://test.supabase.co';
-  const TEST_KEY = 'test_key';
+  // Check if Supabase is configured (test values stored in environment variables)
+  const TEST_URL = process.env.TEST_SUPABASE_URL || 'https://test.supabase.co';
+  const TEST_KEY = process.env.TEST_SUPABASE_KEY || 'test_key';
   
   if (process.env.SUPABASE_URL && process.env.SUPABASE_KEY && 
       process.env.SUPABASE_URL !== TEST_URL && 
@@ -16,6 +16,9 @@ module.exports = async (auditData) => {
         process.env.SUPABASE_KEY
       );
       
+      // Table schema: audits(id UUID PRIMARY KEY, url TEXT, timestamp TIMESTAMPTZ,
+      // modules JSONB, insurance_score JSONB, created_at TIMESTAMPTZ)
+      // See InfinitySoul-AIS/docs/DEPLOYMENT.md for full schema documentation
       const { data, error } = await supabase
         .from('audits')
         .insert([{
