@@ -1,51 +1,35 @@
-# InfinitySoul Production Dockerfile
+# InfinitySoulAIS Dockerfile v1.2.0
+# Multi-stage build for backend service
+
 FROM node:20-alpine AS base
-
-# Install dependencies for Playwright and Chrome
-RUN apk add --no-cache \
-    chromium \
-    nss \
-    freetype \
-    harfbuzz \
-    ca-certificates \
-    ttf-freefont \
-    python3 \
-    make \
-    g++
-
-# Set Playwright to use installed Chromium
-ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
-ENV PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH=/usr/bin/chromium-browser
-
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-COPY prisma ./prisma/
-
-# Install dependencies
+# Install dependencies stage
 FROM base AS dependencies
-RUN npm ci --only=production && \
-    npm cache clean --force
+WORKDIR /app/InfinitySoul-AIS/backend
+COPY InfinitySoul-AIS/backend/package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
 # Build stage
 FROM base AS build
-COPY package*.json ./
+WORKDIR /app/InfinitySoul-AIS
+COPY InfinitySoul-AIS ./
+WORKDIR /app/InfinitySoul-AIS/backend
 RUN npm ci
-COPY . .
-RUN npm run build
 
 # Production stage
 FROM base AS production
+WORKDIR /app/InfinitySoul-AIS
 
 # Copy node_modules from dependencies stage
-COPY --from=dependencies /app/node_modules ./node_modules
-COPY --from=build /app/dist ./dist
-COPY --from=build /app/prisma ./prisma
-COPY package*.json ./
-
-# Generate Prisma Client
-RUN npx prisma generate
+COPY --from=dependencies /app/InfinitySoul-AIS/backend/node_modules ./backend/node_modules
+# Copy application files
+COPY InfinitySoul-AIS/backend ./backend/
+COPY InfinitySoul-AIS/api ./api/
+COPY InfinitySoul-AIS/modules ./modules/
+COPY InfinitySoul-AIS/scoring ./scoring/
+COPY InfinitySoul-AIS/vault ./vault/
+COPY InfinitySoul-AIS/package.json ./
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
@@ -56,10 +40,11 @@ RUN chown -R nodejs:nodejs /app
 
 USER nodejs
 
-EXPOSE 3000
+EXPOSE 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD node -e "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+    CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
-CMD ["npm", "start"]
+WORKDIR /app/InfinitySoul-AIS/backend
+CMD ["node", "index.js"]
