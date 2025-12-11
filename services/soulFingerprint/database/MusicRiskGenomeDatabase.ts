@@ -598,7 +598,7 @@ export const ALGORITHM_VERSIONS: AlgorithmVersion[] = [
   }
 ];
 
-export const CURRENT_ALGORITHM_VERSION = ALGORITHM_VERSIONS.find(v => v.isActive)!;
+export const CURRENT_ALGORITHM_VERSION = ALGORITHM_VERSIONS.find(v => v.isActive) || ALGORITHM_VERSIONS[ALGORITHM_VERSIONS.length - 1];
 
 // =============================================================================
 // EXPORTS

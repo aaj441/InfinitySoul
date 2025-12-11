@@ -171,7 +171,7 @@ import { CURRENT_ALGORITHM_VERSION } from './MusicRiskGenomeDatabase';
 export async function createMusicRiskGenomeSystem(config: {
   dbPath?: string;
   batchConfig?: Partial<BatchConfig>;
-}) {
+} = {}) {
   const db = createMusicRiskDatabase(config.dbPath);
   await db.initialize();
 

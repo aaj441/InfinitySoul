@@ -24,3 +24,24 @@ coverage/
 # Consolidation backup directories
 .consolidation_backup_*/
 consolidation.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+# Cyber scan outputs
+evidence/
+reports/
+leads/
+# Cyber audit results
+audit-results/
+*.audit.json
