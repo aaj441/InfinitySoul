@@ -27,6 +27,21 @@ InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** 
 - **Grounded in:** Public data only—PACER, RECAP, court records, open accessibility standards
 - **Value prop:** "We document the liability so you can fix it before you're liable."
 
+### Cyber Security Audit Tool
+
+**What it does:** Command-line security scanner that checks domains for common vulnerabilities including RDP exposure, email security (SPF/DMARC), and SSL certificate validity.
+
+- **Location:** `audit.py` (Python tool)
+- **Use case:** Quick security assessments for consultants and small businesses
+- **Output:** Risk score (0-100) with actionable remediation guidance
+- **Documentation:** See `AUDIT_TOOL_README.md` and `SALES_SCRIPT.md`
+
+**Quick start:**
+```bash
+pip install -r requirements.txt
+python audit.py --domain example.com
+```
+
 ---
 
 ### 2. Small Business Cyber Audit & Insurance
