@@ -323,6 +323,8 @@ Based on issues found:
 
 ## References
 
+The following files are located in the repository root directory:
+
 - [CODE_AUDIT_CHECKLIST.md](./CODE_AUDIT_CHECKLIST.md) - Full production standards
 - [VS_CODE_AI_PROMPTS.md](./VS_CODE_AI_PROMPTS.md) - AI-assisted code review prompts
 - [ETHICS_CHARTER.md](./ETHICS_CHARTER.md) - Ethics and governance framework

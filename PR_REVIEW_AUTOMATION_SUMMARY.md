@@ -120,15 +120,17 @@ InfinitySoul/
 
 ### Priority PRs (Use Full Template)
 - [ ] PR #19 - InfinitySoul-AIS structure
-- [ ] PR #25 - [Description needed]
-- [ ] PR #27 - [Description needed]
+- [ ] PR #25 - (Check PR for description)
+- [ ] PR #27 - (Check PR for description)
 
 ### Standard PRs (Use Quick Template)
 - [ ] PR #20 - Cyber audit repo
-- [ ] PR #22 - [Description needed]
-- [ ] PR #23 - [Description needed]
-- [ ] PR #24 - [Description needed]
-- [ ] PR #26 - [Description needed]
+- [ ] PR #22 - (Check PR for description)
+- [ ] PR #23 - (Check PR for description)
+- [ ] PR #24 - (Check PR for description)
+- [ ] PR #26 - (Check PR for description)
+
+**Note:** Open each PR on GitHub to see full title and description before reviewing.
 
 ---
 

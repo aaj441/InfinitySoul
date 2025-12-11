@@ -30,11 +30,14 @@ You have **7 remaining open PRs** that need comprehensive nitpicking reviews sim
 5. Post comprehensive review
 6. **Time:** ~10 minutes per PR × 7 = 70 minutes total
 
-### Option C: Automated Batch Review (🤖 Most Efficient)
+### Option C: Automated Batch Review (🤖 Future Enhancement)
 
-Use the provided script to generate reviews for all PRs:
+Automation scripts are provided as templates in this guide (see **Automation Script** section below).
+
+**Note:** The npm scripts below are examples for future implementation. You'll need to add them to package.json first.
 
 ```bash
+# After adding scripts to package.json:
 # Review all PRs at once
 npm run review:all-prs
 
@@ -42,7 +45,7 @@ npm run review:all-prs
 npm run review:prs -- --prs=19,25,27
 ```
 
-See **Automation Script** section below.
+See **Automation Script** section below for implementation details.
 
 ---
 
