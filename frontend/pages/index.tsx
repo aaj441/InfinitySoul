@@ -41,23 +41,15 @@ export default function Home() {
     setError('');
 
     try {
-<<<<<<< HEAD
+      // Nitpick #1: Fixed merge conflict - using consistent apiBase variable
+      // Nitpick #9: Fixed inconsistent async/await - removed .then() chain
       const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-=======
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
->>>>>>> d2e722cb977b12b766e2b17846c504e33fb25fb6
-      const response = await fetch(
-<<<<<<< HEAD
-        `${apiBase}/api/v1/scan`,
-=======
-        `${apiUrl}/api/v1/scan`,
->>>>>>> d2e722cb977b12b766e2b17846c504e33fb25fb6
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ url, email })
-        }
-      ).then(r => r.json());
+      const fetchResponse = await fetch(`${apiBase}/api/v1/scan`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, email }),
+      });
+      const response = await fetchResponse.json();
 
       if (response.status === 'failed') {
         setError(response.error || 'Scan failed');

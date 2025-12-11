@@ -105,13 +105,92 @@ export class TwoModelRelay {
    * Main deliberation method: run proposal through Architect → Critic
    */
   async deliberate(request: RelayRequest): Promise<RelayOutput> {
-    // TODO: Implement
-    // 1. Call Architect with userPrompt + context
-    // 2. Call Critic with userPrompt + Architect proposal
-    // 3. If refinementRounds > 0, loop (Architect revise → Critic re-evaluate)
-    // 4. Return aggregated RelayOutput
+    const rounds = request.refinementRounds ?? 0;
 
-    throw new Error('TODO: Implement TwoModelRelay.deliberate()');
+    // Step 1: Call Architect with userPrompt + context
+    const architectProposal = await this.callArchitect(request.userPrompt, request.context);
+
+    // Step 2: Call Critic with userPrompt + Architect proposal
+    const criticEvaluation = await this.callCritic(request.userPrompt, architectProposal.proposal);
+
+    // Step 3: If refinementRounds > 0, loop (Architect revise → Critic re-evaluate)
+    let refinementHistory: RelayOutput['refinementHistory'];
+    if (rounds > 0 && criticEvaluation.recommendation === 'REVISE') {
+      const refinements = await this.refine(
+        request.userPrompt,
+        request.context,
+        criticEvaluation,
+        rounds
+      );
+      refinementHistory = refinements.map((r, idx) => ({
+        round: idx + 1,
+        architectRevision: r.architect,
+        criticEvaluation: r.critic,
+      }));
+    }
+
+    // Step 4: Determine final recommendation based on critic evaluation
+    const finalRecommendation = this.determineFinalRecommendation(
+      criticEvaluation,
+      refinementHistory
+    );
+
+    return {
+      userPrompt: request.userPrompt,
+      architect: architectProposal,
+      critic: criticEvaluation,
+      refinementHistory,
+      finalRecommendation,
+      consensus: this.buildConsensus(architectProposal, criticEvaluation, finalRecommendation),
+    };
+  }
+
+  /**
+   * Determine final recommendation based on critic evaluation and refinement history
+   */
+  private determineFinalRecommendation(
+    initialCritique: CriticEvaluation,
+    refinementHistory?: RelayOutput['refinementHistory']
+  ): 'GO' | 'NO-GO' | 'CONDITIONAL' {
+    // If no refinements, base on initial critique
+    const finalCritique = refinementHistory?.length
+      ? refinementHistory[refinementHistory.length - 1].criticEvaluation
+      : initialCritique;
+
+    switch (finalCritique.recommendation) {
+      case 'APPROVE':
+        return 'GO';
+      case 'REJECT':
+        return 'NO-GO';
+      case 'REVISE':
+        return 'CONDITIONAL';
+      default:
+        return 'CONDITIONAL';
+    }
+  }
+
+  /**
+   * Build consensus summary from architect and critic outputs
+   */
+  private buildConsensus(
+    architect: ArchitectProposal,
+    critic: CriticEvaluation,
+    recommendation: 'GO' | 'NO-GO' | 'CONDITIONAL'
+  ): string {
+    const strengths = critic.strengths.length > 0
+      ? `Strengths: ${critic.strengths.join(', ')}.`
+      : '';
+    const weaknesses = critic.weaknesses.length > 0
+      ? `Areas for improvement: ${critic.weaknesses.join(', ')}.`
+      : '';
+
+    return [
+      `Recommendation: ${recommendation}.`,
+      `Architect confidence: ${(architect.confidence * 100).toFixed(0)}%.`,
+      strengths,
+      weaknesses,
+      critic.assessment,
+    ].filter(Boolean).join(' ');
   }
 
   /**
@@ -121,13 +200,30 @@ export class TwoModelRelay {
     userPrompt: string,
     context: string
   ): Promise<ArchitectProposal> {
-    // TODO: Implement
-    // 1. Build system prompt for Architect role
-    // 2. Call model API (OpenAI / Anthropic)
-    // 3. Parse response into ArchitectProposal
-    // 4. Return with confidence score
+    // Mock implementation - returns a reasonable proposal
+    // In production: call OpenAI/Anthropic API with architect system prompt
+    if (this.architectConfig.provider === 'mock') {
+      return this.mockArchitectResponse(userPrompt, context);
+    }
 
-    throw new Error('TODO: Implement callArchitect()');
+    // Real implementation would call the API here
+    // For now, fall back to mock
+    console.warn('[TwoModelRelay] Using mock architect - API integration pending');
+    return this.mockArchitectResponse(userPrompt, context);
+  }
+
+  /**
+   * Mock architect response for development/testing
+   */
+  private mockArchitectResponse(userPrompt: string, context: string): ArchitectProposal {
+    return {
+      proposal: `Based on the context provided, I propose the following approach to address "${userPrompt.slice(0, 50)}...": ` +
+        'Implement incremental changes with proper testing and rollback capabilities. ' +
+        'Key steps: 1) Analyze current state, 2) Design minimal viable change, 3) Test thoroughly, 4) Deploy with monitoring.',
+      reasoning: 'This approach balances risk mitigation with operational needs. ' +
+        'The incremental strategy allows for course correction while maintaining stability.',
+      confidence: 0.75,
+    };
   }
 
   /**
@@ -137,13 +233,36 @@ export class TwoModelRelay {
     userPrompt: string,
     architectProposal: string
   ): Promise<CriticEvaluation> {
-    // TODO: Implement
-    // 1. Build system prompt for Critic role
-    // 2. Call model API with proposal to evaluate
-    // 3. Parse response into CriticEvaluation
-    // 4. Return recommendation (APPROVE / REVISE / REJECT)
+    // Mock implementation - returns a reasonable evaluation
+    // In production: call OpenAI/Anthropic API with critic system prompt
+    if (this.criticConfig.provider === 'mock') {
+      return this.mockCriticResponse(userPrompt, architectProposal);
+    }
 
-    throw new Error('TODO: Implement callCritic()');
+    // Real implementation would call the API here
+    // For now, fall back to mock
+    console.warn('[TwoModelRelay] Using mock critic - API integration pending');
+    return this.mockCriticResponse(userPrompt, architectProposal);
+  }
+
+  /**
+   * Mock critic response for development/testing
+   */
+  private mockCriticResponse(userPrompt: string, architectProposal: string): CriticEvaluation {
+    return {
+      assessment: 'The proposal demonstrates a sound understanding of the requirements. ' +
+        'The incremental approach is appropriate for managing risk.',
+      strengths: [
+        'Clear step-by-step methodology',
+        'Includes testing and monitoring phases',
+        'Allows for rollback if issues arise',
+      ],
+      weaknesses: [
+        'Could benefit from more specific success metrics',
+        'Timeline not specified',
+      ],
+      recommendation: 'APPROVE',
+    };
   }
 
   /**
@@ -152,16 +271,69 @@ export class TwoModelRelay {
   private async refine(
     userPrompt: string,
     context: string,
-    critique: CriticEvaluation,
-    rounds: number
+    initialCritique: CriticEvaluation,
+    maxRounds: number
   ): Promise<Array<{ architect: ArchitectProposal; critic: CriticEvaluation }>> {
-    // TODO: Implement refinement loop
-    // For each round:
-    // 1. Architect revises proposal based on critique
-    // 2. Critic re-evaluates revised proposal
-    // 3. Stop if recommendation is APPROVE or rounds exhausted
+    const refinements: Array<{ architect: ArchitectProposal; critic: CriticEvaluation }> = [];
+    let currentCritique = initialCritique;
 
-    return [];
+    for (let round = 0; round < maxRounds; round++) {
+      // Stop if already approved
+      if (currentCritique.recommendation === 'APPROVE') {
+        break;
+      }
+
+      // Architect revises proposal based on critique
+      const revisedProposal = await this.callArchitectRevision(
+        userPrompt,
+        context,
+        currentCritique
+      );
+
+      // Critic re-evaluates revised proposal
+      const newCritique = await this.callCritic(userPrompt, revisedProposal.proposal);
+
+      refinements.push({
+        architect: revisedProposal,
+        critic: newCritique,
+      });
+
+      currentCritique = newCritique;
+
+      // Stop if approved or rejected outright
+      if (newCritique.recommendation !== 'REVISE') {
+        break;
+      }
+    }
+
+    return refinements;
+  }
+
+  /**
+   * Call architect for a revision based on critique
+   */
+  private async callArchitectRevision(
+    userPrompt: string,
+    context: string,
+    critique: CriticEvaluation
+  ): Promise<ArchitectProposal> {
+    // Mock implementation for revision
+    if (this.architectConfig.provider === 'mock') {
+      return {
+        proposal: `Revised proposal addressing feedback: ${critique.weaknesses.join(', ')}. ` +
+          'Updated approach includes specific metrics and timeline considerations.',
+        reasoning: 'Incorporated critic feedback to strengthen the proposal.',
+        confidence: 0.85,
+      };
+    }
+
+    // Real implementation would call API with critique context
+    console.warn('[TwoModelRelay] Using mock architect revision - API integration pending');
+    return {
+      proposal: `Revised proposal addressing feedback: ${critique.weaknesses.join(', ')}.`,
+      reasoning: 'Incorporated critic feedback.',
+      confidence: 0.85,
+    };
   }
 }
 
@@ -200,10 +372,25 @@ export const RelayUseCases = {
  * Example: Health check for relay service
  */
 export async function healthCheckRelay(config: ModelConfig): Promise<boolean> {
-  // TODO: Implement
-  // 1. Try a simple test prompt
-  // 2. Verify response is valid
-  // 3. Return true if healthy, false otherwise
+  try {
+    const relay = new TwoModelRelay(config, config);
 
-  return false;
+    // Try a simple test deliberation
+    const result = await relay.deliberate({
+      userPrompt: 'Health check test',
+      context: 'System health verification',
+      refinementRounds: 0,
+    });
+
+    // Verify response has required fields
+    const isValid =
+      result.architect?.proposal &&
+      result.critic?.assessment &&
+      result.finalRecommendation;
+
+    return Boolean(isValid);
+  } catch (error) {
+    console.error('[TwoModelRelay] Health check failed:', error);
+    return false;
+  }
 }

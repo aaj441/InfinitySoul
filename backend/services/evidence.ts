@@ -11,7 +11,7 @@
 
 import crypto from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 
 // Type definitions
@@ -97,12 +97,10 @@ export async function storeProofOnIPFS(data: ScanData, proof: string): Promise<s
 
   // Store locally for demo (real: would be on IPFS network)
   const vaultDir = path.join(process.cwd(), '.evidence-vault');
-  if (!fs.existsSync(vaultDir)) {
-    fs.mkdirSync(vaultDir, { recursive: true });
-  }
+  await fs.mkdir(vaultDir, { recursive: true });
 
   const filePath = path.join(vaultDir, `${ipfsHash}.json`);
-  fs.writeFileSync(filePath, ipfsContent, 'utf-8');
+  await fs.writeFile(filePath, ipfsContent, 'utf-8');
 
   return ipfsHash;
 }
@@ -184,7 +182,7 @@ export async function generateCertificate(scanData: ScanData): Promise<EvidenceC
   console.log(`[Certificate] Status: ${certificate.status}`);
 
   // Store certificate metadata
-  storeEvidenceMetadata(certificate);
+  await storeEvidenceMetadata(certificate);
 
   return certificate;
 }
@@ -196,11 +194,9 @@ export async function generateCertificate(scanData: ScanData): Promise<EvidenceC
 /**
  * Store certificate metadata for quick retrieval
  */
-function storeEvidenceMetadata(certificate: EvidenceCertificate): void {
+async function storeEvidenceMetadata(certificate: EvidenceCertificate): Promise<void> {
   const vaultDir = path.join(process.cwd(), '.evidence-vault');
-  if (!fs.existsSync(vaultDir)) {
-    fs.mkdirSync(vaultDir, { recursive: true });
-  }
+  await fs.mkdir(vaultDir, { recursive: true });
 
   const metadataPath = path.join(vaultDir, 'certificates.jsonl');
   const line = JSON.stringify({
@@ -210,77 +206,87 @@ function storeEvidenceMetadata(certificate: EvidenceCertificate): void {
     generatedAt: certificate.generatedAt,
   }) + '\n';
 
-  fs.appendFileSync(metadataPath, line, 'utf-8');
+  await fs.appendFile(metadataPath, line, 'utf-8');
 }
 
 /**
  * Retrieve certificate by ID
  */
-export function getCertificate(certificateId: string): EvidenceCertificate | null {
+export async function getCertificate(certificateId: string): Promise<EvidenceCertificate | null> {
   const vaultDir = path.join(process.cwd(), '.evidence-vault');
   const metadataPath = path.join(vaultDir, 'certificates.jsonl');
 
-  if (!fs.existsSync(metadataPath)) {
-    return null;
-  }
+  try {
+    const content = await fs.readFile(metadataPath, 'utf-8');
+    const lines = content.split('\n');
 
-  const lines = fs.readFileSync(metadataPath, 'utf-8').split('\n');
-
-  for (const line of lines) {
-    if (!line) continue;
-    const entry = JSON.parse(line);
-    if (entry.certificateId === certificateId) {
-      // In production, fetch from database
-      return {
-        certificateId: entry.certificateId,
-        scanId: entry.scanId,
-        url: entry.url,
-        scannedAt: entry.generatedAt,
-        proof: 'stored_in_ipfs',
-        ipfsHash: 'Qm...',
-        timestampProof: 'ots_proof',
-        status: 'verified',
-        legalNotice: 'See stored certificate',
-        generatedAt: entry.generatedAt,
-      };
+    for (const line of lines) {
+      if (!line) continue;
+      const entry = JSON.parse(line);
+      if (entry.certificateId === certificateId) {
+        // In production, fetch from database
+        return {
+          certificateId: entry.certificateId,
+          scanId: entry.scanId,
+          url: entry.url,
+          scannedAt: entry.generatedAt,
+          proof: 'stored_in_ipfs',
+          ipfsHash: 'Qm...',
+          timestampProof: 'ots_proof',
+          status: 'verified',
+          legalNotice: 'See stored certificate',
+          generatedAt: entry.generatedAt,
+        };
+      }
     }
-  }
 
-  return null;
+    return null;
+  } catch (error: unknown) {
+    // File doesn't exist or other read error
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return null;
+    }
+    throw error;
+  }
 }
 
 /**
  * List all certificates
  */
-export function listCertificates(): EvidenceCertificate[] {
+export async function listCertificates(): Promise<EvidenceCertificate[]> {
   const vaultDir = path.join(process.cwd(), '.evidence-vault');
   const metadataPath = path.join(vaultDir, 'certificates.jsonl');
 
-  if (!fs.existsSync(metadataPath)) {
-    return [];
+  try {
+    const content = await fs.readFile(metadataPath, 'utf-8');
+    const lines = content.split('\n');
+    const certificates: EvidenceCertificate[] = [];
+
+    for (const line of lines) {
+      if (!line) continue;
+      const entry = JSON.parse(line);
+      certificates.push({
+        certificateId: entry.certificateId,
+        scanId: entry.scanId,
+        url: entry.url,
+        scannedAt: entry.generatedAt,
+        proof: 'stored',
+        ipfsHash: 'Qm...',
+        timestampProof: 'ots',
+        status: 'verified',
+        legalNotice: 'Certificate verified',
+        generatedAt: entry.generatedAt,
+      });
+    }
+
+    return certificates;
+  } catch (error: unknown) {
+    // File doesn't exist
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      return [];
+    }
+    throw error;
   }
-
-  const lines = fs.readFileSync(metadataPath, 'utf-8').split('\n');
-  const certificates: EvidenceCertificate[] = [];
-
-  for (const line of lines) {
-    if (!line) continue;
-    const entry = JSON.parse(line);
-    certificates.push({
-      certificateId: entry.certificateId,
-      scanId: entry.scanId,
-      url: entry.url,
-      scannedAt: entry.generatedAt,
-      proof: 'stored',
-      ipfsHash: 'Qm...',
-      timestampProof: 'ots',
-      status: 'verified',
-      legalNotice: 'Certificate verified',
-      generatedAt: entry.generatedAt,
-    });
-  }
-
-  return certificates;
 }
 
 // ============================================================================

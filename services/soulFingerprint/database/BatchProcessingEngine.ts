@@ -577,13 +577,19 @@ export class BatchProcessingEngine {
     }>,
     artistProfiles: ArtistProfile[]
   ): Promise<void> {
+    // Guard: ensure progress is initialized before batch processing
+    if (!this.progress) {
+      throw new Error('Progress not initialized before batch processing');
+    }
+
     const genomes: SongRiskGenome[] = [];
+    const progress = this.progress; // Capture for use in loop
 
     for (const song of batch) {
       if (this.shouldStop) break;
 
       try {
-        this.progress!.currentItem = {
+        progress.currentItem = {
           artist: song.artist,
           title: song.title,
           album: song.album
@@ -591,10 +597,10 @@ export class BatchProcessingEngine {
 
         const genome = await this.processSong(song, artistProfiles);
         genomes.push(genome);
-        this.progress!.processedItems++;
+        progress.processedItems++;
       } catch (error: any) {
-        this.progress!.failedItems++;
-        this.progress!.recentErrors.push({
+        progress.failedItems++;
+        progress.recentErrors.push({
           item: `${song.artist} - ${song.title}`,
           error: error.message,
           timestamp: new Date()
@@ -606,8 +612,8 @@ export class BatchProcessingEngine {
       }
 
       // Report progress
-      if (this.progress!.processedItems % this.config.reportProgressEvery === 0) {
-        this.updateProgress(this.progress!.processedItems, this.progress!.totalItems);
+      if (progress.processedItems % this.config.reportProgressEvery === 0) {
+        this.updateProgress(progress.processedItems, progress.totalItems);
         this.emitProgress();
       }
     }

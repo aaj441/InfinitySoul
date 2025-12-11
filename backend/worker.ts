@@ -4,16 +4,54 @@
  * Runs independently from API server
  */
 
-import { Worker, QueueEvents } from 'bullmq';
+import { Worker, Job } from 'bullmq';
 import IORedis from 'ioredis';
 import { chromium } from 'playwright';
 import { PrismaClient } from '@prisma/client';
-import { v4 as uuidv4 } from 'uuid';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
 const prisma = new PrismaClient();
+
+// Nitpick #3: Added proper type definitions instead of 'any'
+interface ScanJobData {
+  url: string;
+  email?: string;
+}
+
+interface AxeViolation {
+  id: string;
+  impact: 'critical' | 'serious' | 'moderate' | 'minor';
+  description: string;
+  help: string;
+  helpUrl: string;
+  tags: string[];
+  nodes: unknown[];
+}
+
+interface AxeScanResults {
+  violations: AxeViolation[];
+  passes: unknown[];
+  incomplete: unknown[];
+  inapplicable: unknown[];
+}
+
+interface ViolationCounts {
+  critical: number;
+  serious: number;
+  moderate: number;
+  minor: number;
+  total: number;
+}
+
+interface ScanJobResult {
+  success: boolean;
+  violations: ViolationCounts;
+  riskScore: number;
+  estimatedLawsuitCost: number;
+  completedAt: string;
+}
 
 // Redis connection
 const redisConnection = new IORedis({
@@ -113,7 +151,8 @@ const worker = new Worker('scan_jobs', processScanJob, {
   },
 });
 
-async function processScanJob(job: any) {
+// Nitpick #3: Using proper Job type instead of 'any'
+async function processScanJob(job: Job<ScanJobData>): Promise<ScanJobResult> {
   const { url, email } = job.data;
 
   try {
@@ -121,20 +160,23 @@ async function processScanJob(job: any) {
     console.log(`   URL: ${url}`);
     console.log(`   Email: ${email || 'not provided'}`);
 
-    job.updateProgress(10);
+    await job.updateProgress(10);
 
     // Perform the actual scan
-    const scanResults: any = await performScan(url);
+    const scanResults = await performScan(url) as AxeScanResults;
 
-    job.updateProgress(70);
+    await job.updateProgress(70);
 
-    // Parse violation counts
-    const violations = {
-      critical: scanResults.violations.filter((v: any) => v.impact === 'critical').length,
-      serious: scanResults.violations.filter((v: any) => v.impact === 'serious').length,
-      moderate: scanResults.violations.filter((v: any) => v.impact === 'moderate').length,
-      minor: scanResults.violations.filter((v: any) => v.impact === 'minor').length,
-      total: scanResults.violations.length,
+    // Nitpick #12: Added null check for violations array
+    const violationsArray = scanResults?.violations ?? [];
+
+    // Parse violation counts with proper typing
+    const violations: ViolationCounts = {
+      critical: violationsArray.filter((v) => v.impact === 'critical').length,
+      serious: violationsArray.filter((v) => v.impact === 'serious').length,
+      moderate: violationsArray.filter((v) => v.impact === 'moderate').length,
+      minor: violationsArray.filter((v) => v.impact === 'minor').length,
+      total: violationsArray.length,
     };
 
     // Calculate risk metrics
@@ -162,7 +204,7 @@ async function processScanJob(job: any) {
           riskScore,
           estimatedLawsuitCost: estimatedCost,
           email: email || undefined,
-          violationsData: scanResults.violations,
+          violationsData: violationsArray,
         },
       });
 

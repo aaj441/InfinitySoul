@@ -189,7 +189,9 @@ export class CrawlNode {
 
     } finally {
       if (page) {
-        await page.close().catch(() => {});
+        await page.close().catch((closeErr) => {
+          logger.warn(`Failed to close page for ${config.url}:`, closeErr);
+        });
       }
     }
   }

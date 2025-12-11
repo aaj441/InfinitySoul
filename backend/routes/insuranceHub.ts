@@ -24,6 +24,8 @@ import type {
   InsuranceLine,
   IndustryVertical,
 } from '../services/insuranceComplianceHub/types';
+// Nitpick #8: Import safe parsing utilities
+import { safeParseInt } from '../utils/errors';
 
 const router = Router();
 
@@ -266,17 +268,34 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
   try {
     const { industry, employeeCount, annualRevenue } = req.body;
 
-    if (!industry || !employeeCount || !annualRevenue) {
+    if (!industry) {
       return res.status(400).json({
         success: false,
-        error: 'industry, employeeCount, and annualRevenue are required',
+        error: 'industry is required',
+      });
+    }
+
+    // Nitpick #8: Use safeParseInt with validation instead of raw parseInt
+    const employeeResult = safeParseInt(employeeCount, { min: 1, max: 1000000 });
+    if (!employeeResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid employeeCount: ${employeeResult.error.message}`,
+      });
+    }
+
+    const revenueResult = safeParseInt(annualRevenue, { min: 0 });
+    if (!revenueResult.success) {
+      return res.status(400).json({
+        success: false,
+        error: `Invalid annualRevenue: ${revenueResult.error.message}`,
       });
     }
 
     const stack = insuranceHub.calculateCommissionStack(
       industry as IndustryVertical,
-      parseInt(employeeCount),
-      parseInt(annualRevenue)
+      employeeResult.value,
+      revenueResult.value
     );
 
     const totalPremium = stack.reduce((sum, s) => sum + s.premium, 0);

@@ -24,6 +24,32 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ============ CONSTANTS ============
+// Nitpick #6: Extracted hardcoded URLs to configurable constants
+const AXE_CORE_CDN_URL = process.env.AXE_CORE_CDN_URL ||
+  'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.7.2/axe.min.js';
+
+// Nitpick #7: Extracted magic numbers to named constants
+const RISK_CALCULATION = {
+  /** Multiplier for total violations in risk score calculation */
+  VIOLATION_MULTIPLIER: 1.5,
+  /** Additional points per critical violation */
+  CRITICAL_BOOST_MULTIPLIER: 5,
+  /** Maximum possible risk score */
+  MAX_RISK_SCORE: 100,
+  /** Cost estimate per violation (USD) */
+  COST_PER_VIOLATION: 2500,
+  /** Base cost for lawsuit settlement (USD) */
+  BASE_SETTLEMENT_COST: 50000,
+} as const;
+
+const SCAN_TIMEOUTS = {
+  /** Page navigation timeout in ms */
+  PAGE_LOAD_MS: 30000,
+  /** Axe-core script load timeout in ms */
+  AXE_LOAD_MS: 10000,
+} as const;
+
 // ============ INTERFACES ============
 
 interface ScanRequest {
@@ -109,19 +135,20 @@ async function scanWithAxe(url: string): Promise<any> {
     const page = await browser.newPage();
 
     // Inject axe-core
-    await page.goto(url, { waitUntil: 'networkidle', timeout: 30000 });
+    await page.goto(url, { waitUntil: 'networkidle', timeout: SCAN_TIMEOUTS.PAGE_LOAD_MS });
 
-    await page.evaluate(() => {
+    // Pass the CDN URL into the page context
+    await page.evaluate((axeUrl: string) => {
       const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/axe-core/4.7.2/axe.min.js';
+      script.src = axeUrl;
       script.onload = function() {
         (window as any).axeReady = true;
       };
       document.head.appendChild(script);
-    });
+    }, AXE_CORE_CDN_URL);
 
     // Wait for axe to load
-    await page.waitForFunction(() => (window as any).axeReady, { timeout: 10000 });
+    await page.waitForFunction(() => (window as any).axeReady, { timeout: SCAN_TIMEOUTS.AXE_LOAD_MS });
 
     // Run axe scan
     const results = await page.evaluate(() => {
@@ -146,16 +173,18 @@ async function scanWithAxe(url: string): Promise<any> {
 
 function calculateRiskScore(violationCount: number, criticalCount: number): number {
   // Higher violations = higher risk
-  const baseScore = Math.min(violationCount * 1.5, 100);
-  const criticalBoost = criticalCount * 5;
-  return Math.min(baseScore + criticalBoost, 100);
+  const baseScore = Math.min(
+    violationCount * RISK_CALCULATION.VIOLATION_MULTIPLIER,
+    RISK_CALCULATION.MAX_RISK_SCORE
+  );
+  const criticalBoost = criticalCount * RISK_CALCULATION.CRITICAL_BOOST_MULTIPLIER;
+  return Math.min(baseScore + criticalBoost, RISK_CALCULATION.MAX_RISK_SCORE);
 }
 
 function estimateLawsuitCost(violationCount: number, litigationData: LitigationData): number {
   // Base settlement + per-violation cost
   const baseSettlement = litigationData.avgSettlement;
-  const perViolationCost = 2500; // $2,500 per violation
-  return baseSettlement + (violationCount * perViolationCost);
+  return baseSettlement + (violationCount * RISK_CALCULATION.COST_PER_VIOLATION);
 }
 
 function getIndustryFromDomain(url: string): string {
