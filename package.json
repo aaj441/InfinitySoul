@@ -1,14 +1,22 @@
 {
   "name": "infinitysoul-ais",
   "version": "1.2.0",
-  "description": "InfinitySoulAIS - AI Insurance System v1.2.0: Comprehensive risk assessment and insurance readiness platform for AI systems",
+  "description": "InfinitySoulAIS - AI Insurance System v1.2.0: Comprehensive risk assessment and insurance readiness platform for AI systems with Jacobs District Architecture",
   "private": true,
   "scripts": {
-    "dev": "cd InfinitySoul-AIS && npm run dev",
+    "dev": "cd InfinitySoul-AIS && concurrently \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
     "install:all": "cd InfinitySoul-AIS && npm install && cd frontend && npm install && cd ../backend && npm install && cd ../..",
-    "build": "cd InfinitySoul-AIS && npm run build",
+    "build": "cd InfinitySoul-AIS/frontend && npm run build",
+    "build:backend": "cd InfinitySoul-AIS/backend && npm run build",
     "start": "cd InfinitySoul-AIS && npm start",
-    "test": "cd InfinitySoul-AIS && npm test"
+    "start:frontend": "cd InfinitySoul-AIS/frontend && npm start",
+    "start:backend": "cd InfinitySoul-AIS/backend && npm start",
+    "test": "cd InfinitySoul-AIS && npm test",
+    "test:frontend": "cd InfinitySoul-AIS/frontend && npm test",
+    "test:backend": "cd InfinitySoul-AIS/backend && npm test",
+    "lint": "cd InfinitySoul-AIS/frontend && npm run lint"
   },
   "keywords": [
     "ai-insurance",
@@ -17,16 +25,28 @@
     "audit",
     "insurance-readiness",
     "ai-safety",
-    "nist-ai-rmf"
+    "nist-ai-rmf",
+    "wcag",
+    "security-audit",
+    "jacobs-architecture",
+    "multi-agent-system"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/aaj441/InfinitySoulAIS"
+    "url": "https://github.com/aaj441/InfinitySoul"
   },
-  "author": "InfinitySoulAIS",
+  "author": "InfinitySoulAIS <https://github.com/aaj441>",
   "license": "Apache-2.0",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "devDependencies": {},
+  "homepage": "https://github.com/aaj441/InfinitySoul#readme",
+  "bugs": {
+    "url": "https://github.com/aaj441/InfinitySoul/issues"
   }
 }

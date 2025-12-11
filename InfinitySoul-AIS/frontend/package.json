@@ -1,19 +1,38 @@
 {
-  "name": "frontend",
-  "version": "0.1.0",
+  "name": "infinitysoul-ais-frontend",
+  "version": "1.2.0",
+  "description": "Frontend UI for Infinity Soul AIS - AI Insurance System risk assessment platform",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "next lint",
+    "type-check": "tsc --noEmit"
+  },
+  "keywords": [
+    "ai-insurance",
+    "risk-assessment",
+    "nextjs",
+    "react",
+    "typescript"
+  ],
+  "author": "InfinitySoulAIS",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aaj441/InfinitySoul"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
     "next": "16.0.8",
     "react": "19.2.1",
     "react-dom": "19.2.1",
     "@supabase/supabase-js": "^2.39.0",
-    "axios": "^1.6.7"
+    "axios": "^1.6.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
