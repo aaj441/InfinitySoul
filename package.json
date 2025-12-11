@@ -24,9 +24,17 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "test:consolidation": "jest tests/consolidation-script.test.ts",
-    "test:prisma": "jest tests/prisma-models.test.ts"
+    "test:prisma": "jest tests/prisma-models.test.ts",
+    "agents": "npx ts-node bin/agents.ts",
+    "agents:regulator-scan": "npm run agents regulator-scan",
+    "agents:campus-risk": "npm run agents campus-risk",
+    "agents:music-coach": "npm run agents music-coach",
+    "agents:collective-risk": "npm run agents collective-risk",
+    "agents:insurer-report": "npm run agents insurer-report",
+    "agents:regulator-brief": "npm run agents regulator-brief"
   },
   "dependencies": {
+    "commander": "^11.1.0",
     "express": "^4.18.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
