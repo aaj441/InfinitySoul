@@ -1,2 +1,14 @@
 # Python dependencies for audit.py
 dnspython>=2.4.0
+# Python dependencies for InfinitySoul
+# Cyber Audit Module
+
+# DNS resolution for email security checks
+dnspython==2.4.2
+
+# Optional: PDF report generation
+# reportlab==4.0.7
+
+# Optional: Additional security scanning
+# python-nmap==0.7.1
+# requests==2.31.0

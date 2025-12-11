@@ -4,14 +4,16 @@
 
 ## What InfinitySoul Is
 
-InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges three worlds:
+InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges four worlds:
 
 1. **Accessibility & Compliance** (WCAG 2.2 scanning, litigation intelligence, Infinity8 scoring)
-2. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
-3. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
+2. **Cyber Security Auditing** (Small business cyber risk assessment and insurance enablement)
+3. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
+4. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
 
 **Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
-**Secondary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
+**Secondary use case:** Small business cyber insurance (audit → fix → insure pathway).
+**Tertiary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
 
@@ -39,6 +41,20 @@ InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** 
 pip install -r requirements.txt
 python audit.py --domain example.com
 ```
+
+---
+
+### 2. Small Business Cyber Audit & Insurance
+
+**What it does:** 60-second cyber security scans for small businesses checking RDP exposure, email security (SPF/DMARC), SSL certificates, exposed database ports, and other vulnerabilities.
+
+- **Location:** `automation/cyber_audit.py`, `backend/services/cyberAudit.ts`, `backend/routes/cyberAudit.ts`
+- **Output:** Risk score (0-100), severity-rated findings, actionable recommendations, insurance eligibility assessment
+- **Revenue model:** Free scans for lead generation → $500-2K remediation services → $500-1.5K insurance commissions → $100-300/mo ongoing monitoring
+- **Target market:** Small businesses (5-50 employees), e-commerce, healthcare practices, financial advisors, law firms
+- **Value prop:** "Small businesses can't afford $10K pentests. We give them a risk score in 60 seconds."
+- **Go-to-market:** Hackerspace community validation → local business networking → Chamber of Commerce partnerships
+- **Documentation:** See `CYBER_AUDIT_README.md` for technical details and `SALES_SCRIPT.md` for sales playbooks
 
 ---
 

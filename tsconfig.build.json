@@ -8,8 +8,10 @@
   "include": [
     "backend/server.ts",
     "backend/routes/**/*",
+    "backend/cyber/**/*",
     "scripts/worker-scanner.ts",
     "scripts/worker-intel.ts",
+    "scripts/scan-domain.ts",
     "types/**/*",
     "config/**/*"
   ],

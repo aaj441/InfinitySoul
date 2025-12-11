@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "WCAG Auditor",
+  "version": "1.0.0",
+  "description": "Instant WCAG accessibility auditing for any website",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "WCAG Auditor"
+  },
+  "icons": {
+    "16": "images/icon-16.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

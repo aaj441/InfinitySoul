@@ -38,3 +38,10 @@ ENV/
 pip-log.txt
 pip-delete-this-directory.txt
 .pytest_cache/
+# Cyber scan outputs
+evidence/
+reports/
+leads/
+# Cyber audit results
+audit-results/
+*.audit.json

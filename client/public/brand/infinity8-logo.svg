@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
+  <defs>
+    <linearGradient id="infinityGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#5A1A1A;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#8B3A3A;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#5A1A1A;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Infinity Symbol -->
+  <g transform="translate(400, 130)">
+    <!-- Outer infinity loop -->
+    <path d="M -120,0 C -120,-50 -80,-80 -40,-80 C 0,-80 20,-60 40,-40 C 60,-20 80,0 120,0 C 160,0 180,-20 180,-60 C 180,-100 140,-130 80,-130 C 40,-130 0,-110 -40,-80 C -80,-50 -120,-20 -180,0 C -180,40 -140,70 -100,70 C -60,70 -40,50 -20,30 C 0,10 20,0 40,0 C 80,0 100,20 100,60 C 100,100 60,130 0,130 C -40,130 -80,110 -120,80 C -120,40 -120,20 -120,0 Z" 
+          fill="none" 
+          stroke="url(#infinityGradient)" 
+          stroke-width="8" 
+          stroke-linecap="round"/>
+    
+    <!-- Inner infinity detail -->
+    <path d="M -100,0 C -100,-35 -70,-60 -30,-60 C 10,-60 25,-45 45,-25 C 65,-5 85,0 110,0 C 135,0 150,-15 150,-45 C 150,-75 120,-100 70,-100 C 35,-100 0,-85 -35,-60 C -70,-35 -100,-10 -150,0 C -150,30 -120,50 -85,50 C -50,50 -35,35 -15,15 C 5,0 20,0 45,0 C 70,0 85,15 85,45 C 85,75 55,100 5,100 C -30,100 -65,85 -100,60 C -100,30 -100,15 -100,0 Z" 
+          fill="none" 
+          stroke="#2A0A0A" 
+          stroke-width="4" 
+          stroke-linecap="round"
+          opacity="0.5"/>
+  </g>
+  
+  <!-- INFINITY 8 Text -->
+  <text x="400" y="280" font-family="'Georgia', serif" font-size="72" font-weight="bold" text-anchor="middle" fill="#2A0A0A" letter-spacing="8">
+    INFINITY 8
+  </text>
+  
+  <!-- CONSULTING SERVICES, LLC Text -->
+  <text x="400" y="320" font-family="'Georgia', serif" font-size="28" text-anchor="middle" fill="#4A4A4A" letter-spacing="12">
+    CONSULTING SERVICES, LLC
+  </text>
+</svg>
