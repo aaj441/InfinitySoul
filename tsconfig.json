@@ -1,24 +1,66 @@
 {
-  "include": ["client/src/**/*", "shared/**/*", "server/**/*"],
-  "exclude": ["node_modules", "build", "dist", "**/*.test.ts"],
   "compilerOptions": {
-    "incremental": true,
-    "tsBuildInfoFile": "./node_modules/typescript/tsbuildinfo",
-    "noEmit": true,
-    "module": "ESNext",
-    "strict": true,
-    "lib": ["esnext", "dom", "dom.iterable"],
+    /* Language and Environment */
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM"],
     "jsx": "preserve",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "allowImportingTsExtensions": true,
-    "moduleResolution": "bundler",
-    "downlevelIteration": true,
-    "baseUrl": ".",
-    "types": ["node", "vite/client"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["node"],
+
+    /* Modules */
+    "module": "commonjs",
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["./client/src/*"],
-      "@shared/*": ["./shared/*"]
-    }
-  }
+      "@/*": ["./*"]
+    },
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    /* Emit */
+    "outDir": "./dist",
+    "removeComments": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+
+    /* Completeness */
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "backend/**/*",
+    "api/**/*",
+    "services/**/*",
+    "types/**/*",
+    "utils/**/*",
+    "config/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "frontend",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ]
 }
