@@ -49,10 +49,14 @@ describe("Cyber Scan Pipeline Integration", () => {
     expect(evidencePath).toContain(evidenceDir);
     expect(evidencePath).toMatch(/\.json$/);
 
-    // Verify evidence file exists and contains valid JSON
+    // Verify evidence file exists and contains valid JSON with schema
     const evidenceContent = await fs.readFile(evidencePath, "utf-8");
     const evidenceJson = JSON.parse(evidenceContent);
-    expect(evidenceJson.domain).toBe(testDomain);
+    expect(evidenceJson.schemaVersion).toBe("1.0.0");
+    expect(evidenceJson.data).toBeDefined();
+    expect(evidenceJson.data.domain).toBe(testDomain);
+    expect(evidenceJson.metadata).toBeDefined();
+    expect(evidenceJson.metadata.generator).toContain("InfinitySoul");
 
     // Step 5: Files - Write report
     const reportPath = await writeReport(analysis, markdown);
@@ -123,9 +127,14 @@ describe("Cyber Scan Pipeline Integration", () => {
     const evidenceContent = await fs.readFile(evidencePath, "utf-8");
     const reloadedEvidence = JSON.parse(evidenceContent);
 
-    // Verify all key data is preserved in evidence
-    expect(reloadedEvidence.domain).toBe(scout.domain);
-    expect(reloadedEvidence.httpReachable).toBe(scout.httpReachable);
-    expect(reloadedEvidence.httpsReachable).toBe(scout.httpsReachable);
+    // Verify schema structure
+    expect(reloadedEvidence.schemaVersion).toBe("1.0.0");
+    expect(reloadedEvidence.data).toBeDefined();
+    expect(reloadedEvidence.metadata).toBeDefined();
+
+    // Verify all key data is preserved in evidence.data
+    expect(reloadedEvidence.data.domain).toBe(scout.domain);
+    expect(reloadedEvidence.data.httpReachable).toBe(scout.httpReachable);
+    expect(reloadedEvidence.data.httpsReachable).toBe(scout.httpsReachable);
   }, 60000);
 });

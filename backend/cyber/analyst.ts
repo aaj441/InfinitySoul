@@ -10,6 +10,7 @@
 
 import { ScoutResult, CyberRiskAnalysis, RiskIssue, Severity, RiskCategory } from "./types";
 import { v4 as uuidv4 } from "uuid";
+import { CyberScanConfig } from "../../config/cyber";
 
 /**
  * Generate risk issues from scout findings
@@ -132,10 +133,11 @@ function generateRiskIssues(result: ScoutResult): RiskIssue[] {
 
 /**
  * Compute overall severity from issue list
+ * Uses configurable threshold for medium issue escalation
  * 
  * Logic:
  * - Any high severity issue → overall high
- * - 2+ medium severity issues → overall high
+ * - N+ medium severity issues → overall high (N from config)
  * - 1 medium severity issue → overall medium
  * - Only low severity issues → overall low
  * - No issues → overall low
@@ -152,11 +154,11 @@ function computeOverallSeverity(issues: RiskIssue[]): Severity {
     return "high";
   }
   
-  if (mediumCount >= 2) {
+  if (mediumCount >= CyberScanConfig.scoring.mediumIssuesForHighSeverity) {
     return "high";
   }
   
-  if (mediumCount === 1) {
+  if (mediumCount >= 1) {
     return "medium";
   }
   

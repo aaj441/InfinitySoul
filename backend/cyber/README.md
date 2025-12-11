@@ -12,12 +12,23 @@ The cyber scan pipeline provides free security assessments to small business own
 
 ```
 backend/cyber/
-├── types.ts      # TypeScript interfaces and types
-├── scout.ts      # Technical reconnaissance (DNS, HTTP/HTTPS, ports)
-├── analyst.ts    # Risk classification and severity scoring
-├── scribe.ts     # Human-readable report generation
-├── broker.ts     # Lead logging
-└── files.ts      # Evidence and report file management
+├── types.ts              # TypeScript interfaces and types
+├── scout.ts              # Technical reconnaissance (DNS, HTTP/HTTPS, ports)
+├── analyst.ts            # Risk classification and severity scoring
+├── scribe.ts             # Human-readable report generation
+├── broker.ts             # Lead logging with explicit error handling
+├── files.ts              # Evidence and report file management with versioning
+├── errors.ts             # Custom error types (NEW)
+├── cache.ts              # In-memory LRU cache for DNS/cert results (NEW)
+└── evidence-schema.json  # JSON Schema for evidence output (NEW)
+```
+
+## Configuration
+
+```
+config/
+├── cyber.ts              # Configuration constants (timeouts, thresholds, etc.)
+└── secrets.example.ts    # Example secrets configuration (API keys, webhooks)
 ```
 
 ## Usage
@@ -51,17 +62,45 @@ await logLead(analysis);
 
 Each module has a single, clear responsibility:
 
-- **Scout**: Data collection only (no analysis, no file I/O)
+- **Scout**: Data collection only (with caching and parallelization)
 - **Analyst**: Analysis only (no network calls, no file I/O)
 - **Scribe**: Formatting only (no analysis, no file I/O)
-- **Broker**: Persistence only (no analysis, no formatting)
-- **Files**: I/O only (no analysis, no formatting)
+- **Broker**: Persistence only (with explicit error states)
+- **Files**: I/O only (with schema versioning)
+- **Cache**: Caching layer for performance optimization
+- **Errors**: Custom error types for explicit error handling
 
 This separation enables:
 - Easy unit testing with mocked inputs
 - Clear debugging path
 - Safe parallel development
 - Independent scaling
+- Explicit error handling and recovery
+
+## Production Hardening (v2.0)
+
+### 1. Error Handling
+All modules now use custom error types:
+- `DnsResolutionError`, `HttpCheckError`, `PortScanError`
+- `FileWriteError`, `LeadLogError`, `CacheError`
+- Check `isRecoverableError()` for retry logic
+
+### 2. Caching Layer
+24-hour TTL cache for DNS and certificate data to avoid redundant lookups and rate limiting.
+
+### 3. Configuration Management
+All constants moved to `config/cyber.ts` (timeouts, thresholds, ports, etc.)
+
+### 4. Secrets Management
+API keys via `config/secrets.example.ts` and environment variables (optional for basic scanning).
+
+### 5. Schema Versioning
+Evidence JSON includes `schemaVersion` field for backward compatibility.
+
+### 6. Performance Optimization
+- Parallel scanning with `Promise.allSettled()`
+- DNS/cert caching (24hr TTL)
+- Error tolerance (failed checks don't block scan)
 
 ## Outputs
 

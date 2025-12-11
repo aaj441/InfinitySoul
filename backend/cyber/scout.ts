@@ -15,13 +15,25 @@ import { promisify } from "util";
 import * as http from "http";
 import * as https from "https";
 import * as net from "net";
+import { CyberScanConfig } from "../../config/cyber";
+import { scanCache, CacheKeys } from "./cache";
+import { DnsResolutionError, HttpCheckError, PortScanError } from "./errors";
 
 const resolve4 = promisify(dns.resolve4);
 
 /**
  * Check if a TCP port is open on the given host
  */
-async function checkPort(host: string, port: number, timeout = 2000): Promise<boolean> {
+async function checkPort(host: string, port: number, timeout?: number): Promise<boolean> {
+  const actualTimeout = timeout || CyberScanConfig.timeouts.portScan;
+  
+  // Check cache first
+  const cacheKey = CacheKeys.portScan(host, port);
+  const cached = scanCache.get<boolean>(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   return new Promise((resolve) => {
     const socket = new net.Socket();
     
@@ -30,13 +42,16 @@ async function checkPort(host: string, port: number, timeout = 2000): Promise<bo
       resolve(false);
     };
     
-    socket.setTimeout(timeout);
+    socket.setTimeout(actualTimeout);
     socket.once("error", onError);
     socket.once("timeout", onError);
     
     socket.connect(port, host, () => {
       socket.destroy();
-      resolve(true);
+      const isOpen = true;
+      // Cache the result
+      scanCache.set(cacheKey, isOpen, CyberScanConfig.cache.dnsTTL);
+      resolve(isOpen);
     });
   });
 }
@@ -48,9 +63,16 @@ async function checkHttpEndpoint(
   url: string,
   isHttps: boolean
 ): Promise<{ reachable: boolean; headers: Record<string, string | undefined> }> {
+  // Check cache first
+  const cacheKey = isHttps ? CacheKeys.httpsCheck(url) : CacheKeys.httpCheck(url);
+  const cached = scanCache.get<{ reachable: boolean; headers: Record<string, string | undefined> }>(cacheKey);
+  if (cached !== undefined) {
+    return cached;
+  }
+
   return new Promise((resolve) => {
     const client = isHttps ? https : http;
-    const timeout = 10000; // 10 second timeout
+    const timeout = isHttps ? CyberScanConfig.timeouts.https : CyberScanConfig.timeouts.http;
     
     const req = client.request(
       url,
@@ -58,7 +80,7 @@ async function checkHttpEndpoint(
         method: "HEAD",
         timeout,
         headers: {
-          "User-Agent": "InfinitySoul-CyberScout/1.0",
+          "User-Agent": CyberScanConfig.userAgent,
         },
       },
       (res) => {
@@ -70,17 +92,25 @@ async function checkHttpEndpoint(
           "x-xss-protection": res.headers["x-xss-protection"] as string | undefined,
         };
         
-        resolve({ reachable: true, headers: securityHeaders });
+        const result = { reachable: true, headers: securityHeaders };
+        // Cache the result
+        scanCache.set(cacheKey, result, CyberScanConfig.cache.certTTL);
+        resolve(result);
       }
     );
     
     req.on("error", () => {
-      resolve({ reachable: false, headers: {} });
+      const result = { reachable: false, headers: {} };
+      // Cache negative results too (with shorter TTL)
+      scanCache.set(cacheKey, result, CyberScanConfig.cache.dnsTTL / 24);
+      resolve(result);
     });
     
     req.on("timeout", () => {
       req.destroy();
-      resolve({ reachable: false, headers: {} });
+      const result = { reachable: false, headers: {} };
+      scanCache.set(cacheKey, result, CyberScanConfig.cache.dnsTTL / 24);
+      resolve(result);
     });
     
     req.end();
@@ -91,25 +121,32 @@ async function checkHttpEndpoint(
  * Scan common ports (shallow scan only)
  */
 async function scanCommonPorts(host: string): Promise<number[]> {
-  // Common ports checked:
-  // 21=FTP, 22=SSH, 23=Telnet, 25=SMTP, 80=HTTP, 443=HTTPS,
-  // 3389=RDP, 5432=PostgreSQL, 3306=MySQL, 27017=MongoDB
-  const commonPorts = [21, 22, 23, 25, 80, 443, 3389, 5432, 3306, 27017];
-  const openPorts: number[] = [];
+  const commonPorts = CyberScanConfig.portScanning.commonPorts;
   
-  // Check ports in parallel but with a reasonable limit
-  const results = await Promise.all(
+  // Use Promise.allSettled for parallel scanning with error tolerance
+  const results = await Promise.allSettled(
     commonPorts.map(async (port) => {
-      const isOpen = await checkPort(host, port);
-      return isOpen ? port : null;
+      try {
+        const isOpen = await checkPort(host, port);
+        return isOpen ? port : null;
+      } catch (error) {
+        // Log error but don't fail entire scan
+        console.warn(`Port check failed for ${host}:${port}`, error);
+        return null;
+      }
     })
   );
   
-  return results.filter((port): port is number => port !== null);
+  return results
+    .filter((result): result is PromiseFulfilledResult<number | null> => 
+      result.status === "fulfilled" && result.value !== null
+    )
+    .map((result) => result.value as number);
 }
 
 /**
  * Main Scout function: performs all technical checks
+ * Uses Promise.allSettled for parallel execution with error tolerance
  */
 export async function runScout(domain: string): Promise<ScoutResult> {
   const scannedAt = new Date();
@@ -123,69 +160,108 @@ export async function runScout(domain: string): Promise<ScoutResult> {
   // Clean domain (remove protocol if present)
   const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
   
-  // Step 1: DNS resolution
-  try {
-    const ips = await resolve4(cleanDomain);
-    if (ips && ips.length > 0) {
-      resolvedIp = ips[0];
-      rawFindings.push(`Resolved ${cleanDomain} to ${resolvedIp}`);
-    } else {
-      rawFindings.push(`No A records found for ${cleanDomain}`);
-    }
-  } catch (error) {
-    const err = error as Error;
-    rawFindings.push(`DNS resolution failed: ${err.message}`);
-  }
+  // Step 1: DNS resolution (with caching)
+  const cacheKey = CacheKeys.dns(cleanDomain);
+  const cachedIp = scanCache.get<string>(cacheKey);
   
-  // Step 2: HTTP reachability
-  try {
-    const httpResult = await checkHttpEndpoint(`http://${cleanDomain}`, false);
-    httpReachable = httpResult.reachable;
-    if (httpReachable) {
-      rawFindings.push(`HTTP (port 80) is reachable`);
-    } else {
-      rawFindings.push(`HTTP (port 80) is not reachable`);
-    }
-  } catch (error) {
-    const err = error as Error;
-    rawFindings.push(`HTTP check error: ${err.message}`);
-  }
-  
-  // Step 3: HTTPS reachability and security headers
-  try {
-    const httpsResult = await checkHttpEndpoint(`https://${cleanDomain}`, true);
-    httpsReachable = httpsResult.reachable;
-    if (httpsReachable) {
-      rawFindings.push(`HTTPS (port 443) is reachable`);
-      securityHeaders = httpsResult.headers;
-      
-      // Document which headers were found
-      Object.entries(httpsResult.headers).forEach(([key, value]) => {
-        if (value) {
-          rawFindings.push(`Security header found: ${key}`);
-        }
-      });
-    } else {
-      rawFindings.push(`HTTPS (port 443) is not reachable`);
-    }
-  } catch (error) {
-    const err = error as Error;
-    rawFindings.push(`HTTPS check error: ${err.message}`);
-  }
-  
-  // Step 4: Port scanning (only if we have an IP)
-  if (resolvedIp) {
+  if (cachedIp) {
+    resolvedIp = cachedIp;
+    rawFindings.push(`Resolved ${cleanDomain} to ${resolvedIp} (cached)`);
+  } else {
     try {
-      openPorts = await scanCommonPorts(resolvedIp);
-      if (openPorts.length > 0) {
-        rawFindings.push(`Open ports detected: ${openPorts.join(", ")}`);
+      const ips = await resolve4(cleanDomain);
+      if (ips && ips.length > 0) {
+        resolvedIp = ips[0];
+        // Cache DNS result
+        scanCache.set(cacheKey, resolvedIp, CyberScanConfig.cache.dnsTTL);
+        rawFindings.push(`Resolved ${cleanDomain} to ${resolvedIp}`);
       } else {
-        rawFindings.push(`No common ports found open (may be firewalled)`);
+        rawFindings.push(`No A records found for ${cleanDomain}`);
       }
     } catch (error) {
       const err = error as Error;
-      rawFindings.push(`Port scanning error: ${err.message}`);
+      rawFindings.push(`DNS resolution failed: ${err.message}`);
+      // Don't throw - continue with other checks
     }
+  }
+  
+  // Steps 2-4: Run HTTP, HTTPS, and port scanning in parallel
+  const [httpResult, httpsResult, portScanResult] = await Promise.allSettled([
+    // HTTP check
+    (async () => {
+      try {
+        const result = await checkHttpEndpoint(`http://${cleanDomain}`, false);
+        httpReachable = result.reachable;
+        if (httpReachable) {
+          rawFindings.push(`HTTP (port 80) is reachable`);
+        } else {
+          rawFindings.push(`HTTP (port 80) is not reachable`);
+        }
+        return result;
+      } catch (error) {
+        const err = error as Error;
+        rawFindings.push(`HTTP check error: ${err.message}`);
+        return { reachable: false, headers: {} };
+      }
+    })(),
+    
+    // HTTPS check
+    (async () => {
+      try {
+        const result = await checkHttpEndpoint(`https://${cleanDomain}`, true);
+        httpsReachable = result.reachable;
+        if (httpsReachable) {
+          rawFindings.push(`HTTPS (port 443) is reachable`);
+          securityHeaders = result.headers;
+          
+          // Document which headers were found
+          Object.entries(result.headers).forEach(([key, value]) => {
+            if (value) {
+              rawFindings.push(`Security header found: ${key}`);
+            }
+          });
+        } else {
+          rawFindings.push(`HTTPS (port 443) is not reachable`);
+        }
+        return result;
+      } catch (error) {
+        const err = error as Error;
+        rawFindings.push(`HTTPS check error: ${err.message}`);
+        return { reachable: false, headers: {} };
+      }
+    })(),
+    
+    // Port scanning (only if we have an IP)
+    (async () => {
+      if (!resolvedIp) {
+        rawFindings.push(`Skipping port scan: no IP resolved`);
+        return [];
+      }
+      
+      try {
+        const ports = await scanCommonPorts(resolvedIp);
+        if (ports.length > 0) {
+          rawFindings.push(`Open ports detected: ${ports.join(", ")}`);
+        } else {
+          rawFindings.push(`No common ports found open (may be firewalled)`);
+        }
+        return ports;
+      } catch (error) {
+        const err = error as Error;
+        rawFindings.push(`Port scanning error: ${err.message}`);
+        return [];
+      }
+    })(),
+  ]);
+  
+  // Extract results from Promise.allSettled
+  if (httpsResult.status === "fulfilled" && httpsResult.value) {
+    httpsReachable = httpsResult.value.reachable;
+    securityHeaders = httpsResult.value.headers;
+  }
+  
+  if (portScanResult.status === "fulfilled") {
+    openPorts = portScanResult.value;
   }
   
   return {
