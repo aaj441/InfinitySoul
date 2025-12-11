@@ -20,6 +20,7 @@
     "db:migrate": "prisma migrate deploy",
     "db:generate": "prisma generate",
     "type-check": "tsc --noEmit",
+    "scan:domain": "npx ts-node scripts/scan-domain.ts",
     "test": "jest --watch",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
