@@ -1,0 +1,32 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./",
+    "noEmit": false
+  },
+  "include": [
+    "backend/server.ts",
+    "backend/routes/**/*",
+    "backend/cyber/**/*",
+    "scripts/worker-scanner.ts",
+    "scripts/worker-intel.ts",
+    "scripts/scan-domain.ts",
+    "types/**/*",
+    "config/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "frontend",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "backend/intel/**/*",
+    "backend/legalos/**/*",
+    "backend/risk/**/*",
+    "backend/worker.ts",
+    "backend/services/queue.ts",
+    "utils/errorTracking.ts",
+    "utils/logger.ts"
+  ]
+}

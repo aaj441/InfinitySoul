@@ -1,416 +1,308 @@
-# InfinitySoulAIS - AI Insurance System v1.2.0
+# InfinitySoul: Ethical Behavioral Risk & Accessibility Intelligence Platform
 
-**Comprehensive AI Risk Assessment & Insurance Readiness Platform**
+**"We turn soundtracks into signals for support, not tools of control."**
 
----
+## What InfinitySoul Is
 
-## 🚀 What is InfinitySoulAIS?
+InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges four worlds:
 
-InfinitySoulAIS is a complete **AI Insurance System-in-a-Box** that provides comprehensive risk assessment and insurance readiness scoring for AI systems. Deploy in 5 minutes, get results in seconds.
+1. **Accessibility & Compliance** (WCAG 2.2 scanning, litigation intelligence, Infinity8 scoring)
+2. **Cyber Security Auditing** (Small business cyber risk assessment and insurance enablement)
+3. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
+4. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
 
-### Core Capabilities
-
-- **8 Comprehensive Audit Modules** (A-H) covering all aspects of AI system evaluation
-- **Real-time Insurance Readiness Scoring** with LOW/MEDIUM/HIGH risk tiers
-- **NAIC Compliant** mapping to regulatory requirements
-- **Evidence Vault** for immutable audit trails
-- **Partner API** for insurance company integrations
-- **Production-Ready** deployment guides for multiple platforms
+**Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
+**Secondary use case:** Small business cyber insurance (audit → fix → insure pathway).
+**Tertiary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
 
-## 📁 Project Structure
+## Core Systems
+
+### 1. Accessibility Compliance Platform
+
+**What it does:** WCAG 2.2 scanning, public litigation intelligence, compliance scoring (Infinity8: 0-1000), real-time news aggregation.
+
+- **Location:** `services/wcagScanner.ts`, `services/litigationDatabase.ts`, `services/infinity8Score.ts`
+- **Grounded in:** Public data only—PACER, RECAP, court records, open accessibility standards
+- **Value prop:** "We document the liability so you can fix it before you're liable."
+
+---
+
+### 2. Small Business Cyber Audit & Insurance
+
+**What it does:** 60-second cyber security scans for small businesses checking RDP exposure, email security (SPF/DMARC), SSL certificates, exposed database ports, and other vulnerabilities.
+
+- **Location:** `automation/cyber_audit.py`, `backend/services/cyberAudit.ts`, `backend/routes/cyberAudit.ts`
+- **Output:** Risk score (0-100), severity-rated findings, actionable recommendations, insurance eligibility assessment
+- **Revenue model:** Free scans for lead generation → $500-2K remediation services → $500-1.5K insurance commissions → $100-300/mo ongoing monitoring
+- **Target market:** Small businesses (5-50 employees), e-commerce, healthcare practices, financial advisors, law firms
+- **Value prop:** "Small businesses can't afford $10K pentests. We give them a risk score in 60 seconds."
+- **Go-to-market:** Hackerspace community validation → local business networking → Chamber of Commerce partnerships
+- **Documentation:** See `CYBER_AUDIT_README.md` for technical details and `SALES_SCRIPT.md` for sales playbooks
+
+---
+
+## Legal Posture & Ethical Framework
+
+### Van Buren Compliance (CFAA Safety)
+
+We only access publicly served content:
+- ✅ Public HTML/CSS/JavaScript
+- ✅ Respects `robots.txt` directives
+- ✅ Respects rate limiting
+- ✅ No WAF bypass, no login hijacking
+- ✅ No header spoofing
+
+**We don't commit federal crimes.** Van Buren v. United States established that "exceeding authorized access" to computer systems is a felony. We never do this.
+
+### Unauthorized Practice of Law (UPL) Safe
+
+All our outputs are **technical, not legal**:
+- ✅ Audits are evidence of WCAG violations
+- ✅ Risk assessments are statistical analysis
+- ✅ All legal conclusions are from public sources
+- ✅ Every claim is cited to public sources
+- ✅ We include "consult your attorney" on everything
+
+**We're expert witnesses, not attorneys.** We can testify about accessibility violations and remediation. We can't advise on settlement strategy or liability.
+
+### The "Carson Clause" (Self-Protection)
+
+Every service agreement must include:
 
 ```
-InfinitySoulAIS/
-├── InfinitySoul-AIS/       # Main AI Insurance System
-│   ├── frontend/           # Next.js 16 + TypeScript + Tailwind
-│   ├── backend/            # Express API on port 3001
-│   ├── modules/            # 8 audit modules (A-H)
-│   ├── scoring/            # Insurance readiness engine
-│   ├── vault/              # Evidence vault integration
-│   ├── api/                # Audit orchestrator
-│   └── docs/               # Comprehensive documentation (30,000+ words)
-├── .env.example            # Environment variables template
-├── package.json            # Root project configuration
-└── README.md               # This file
-```
+Client acknowledges that InfinitySoul:
+(a) Performs technical audits only
+(b) Does not provide legal advice
+(c) May publish anonymized audit results for industry benchmarking
+(d) Will cooperate with any court's request for technical testimony
 
----
-
-## ⚡ Quick Start (5 Minutes)
-
-### Prerequisites
-- Node.js 20+
-- npm 10+
-- (Optional) Supabase account for evidence vault
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/aaj441/InfinitySoul.git
-cd InfinitySoul
-
-# Navigate to the AIS system
-cd InfinitySoul-AIS
-
-# Install dependencies
-npm install
-cd frontend && npm install && cd ..
-cd backend && npm install && cd ..
-
-# Configure environment (optional for testing)
-cp .env.example .env
-# Edit .env with your API keys (system works with mock data)
-
-# Start the system
-npm run dev
-```
-
-### Access
-- **Frontend**: http://localhost:3000
-- **Backend API**: http://localhost:3001
-- **Health Check**: http://localhost:3001/health
-
----
-
-## 🎯 8 Audit Modules
-
-| Module | Purpose | Key Outputs |
-|--------|---------|-------------|
-| **A: AI System Scanner** | Analyzes AI capabilities & risks | Bias score, vulnerabilities, compliance checks |
-| **B: WCAG Accessibility** | Tests WCAG 2.2 compliance | Accessibility score, violations, recommendations |
-| **C: Data & Security** | Evaluates security posture | SSL, encryption, GDPR compliance |
-| **D: Stress Test** | Tests system resilience | Jailbreak resistance, uptime, response time |
-| **E: NIST AI RMF** | Maps to NIST framework | Govern, Map, Measure, Manage status |
-| **F: Insurance Readiness** | Detailed scoring breakdown | Technical, compliance, operational scores |
-| **G: Compliance Playbooks** | Generates action plans | Framework-specific compliance steps |
-| **H: Evidence Vault** | Stores results immutably | Vault ID, timestamp verification |
-
----
-
-## 📊 Insurance Readiness Scoring
-
-The system calculates a comprehensive insurance readiness score using a weighted algorithm:
-
-```javascript
-Score = (AI × 30%) + (Accessibility × 20%) + (Security × 25%) + 
-        (Stress × 15%) + (NIST × 10%)
-
-Risk Tiers:
-- LOW: Score ≥ 80 → Eligible for all insurance types
-- MEDIUM: Score 60-79 → Eligible for Cyber & E&O
-- HIGH: Score < 60 → Requires remediation
-
-Insurance Eligibility:
-- Cyber Insurance: Score ≥ 75
-- E&O Insurance: Score ≥ 70
-- General Liability: Score ≥ 65
+Client waives any claim of tortious interference or defamation
+arising from InfinitySoul's publication of public data.
 ```
 
 ---
 
-## 🎨 User Interface
+## Core Systems (Expanded)
 
-### Gradient Purple/Blue Theme
-- Professional gradient design (slate-900 → purple-900 → slate-900)
-- Tab-based navigation (Overview, Modules, Compliance, Scoring)
-- Real-time results with color-coded risk indicators
-- Progress bars and detailed breakdowns
-- Mobile-responsive design
+### 2. Music Behavior Risk Engine (Soul Fingerprint)
 
-### Screenshots
-See the [PR description](https://github.com/aaj441/InfinitySoul/pull/XXX) for full screenshots.
+**What it does:** Transforms long-run listening data (21 years from Last.fm/Spotify) into **volatility, resilience, social engagement, and impulsivity bands** for early-warning wellness systems.
 
----
+- **Science basis:** Big Five personality correlations with music preferences (Greenberg et al., Rentfrow & Gosling)
+- **Innovation:** Adapts Pandora's Music Genome Project (450 attributes) into actuarial risk factors
+- **Primary use:** Opt-in student wellness pilots at CSUDH—flags students at risk for burnout, isolation, mental health crises **before** grades or attendance show it
+- **Secondary use:** Tightly sandboxed actuarial research (no direct premium increases without ethics review, regulator approval, and demonstrated community benefit)
 
-## 📚 Documentation
+**Key outputs:**
+- Volatility index (emotional stability under stress)
+- Resilience index (recovery time after setbacks)
+- Social engagement stability (platform use vs. withdrawal/manic spikes)
+- Impulsivity band (skip rate, playlist variety, repeat intensity)
 
-Complete documentation suite (**30,000+ words**):
+**Location:** `services/soulFingerprint/`, `backend/intel/riskDistribution/musicBehaviorRiskEngine.ts`
 
-- **[README.md](InfinitySoul-AIS/README.md)** - Quick start and overview
-- **[ARCHITECTURE.md](InfinitySoul-AIS/docs/ARCHITECTURE.md)** - System design and data flow (4,500 words)
-- **[API_DOCUMENTATION.md](InfinitySoul-AIS/docs/API_DOCUMENTATION.md)** - Complete API reference (8,500 words)
-- **[DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md)** - Multi-platform deployment (8,800 words)
-- **[NAIC_COMPLIANCE.md](InfinitySoul-AIS/docs/NAIC_COMPLIANCE.md)** - Regulatory mapping (5,700 words)
-- **[MANIFESTO.md](InfinitySoul-AIS/docs/MANIFESTO.md)** - Project philosophy (6,000 words)
+**Case study:** "Get Real Get Right" (Sufjan Stevens) analysis demonstrates that music about mortality predicts **lower** behavioral risk—people who consciously engage with death tend to live more carefully.
+
+[See `docs/MUSIC_BEHAVIOR_RISK.md` for full methodology]
 
 ---
 
-## 🚀 Deployment
+### 3. Universal Risk Distribution Framework
 
-### Option 1: Vercel + Railway (Recommended)
+**What it does:** Unifies code risk + human risk + organizational culture risk into a single actuarial engine with tradeable, poolable risk units.
 
-**Frontend (Vercel)**:
-```bash
-cd InfinitySoul-AIS/frontend
-vercel --prod
+**Components:**
+
+- **Universal Risk Taxonomy** (`universalRiskTaxonomy.ts`) - "Periodic Table of Risk" organizing all risk types
+- **Risk Tokenization Engine** (`riskTokenizationEngine.ts`) - Converts risks into atomic `RiskToken` and `RiskPool` units
+- **Genetic Risk Pool** (`geneticRiskPool.ts`) - Evolutionary algorithm optimizing risk distribution across holders
+- **LLM Risk Oracle Network** (`llmRiskOracleNetwork.ts`) - Multi-LLM consensus + divergence detection for AI risk assessment
+- **Data-as-Collateral Engine** (`dataAsCollateral.ts`) - Treats behavioral datasets as mineable, valued collateral with intrinsic/utility/option value
+
+**Location:** `backend/intel/riskDistribution/`
+
+**Orchestrator:** `index.ts` wires all engines together into a unified `RiskDistributionOrchestrator`
+
+[See `docs/RISK_DISTRIBUTION_ARCHITECTURE.md` for deep technical dive]
+
+---
+
+### 4. Campus Early-Warning Service (CSUDH-First)
+
+**What it does:** Delivers **cohort-level risk bands and accessibility risk dashboards** for university departments (Counseling, Student Affairs, IT/Disability Services, Institutional Research).
+
+**Never:** Individual deterministic scores.  
+**Always:** Aggregate, anonymized bands with **support-first framing** ("mental health weather report," not "behavioral credit score").
+
+**Location:** `backend/services/campus/CampusEarlyWarningService.ts`
+
+**GTM:** Start with CSUDH Behavioral Science / Student Success / Counseling as pilot, validate ethical use, scale across CSU system.
+
+[See `docs/CSUDH_GTM_ONEPAGER.md` for full pilot strategy]
+
+---
+
+### 5. Ethical Use Policy (Hard-Coded)
+
+**All behavioral/music data usage is gated by:**
+
+- **Permitted uses:** Wellness triage, student success analytics, aggregate research, tightly sandboxed actuarial experiments with IRB-style review
+- **Prohibited uses (code throws):** Direct premium increases, disciplinary decisions, genre/platform as demographic proxy
+- **Required for any actuarial experiment:** Ethics approval ID, sandbox environment, documented net benefit to insured populations
+
+**Location:** `backend/intel/ethics/ethicalUsePolicy.ts` (enforced by orchestrator)
+
+[See `docs/ETHICAL_USE_POLICY.md` and `ETHICS_CHARTER.md`]
+
+---
+
+## Why This Matters: The "Mental Health Weather Report" Framing
+
+Traditional actuarial models price people **after** they fail.  
+InfinitySoul's behavioral engine surfaces **early-warning signals** 4-6 months before crises show up in grades, attendance, or claims.
+
+**Example use case at CSUDH:**
+- Counseling center opts student cohort into music + engagement pilot
+- Engine detects volatility spike + social withdrawal pattern in subset of students
+- System routes **support resources** (check-ins, mentoring, mental health referrals), not punitive actions
+- Outcome: earlier intervention, better retention, documented case study for scaling
+
+**The paradox:** Music about death/mortality often predicts **lower** risk because it signals conscious engagement with existential themes, which correlates with careful, intentional living.
+
+---
+
+## Architecture Overview
+
+```
+InfinitySoul/
+├── ETHICS_CHARTER.md                    # Information ethics + open-access principles
+├── EXECUTIVE_SUMMARY.md                 # InfinitySoul Nexus vision
+├── README.md                            # This file
+│
+├── docs/
+│   ├── MUSIC_BEHAVIOR_RISK.md           # Music genome methodology
+│   ├── CSUDH_GTM_ONEPAGER.md            # Campus pilot strategy
+│   ├── AI_INSURANCE_VISION.md           # Long-term actuarial roadmap
+│   ├── ETHICAL_USE_POLICY.md            # Behavioral data red-lines
+│   └── RISK_DISTRIBUTION_ARCHITECTURE.md # Actuarial deep-dive
+│
+├── backend/intel/
+│   ├── riskDistribution/
+│   │   ├── index.ts                     # RiskDistributionOrchestrator
+│   │   ├── universalRiskTaxonomy.ts     # Periodic Table of Risk
+│   │   ├── riskTokenizationEngine.ts    # Atomic risk units
+│   │   ├── geneticRiskPool.ts           # Evolutionary optimization
+│   │   ├── llmRiskOracleNetwork.ts      # Multi-LLM risk consensus
+│   │   ├── dataAsCollateral.ts          # Data-backed risk positions
+│   │   └── musicBehaviorRiskEngine.ts   # Music → behavioral risk
+│   │
+│   └── ethics/
+│       └── ethicalUsePolicy.ts          # Behavioral data governor
+│
+├── backend/services/
+│   ├── campus/
+│   │   └── CampusEarlyWarningService.ts # CSUDH wellness dashboards
+│   │
+│   ├── soulFingerprint/
+│   │   ├── lastFmIntegration.ts         # 21-year listening data ingest
+│   │   ├── musicGenomeRisk.ts           # Pandora attributes → risk factors
+│   │   └── examples/
+│   │       └── sufjanStevens_getRealGetRight.ts  # Mortality salience case study
+│   │
+│   ├── wcagScanner.ts                   # WCAG 2.2 compliance scanning
+│   ├── litigationDatabase.ts            # Public court data aggregation
+│   ├── riskAssessment.ts                # Statistical risk calculation
+│   └── infinity8Score.ts                # Accessibility compliance scoring
+│
+└── research/
+    └── dissertation/                     # Music × behavioral risk thesis framework
 ```
 
-**Backend (Railway)**:
-```bash
-cd InfinitySoul-AIS/backend
-railway up
-```
+---
 
-### Option 2: Docker
-```bash
-cd InfinitySoul-AIS
-docker-compose up -d
-```
+## Five Revenue Streams
 
-### Option 3: AWS, GCP, Azure
-See [DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md) for detailed guides.
+### 1. University Wellness & Student Success Pilots (CSUDH First)
+- **Offer:** Opt-in behavioral early-warning dashboards for Counseling, Student Affairs, Advising
+- **Revenue:** SaaS fees per department or per-campus ($50-150K/year per campus pilot)
+
+### 2. Accessibility & Digital Risk Audits for Higher Ed
+- **Offer:** WCAG 2.2 scans + "accessibility risk" scoring + remediation plans
+- **Revenue:** Fixed-fee audits + recurring retainers for monitoring ($25-100K/engagement)
+
+### 3. Behavioral Risk Analytics for Insurers (Research & Pilots)
+- **Offer:** Joint pilots using anonymized campus data to validate ethical behavioral risk scoring
+- **Revenue:** Proof-of-concept contracts, API licensing as AI-insurance spending scales
+
+### 4. Agentic AI-Insurance Products (Medium-Term)
+- **Offer:** InfinitySoul as the **risk brain** for AI agent insurance, LLM ops coverage, autonomous workflow policies
+- **Revenue:** Per-policy or per-agent usage fees in a market projected to hit billions in premiums by 2030
+
+### 5. Labs, Grants, Academic–Industry Consortia
+- **Offer:** Formal CSUDH/CSULB/CSU research lab on ethical behavioral risk + AI insurance
+- **Revenue:** Sponsored research, grants, institutional contracts validating InfinitySoul as the academic standard
 
 ---
 
-## 🔧 API Reference
+## Go-To-Market: CSUDH Baby Steps (Start Tomorrow)
 
-### POST /api/audit
-Run a comprehensive audit on an AI system.
+**Phase 1: Non-Controversial Pilots (Weeks 1-12)**
+- Approach Counseling/Behavioral Science/Student Affairs with "opt-in wellness radar" proposal
+- Pair music signals + LMS engagement → early-warning flags routed to counseling teams
+- Run accessibility audits on CSUDH public sites + student portals → deliver remediation dashboards
 
-**Request**:
-```bash
-curl -X POST http://localhost:3001/api/audit \
-  -H "Content-Type: application/json" \
-  -d '{"url": "https://example.com/ai-system"}'
-```
+**Phase 2: Data & Actuarial Programs (Weeks 13-24)**
+- Position InfinitySoul as "living lab" for CSUDH Math/Business/CS programs
+- Co-teach or guest-lecture on fairness in AI risk modeling, using real campus data
+- Publish anonymized case study: "How CSUDH used music + engagement data to improve student retention"
 
-**Response**:
-```json
-{
-  "url": "https://example.com/ai-system",
-  "timestamp": "2025-12-10T20:00:00.000Z",
-  "modules": {
-    "aiData": { "biasScore": 85, "compliance": {...} },
-    "accessibility": { "wcagScore": 92, "violations": [...] },
-    "security": { "dataProtection": {...} },
-    "stress": { "uptime": 99.9, "responseTime": 250 },
-    "nist": { "govern": "Complete", "map": "Partial" }
-  },
-  "insuranceReadiness": {
-    "overall": 87,
-    "riskTier": "LOW",
-    "eligibleForCyber": true,
-    "eligibleForEO": true,
-    "eligibleForGL": true,
-    "breakdown": { "ai": 26, "accessibility": 18, ... }
-  },
-  "vaultId": "550e8400-e29b-41d4-a716-446655440000"
-}
-```
+**Phase 3: Insurance Pilots (Weeks 25+)**
+- Use CSUDH case studies to approach insurers, reinsurers for simulated behavioral insurance pilots
+- Keep all pricing/underwriting in **sandbox mode** with documented ethics review
 
-### GET /health
-Health check endpoint.
-
-**Response**:
-```json
-{
-  "status": "ok",
-  "timestamp": "2025-12-10T20:00:00.000Z"
-}
-```
-
-See [API_DOCUMENTATION.md](InfinitySoul-AIS/docs/API_DOCUMENTATION.md) for complete reference.
+[See full strategy in `docs/CSUDH_GTM_ONEPAGER.md`]
 
 ---
 
-## 🔒 Security
+## Ethical Positioning: "Support, Not Punishment"
 
-- **Zero vulnerabilities** (CodeQL verified)
-- **Axios v1.6.8** (security patches applied)
-- **TypeScript** type safety throughout
-- **Input validation** on all endpoints
-- **Environment variables** for sensitive data
-- **Evidence vault** with immutable audit trails
+InfinitySoul explicitly rejects:
+- Using behavioral scores to **raise premiums** without IRB-style review, regulator approval, and demonstrated community benefit
+- Treating music genre or platform engagement as proxies for race, class, disability, immigration status
+- Any model that appears to penalize rap, trap, drill, or other Black musical forms more harshly—such models are **automatically rejected as structurally biased**
 
----
+InfinitySoul embraces:
+- **Early intervention** → resource routing, not exclusion
+- **Transparency** → all models audited for fairness, calibration, stability across demographic groups
+- **Community benefit** → CSUDH and CSU campuses as home base, not extraction targets
+- **Open access** → research outputs published, core infrastructure eventually open-sourced
 
-## 📜 Regulatory Compliance
-
-### NAIC Model AI Act
-- ✅ Governance & Oversight
-- ✅ Risk Management
-- ✅ Data Management
-- ✅ Transparency & Explainability
-- ✅ Fairness & Bias Mitigation
-- ✅ Privacy & Security
-- ✅ Testing & Monitoring
-- ✅ Documentation
-- ⚠️ Third-Party Risk (in development)
-- ✅ Model Validation
-
-### State Compliance
-- ✅ California (AB 2013)
-- ✅ New York (DFS Circular Letter No. 1)
-- ✅ Illinois (AI Video Interview Act)
-- ⚠️ Vermont (Act 88) - Indirect support
-
-See [NAIC_COMPLIANCE.md](InfinitySoul-AIS/docs/NAIC_COMPLIANCE.md) for detailed mapping.
+[See `ETHICS_CHARTER.md` for full framework]
 
 ---
 
-## 🛠️ Technology Stack
+## Repository Atlas (Everything in One Place)
 
-### Frontend
-- Next.js 16
-- React 19
-- TypeScript 5
-- Tailwind CSS 4
-
-### Backend
-- Express 4.18
-- Node.js 20
-- Axios 1.6.8
-- Concurrently 8.2
-
-### Database
-- Supabase (PostgreSQL)
-- Evidence vault with RLS
-
-### Deployment
-- Vercel (frontend)
-- Railway (backend)
-- Docker support
-- AWS/GCP/Azure compatible
-
----
-
-## 🗺️ Roadmap
-
-### ✅ v1.2.0 (Current)
-- 8 complete modules (A-H)
-- Gradient purple/blue UI with tabs
-- Enhanced scoring with detailed breakdowns
-- Multiple insurance eligibility checks
-- Comprehensive documentation (30,000+ words)
-- Health check and error handling
-- TypeScript improvements
-- Security patches
-
-### 🚧 Q1 2025
-- Real-time WebSocket updates
-- Historical trend analysis
-- Partner API OAuth2
-- Modules A-E open source
-- PDF report generation
-
-### 📋 Q2 2025
-- International compliance (EU AI Act, UK)
-- Industry-specific modules (healthcare, finance)
-- Email notifications
-- Advanced analytics dashboard
-
-### 🌍 Q3 2025
-- Multi-language support
-- White-label deployment options
-- Mobile app (iOS/Android)
-- Enterprise features
-
----
-
-## 🤝 Contributing
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) (coming soon).
-
-### Areas for Contribution
-- Additional audit modules
-- International compliance frameworks
-- Industry-specific adaptations
-- UI/UX improvements
-- Documentation translations
-
----
-
-## 📄 License
-
-### Software License
-Apache 2.0 (open source release planned Q2 2025)
-
-### Insurance Licenses
-- **Pennsylvania Life/Health Insurance License** (Active)
-- **Property & Casualty License** (In Progress)
-- **Surplus Lines Broker License** (Planned)
-
----
-
-## 📞 Support & Contact
-
-- **Documentation**: See `/InfinitySoul-AIS/docs` folder
-- **GitHub Issues**: https://github.com/aaj441/InfinitySoulAIS/issues
-- **Email**: hello@infinitysoulais.com
-- **Website**: https://infinitysoulais.com (coming soon)
-
----
-
-## 🏆 Features
-
-- ✅ **5-Minute Deployment** - From clone to running in 5 minutes
-- ✅ **Sub-5-Second Audits** - Complete risk assessment in seconds
-- ✅ **8 Comprehensive Modules** - All aspects of AI system evaluation
-- ✅ **NAIC Compliant** - Full regulatory mapping
-- ✅ **Evidence Vault** - Immutable audit trails
-- ✅ **Mock Mode** - Works without external dependencies
-- ✅ **Production Ready** - Deployment guides for multiple platforms
-- ✅ **Zero Vulnerabilities** - Security verified with CodeQL
-- ✅ **Type Safe** - Full TypeScript implementation
-- ✅ **Well Documented** - 30,000+ words of comprehensive docs
-
----
-
-## 🎯 Use Cases
-
-### Insurance Companies
-- Underwriting AI system risks
-- Premium calculation based on objective scores
-- Continuous monitoring of insured systems
-- Claims validation with evidence vault
-
-### AI System Operators
-- Pre-launch risk assessment
-- Compliance verification
-- Insurance readiness scoring
-- Regulatory documentation
-
-### Compliance Officers
-- NAIC compliance tracking
-- Audit trail maintenance
-- Risk mitigation planning
-- Regulatory reporting
-
-### Developers
-- API integration for CI/CD pipelines
-- Automated compliance checking
-- Risk scoring for deployment gates
-- Historical trend analysis
-
----
-
-## 💡 Philosophy
-
-**"We do not build AI that judges people. We build AI that makes insurance fair."**
-
-### Core Beliefs
-1. Risk = Behavior, Not Identity
-2. Data = Liability, Not Asset (Without Governance)
-3. Compliance = Opportunity, Not Cost
-4. Transparency = Competitive Advantage
-5. Speed = Feature
-
-See [MANIFESTO.md](InfinitySoul-AIS/docs/MANIFESTO.md) for complete philosophy.
-
----
-
-## 🎓 Learn More
-
-- **Architecture Deep Dive**: [ARCHITECTURE.md](InfinitySoul-AIS/docs/ARCHITECTURE.md)
-- **API Complete Reference**: [API_DOCUMENTATION.md](InfinitySoul-AIS/docs/API_DOCUMENTATION.md)
-- **Deployment Guides**: [DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md)
-- **Regulatory Compliance**: [NAIC_COMPLIANCE.md](InfinitySoul-AIS/docs/NAIC_COMPLIANCE.md)
-- **Project Vision**: [MANIFESTO.md](InfinitySoul-AIS/docs/MANIFESTO.md)
-
----
-
-**Built with ❤️ for ethical AI insurance**  
-**Version 1.2.0** | **December 2025** | **InfinitySoulAIS**
+- **Product vision & GTM** — `EXECUTIVE_SUMMARY.md`, `GO_TO_MARKET_STRATEGY.md`, `AI_INSURANCE_VISION.md`, `CULTURAL_GEOMETRY_CITIES.md`, `INFINITYSOUL_MEGALOPOLIS.md`, `SALES_WEAPONIZATION_COMPLETE.md`
+- **Activation & deployment** — `30DAY_EXECUTION_PLAYBOOK.md`, `DAY1_ACTIVATION_GUIDE.md`, `DEPLOYMENT.md`, `DEPLOYMENT_GUIDE.md`, `DEPLOYMENT_READY.md`, `DEPLOY_CHECKLIST.md`, `DEPLOY_NOW.md`
+- **Ethics, legal, compliance** — `ETHICS_CHARTER.md`, `ETHICAL_USE_POLICY.md`, `LEGAL.md`, `UPL_COMPLIANCE.md`, `CARSON_CLAUSE.md`, `COMPLIANCE_SAFEGUARDS.md`, `WCAG_AI_PLATFORM_PITFALLS.md`, `PRE_LAUNCH_AUDIT.md`, `VERIFICATION_DEBT_PREVENTION.md`, `legal/`
+- **Risk, research, underwriting** — `docs/MUSIC_BEHAVIOR_RISK.md`, `docs/RISK_DISTRIBUTION_ARCHITECTURE.md`, `research/BEHAVIORAL_RISK_AI_SYNTHESIS.md`, `research/DISSERTATION_FRAMEWORK.md`, `PHASE_III_RISK_UNDERWRITING.md`, `PHASE_V_DOCUMENTATION.md`, `PHASE_VI_IMPLEMENTATION_GUIDE.md`
+- **Backend** — `backend/server.ts`, `backend/worker.ts`, `backend/routes/` (automation, consultant, evidence, intel), `backend/services/` (WCAG scanner, litigation DB, soul fingerprint, campus early-warning), `backend/intel/` (riskDistribution, autonomousScanner, lawsuitMonitor, portfolio, prediction), `prisma/schema.prisma`
+- **Frontend** — `frontend/` Next.js app (`pages/`, `components/`, `design/`, `intel/`, `lib/`, Tailwind config)
+- **APIs & automation** — `api/routes.ts`, `automation/ai-email-generator.ts`, `automation/vpat-generator.ts`, `automation/insurance_lead_import.py`, scripts: `runGlobalScan.ts`, `pre-launch-check.ts`, `setup-railway-env.sh`, `stress-test.sh`, `test-ai-consistency.ts`, `test-single-lead.sh`, `updatePlaintiffMap.ts`, `worker-intel.ts`, `worker-scanner.ts`
+- **Data, evidence, testing** — `test-data/`, `tests/`, `evidence-vault/attestations|reports|scans/`, `TESTING_GUIDE.md`, `TEST_SUMMARY.md`, `TESTING_REPORT.md`, `PRELAUNCH_IMPROVEMENTS.md`
+- **Ops, infra, monitoring** — `Dockerfile`, `docker-compose.yml`, `nixpacks.toml`, `railway.json`, `Procfile`, `vercel.json`, `nginx.conf`, `monitoring/` dashboards, `config/environment.ts`, `deploy.sh`, `cleanup_repo.sh`
+- **Governance & automation** — `.github/workflows/`, `.verification/` (config, dashboards, hooks, scripts), `.gitattributes`, `.gitignore`, `.env.example`, `.vscode/`
+- **Aux/marketing** — `LINKEDIN_POST_CONSTRUCTION.md`, `INTEGRATION_GUIDE.md`, `MOBILE_FIRST_GUIDE.md`, `INFINITYSOL_CONSOLIDATION.sh`, `CULTURAL_GEOMETRY_CITIES.md`
+- **Archived/backup** — `.consolidation_backup_*/`, `WCAGAIPlatform/` (placeholder)
+- **Backend** — `backend/server.ts`, `backend/worker.ts`, `backend/routes/` (automation, consultant, evidence, intel), `backend/services/` (WCAG scanner, litigation DB, soul fingerprint, campus early-warning), `backend/intel/` (riskDistribution, autonomousScanner, lawsuitMonitor, portfolio, prediction), `backend/config/environment.ts`, `prisma/schema.prisma`
+- **Frontend** — `frontend/` Next.js app (`pages/`, `components/`, `design/`, `intel/`, `lib/`, Tailwind config)
+- **APIs & automation** — `api/routes.ts`, `automation/ai-email-generator.ts`, `automation/vpat-generator.ts`, `automation/insurance_lead_import.py`, scripts: `runGlobalScan.ts`, `pre-launch-check.ts`, `setup-railway-env.sh`, `stress-test.sh`, `test-ai-consistency.ts`, `test-single-lead.sh`, `updatePlaintiffMap.ts`, `worker-intel.ts`, `worker-scanner.ts`
+- **Data, evidence, testing** — `test-data/`, `tests/`, `evidence-vault/attestations|reports|scans/`, `TESTING_GUIDE.md`, `TEST_SUMMARY.md`, `TESTING_REPORT.md`, `PRELAUNCH_IMPROVEMENTS.md`
+- **Shared libs** — `types/`, `utils/` (`errorTracking.ts`, `logger.ts`, disabled variants), `config/environment.ts`
+- **Ops, infra, monitoring** — `Dockerfile`, `docker-compose.yml`, `nixpacks.toml`, `railway.json`, `Procfile`, `vercel.json`, `nginx.conf`, `monitoring/` dashboards, `deploy.sh`, `cleanup_repo.sh`
+- **Governance & automation** — `.github/workflows/`, `.verification/` (config, dashboards, hooks, scripts), `.gitattributes`, `.gitignore`, `.env.example`, `.vscode/`
+- **Aux/marketing** — `LINKEDIN_POST_CONSTRUCTION.md`, `INTEGRATION_GUIDE.md`, `MOBILE_FIRST_GUIDE.md`, `INFINITYSOL_CONSOLIDATION.sh`, `CULTURAL_GEOMETRY_CITIES.md`
+- **Archived/backup** — `.consolidation_backup_*/`, `WCAGAIPlatform/` (placeholder)
