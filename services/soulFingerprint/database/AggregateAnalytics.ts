@@ -270,8 +270,11 @@ export class AggregateAnalyticsEngine {
     // Collect all tags
     const tagCounts = new Map<string, number>();
     for (const song of songs) {
-      for (const tag of song.audioSource.tags) {
-        tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+      const tags = song.audioSource?.tags;
+      if (tags && Array.isArray(tags)) {
+        for (const tag of tags) {
+          tagCounts.set(tag, (tagCounts.get(tag) || 0) + 1);
+        }
       }
     }
     const primaryTags = Array.from(tagCounts.entries())
@@ -284,7 +287,7 @@ export class AggregateAnalyticsEngine {
     const styleConsistency = 1 - Math.min(1, uniqueTags / 50);
 
     // Unique albums
-    const uniqueAlbums = new Set(songs.map(s => s.identifier.album)).size;
+    const uniqueAlbums = new Set(songs.map(s => s.identifier?.album).filter(Boolean)).size;
 
     // Total plays
     const totalPlays = songs.reduce((sum, s) => sum + (s.listeningContext?.totalPlays || 0), 0);
@@ -659,6 +662,22 @@ export class AggregateAnalyticsEngine {
   }
 
   private calculateRiskTrajectory(eras: EraRiskProfile[]): RiskTrajectory {
+    if (eras.length === 0) {
+      // Return safe default for empty eras
+      const now = new Date();
+      return {
+        dataPoints: [],
+        overallTrend: 'stable',
+        trendStrength: 0,
+        volatility: 0,
+        peakRiskDate: now,
+        peakRiskScore: 50,
+        troughRiskDate: now,
+        troughRiskScore: 50,
+        significantChanges: []
+      };
+    }
+
     const dataPoints = eras.map(era => ({
       date: era.startDate,
       riskScore: era.aggregateInsuranceProfile.overallRiskScore,
@@ -733,8 +752,9 @@ export class AggregateAnalyticsEngine {
     else if (yourScore <= distribution.percentile90) percentileRank = 90;
     else percentileRank = 95;
 
-    // Standard deviations from mean
-    const stdDevsFromMean = (yourScore - distribution.mean) / distribution.stdDev;
+    // Standard deviations from mean - guard against zero stdDev
+    const stdDev = distribution.stdDev || 1; // Use 1 as fallback to avoid division by zero
+    const stdDevsFromMean = (yourScore - distribution.mean) / stdDev;
 
     // Risk band
     let riskBand: CohortComparison['riskBand'];
@@ -750,7 +770,7 @@ export class AggregateAnalyticsEngine {
       percentileRank,
       populationMean: distribution.mean,
       populationMedian: distribution.percentile50,
-      populationStdDev: distribution.stdDev,
+      populationStdDev: stdDev,
       standardDeviationsFromMean: stdDevsFromMean,
       riskBand,
       factorComparisons: []

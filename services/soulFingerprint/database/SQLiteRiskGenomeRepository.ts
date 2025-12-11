@@ -509,42 +509,42 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
     let failed = 0;
 
     const transaction = db.transaction((items: SongRiskGenome[]) => {
+      const stmt = db.prepare(`
+        INSERT INTO songs (
+          id, song_hash, artist, title, album,
+          mbid, spotify_id, lastfm_url, isrc,
+          audio_source, listening_context,
+          genome, genome_confidence,
+          risk_factors, insurance_profile,
+          algorithm_version, computed_at, last_updated_at,
+          is_validated, validation_notes,
+          weighted_contribution, overall_risk_score, total_plays
+        ) VALUES (
+          ?, ?, ?, ?, ?,
+          ?, ?, ?, ?,
+          ?, ?,
+          ?, ?,
+          ?, ?,
+          ?, ?, ?,
+          ?, ?,
+          ?, ?, ?
+        )
+        ON CONFLICT(song_hash) DO UPDATE SET
+          audio_source = excluded.audio_source,
+          listening_context = excluded.listening_context,
+          genome = excluded.genome,
+          genome_confidence = excluded.genome_confidence,
+          risk_factors = excluded.risk_factors,
+          insurance_profile = excluded.insurance_profile,
+          algorithm_version = excluded.algorithm_version,
+          last_updated_at = excluded.last_updated_at,
+          weighted_contribution = excluded.weighted_contribution,
+          overall_risk_score = excluded.overall_risk_score,
+          total_plays = excluded.total_plays
+      `);
+
       for (const genome of items) {
         try {
-          const stmt = db.prepare(`
-            INSERT INTO songs (
-              id, song_hash, artist, title, album,
-              mbid, spotify_id, lastfm_url, isrc,
-              audio_source, listening_context,
-              genome, genome_confidence,
-              risk_factors, insurance_profile,
-              algorithm_version, computed_at, last_updated_at,
-              is_validated, validation_notes,
-              weighted_contribution, overall_risk_score, total_plays
-            ) VALUES (
-              ?, ?, ?, ?, ?,
-              ?, ?, ?, ?,
-              ?, ?,
-              ?, ?,
-              ?, ?,
-              ?, ?, ?,
-              ?, ?,
-              ?, ?, ?
-            )
-            ON CONFLICT(song_hash) DO UPDATE SET
-              audio_source = excluded.audio_source,
-              listening_context = excluded.listening_context,
-              genome = excluded.genome,
-              genome_confidence = excluded.genome_confidence,
-              risk_factors = excluded.risk_factors,
-              insurance_profile = excluded.insurance_profile,
-              algorithm_version = excluded.algorithm_version,
-              last_updated_at = excluded.last_updated_at,
-              weighted_contribution = excluded.weighted_contribution,
-              overall_risk_score = excluded.overall_risk_score,
-              total_plays = excluded.total_plays
-          `);
-
           stmt.run(
             genome.id,
             genome.identifier.songHash,
@@ -608,7 +608,7 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
       SELECT songs.* FROM songs
       JOIN songs_fts ON songs.rowid = songs_fts.rowid
       WHERE songs_fts MATCH ?
-      ORDER BY rank
+      ORDER BY bm25(songs_fts)
       LIMIT ?
     `).all(query, limit) as any[];
 
@@ -616,31 +616,36 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
   }
 
   private rowToSongGenome(row: any): SongRiskGenome {
-    return {
-      id: row.id,
-      identifier: {
-        songHash: row.song_hash,
-        artist: row.artist,
-        title: row.title,
-        album: row.album,
-        mbid: row.mbid || undefined,
-        spotifyId: row.spotify_id || undefined,
-        lastFmUrl: row.lastfm_url || undefined,
-        isrc: row.isrc || undefined
-      },
-      audioSource: JSON.parse(row.audio_source),
-      listeningContext: row.listening_context ? JSON.parse(row.listening_context) : undefined,
-      genome: JSON.parse(row.genome),
-      genomeConfidence: row.genome_confidence,
-      riskFactors: JSON.parse(row.risk_factors),
-      insuranceProfile: JSON.parse(row.insurance_profile),
-      algorithmVersion: row.algorithm_version,
-      computedAt: new Date(row.computed_at),
-      lastUpdatedAt: new Date(row.last_updated_at),
-      isValidated: row.is_validated === 1,
-      validationNotes: row.validation_notes || undefined,
-      weightedContribution: JSON.parse(row.weighted_contribution)
-    };
+    try {
+      return {
+        id: row.id,
+        identifier: {
+          songHash: row.song_hash,
+          artist: row.artist,
+          title: row.title,
+          album: row.album,
+          mbid: row.mbid || undefined,
+          spotifyId: row.spotify_id || undefined,
+          lastFmUrl: row.lastfm_url || undefined,
+          isrc: row.isrc || undefined
+        },
+        audioSource: JSON.parse(row.audio_source),
+        listeningContext: row.listening_context ? JSON.parse(row.listening_context) : undefined,
+        genome: JSON.parse(row.genome),
+        genomeConfidence: row.genome_confidence,
+        riskFactors: JSON.parse(row.risk_factors),
+        insuranceProfile: JSON.parse(row.insurance_profile),
+        algorithmVersion: row.algorithm_version,
+        computedAt: new Date(row.computed_at),
+        lastUpdatedAt: new Date(row.last_updated_at),
+        isValidated: row.is_validated === 1,
+        validationNotes: row.validation_notes || undefined,
+        weightedContribution: JSON.parse(row.weighted_contribution)
+      };
+    } catch (error) {
+      console.error('[MusicRiskDB] Failed to parse song row:', error);
+      throw new Error(`Failed to parse song ${row.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   // ===========================================================================
@@ -726,26 +731,31 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
   }
 
   private rowToArtistProfile(row: any): ArtistRiskProfile {
-    return {
-      artistHash: row.artist_hash,
-      artistName: row.artist_name,
-      songCount: row.song_count,
-      totalPlays: row.total_plays,
-      uniqueAlbums: row.unique_albums,
-      aggregateGenome: JSON.parse(row.aggregate_genome),
-      aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
-      aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
-      primaryTags: JSON.parse(row.primary_tags),
-      styleConsistency: row.style_consistency,
-      riskVariance: row.risk_variance,
-      riskRange: { min: row.risk_min, max: row.risk_max },
-      firstPlayed: new Date(row.first_played),
-      lastPlayed: new Date(row.last_played),
-      peakYear: row.peak_year,
-      loyaltyScore: row.loyalty_score,
-      algorithmVersion: row.algorithm_version,
-      computedAt: new Date(row.computed_at)
-    };
+    try {
+      return {
+        artistHash: row.artist_hash,
+        artistName: row.artist_name,
+        songCount: row.song_count,
+        totalPlays: row.total_plays,
+        uniqueAlbums: row.unique_albums,
+        aggregateGenome: JSON.parse(row.aggregate_genome),
+        aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
+        aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
+        primaryTags: JSON.parse(row.primary_tags),
+        styleConsistency: row.style_consistency,
+        riskVariance: row.risk_variance,
+        riskRange: { min: row.risk_min, max: row.risk_max },
+        firstPlayed: new Date(row.first_played),
+        lastPlayed: new Date(row.last_played),
+        peakYear: row.peak_year,
+        loyaltyScore: row.loyalty_score,
+        algorithmVersion: row.algorithm_version,
+        computedAt: new Date(row.computed_at)
+      };
+    } catch (error) {
+      console.error('[MusicRiskDB] Failed to parse artist row:', error);
+      throw new Error(`Failed to parse artist ${row.artist_name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   // ===========================================================================
@@ -807,19 +817,24 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
   }
 
   private rowToGenreProfile(row: any): GenreRiskProfile {
-    return {
-      tagHash: row.tag_hash,
-      tag: row.tag,
-      songCount: row.song_count,
-      artistCount: row.artist_count,
-      totalPlays: row.total_plays,
-      aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
-      aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
-      riskVolatility: row.risk_volatility,
-      dominantRiskFactors: JSON.parse(row.dominant_risk_factors),
-      algorithmVersion: row.algorithm_version,
-      computedAt: new Date(row.computed_at)
-    };
+    try {
+      return {
+        tagHash: row.tag_hash,
+        tag: row.tag,
+        songCount: row.song_count,
+        artistCount: row.artist_count,
+        totalPlays: row.total_plays,
+        aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
+        aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
+        riskVolatility: row.risk_volatility,
+        dominantRiskFactors: JSON.parse(row.dominant_risk_factors),
+        algorithmVersion: row.algorithm_version,
+        computedAt: new Date(row.computed_at)
+      };
+    } catch (error) {
+      console.error('[MusicRiskDB] Failed to parse genre row:', error);
+      throw new Error(`Failed to parse genre ${row.tag}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   // ===========================================================================
@@ -895,25 +910,30 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
   }
 
   private rowToEraProfile(row: any): EraRiskProfile {
-    return {
-      eraId: row.era_id,
-      name: row.name,
-      startDate: new Date(row.start_date),
-      endDate: new Date(row.end_date),
-      durationDays: row.duration_days,
-      songCount: row.song_count,
-      uniqueArtists: row.unique_artists,
-      totalPlays: row.total_plays,
-      aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
-      aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
-      dominantArtists: JSON.parse(row.dominant_artists),
-      dominantGenres: JSON.parse(row.dominant_genres),
-      noveltyRate: row.novelty_rate,
-      riskTrajectory: row.risk_trajectory as EraRiskProfile['riskTrajectory'],
-      riskDelta: row.risk_delta,
-      algorithmVersion: row.algorithm_version,
-      computedAt: new Date(row.computed_at)
-    };
+    try {
+      return {
+        eraId: row.era_id,
+        name: row.name,
+        startDate: new Date(row.start_date),
+        endDate: new Date(row.end_date),
+        durationDays: row.duration_days,
+        songCount: row.song_count,
+        uniqueArtists: row.unique_artists,
+        totalPlays: row.total_plays,
+        aggregateRiskFactors: JSON.parse(row.aggregate_risk_factors),
+        aggregateInsuranceProfile: JSON.parse(row.aggregate_insurance_profile),
+        dominantArtists: JSON.parse(row.dominant_artists),
+        dominantGenres: JSON.parse(row.dominant_genres),
+        noveltyRate: row.novelty_rate,
+        riskTrajectory: row.risk_trajectory as EraRiskProfile['riskTrajectory'],
+        riskDelta: row.risk_delta,
+        algorithmVersion: row.algorithm_version,
+        computedAt: new Date(row.computed_at)
+      };
+    } catch (error) {
+      console.error('[MusicRiskDB] Failed to parse era row:', error);
+      throw new Error(`Failed to parse era ${row.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   // ===========================================================================
@@ -924,25 +944,30 @@ export class SQLiteRiskGenomeRepository implements IMusicRiskGenomeDatabase {
     const db = this.ensureDb();
     const row = db.prepare('SELECT * FROM global_statistics WHERE id = 1').get() as any;
 
-    return {
-      totalSongs: row.total_songs,
-      totalArtists: row.total_artists,
-      totalPlays: row.total_plays,
-      totalGenres: row.total_genres,
-      totalEras: row.total_eras,
-      earliestPlay: row.earliest_play ? new Date(row.earliest_play) : new Date(),
-      latestPlay: row.latest_play ? new Date(row.latest_play) : new Date(),
-      historySpanYears: row.history_span_years,
-      lifetimeRiskFactors: row.lifetime_risk_factors ? JSON.parse(row.lifetime_risk_factors) : null,
-      lifetimeInsuranceProfile: row.lifetime_insurance_profile ? JSON.parse(row.lifetime_insurance_profile) : null,
-      riskDistribution: row.risk_distribution ? JSON.parse(row.risk_distribution) : null,
-      topRiskSongs: row.top_risk_songs ? JSON.parse(row.top_risk_songs) : [],
-      topMitigatingSongs: row.top_mitigating_songs ? JSON.parse(row.top_mitigating_songs) : [],
-      currentAlgorithmVersion: row.current_algorithm_version || CURRENT_ALGORITHM_VERSION.id,
-      lastFullRecompute: row.last_full_recompute ? new Date(row.last_full_recompute) : new Date(),
-      songsNeedingRecompute: row.songs_needing_recompute,
-      computedAt: new Date(row.computed_at)
-    };
+    try {
+      return {
+        totalSongs: row.total_songs,
+        totalArtists: row.total_artists,
+        totalPlays: row.total_plays,
+        totalGenres: row.total_genres,
+        totalEras: row.total_eras,
+        earliestPlay: row.earliest_play ? new Date(row.earliest_play) : new Date(),
+        latestPlay: row.latest_play ? new Date(row.latest_play) : new Date(),
+        historySpanYears: row.history_span_years,
+        lifetimeRiskFactors: row.lifetime_risk_factors ? JSON.parse(row.lifetime_risk_factors) : null,
+        lifetimeInsuranceProfile: row.lifetime_insurance_profile ? JSON.parse(row.lifetime_insurance_profile) : null,
+        riskDistribution: row.risk_distribution ? JSON.parse(row.risk_distribution) : null,
+        topRiskSongs: row.top_risk_songs ? JSON.parse(row.top_risk_songs) : [],
+        topMitigatingSongs: row.top_mitigating_songs ? JSON.parse(row.top_mitigating_songs) : [],
+        currentAlgorithmVersion: row.current_algorithm_version || CURRENT_ALGORITHM_VERSION.id,
+        lastFullRecompute: row.last_full_recompute ? new Date(row.last_full_recompute) : new Date(),
+        songsNeedingRecompute: row.songs_needing_recompute,
+        computedAt: new Date(row.computed_at)
+      };
+    } catch (error) {
+      console.error('[MusicRiskDB] Failed to parse global statistics:', error);
+      throw new Error(`Failed to parse global statistics: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
   async updateGlobalStatistics(): Promise<void> {

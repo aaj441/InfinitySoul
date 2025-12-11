@@ -371,6 +371,14 @@ export class BatchProcessingEngine {
       startedAt: startTime
     });
 
+    // Validate required history properties
+    if (!history.allScrobblesSample || !Array.isArray(history.allScrobblesSample)) {
+      throw new Error('Invalid history: allScrobblesSample is required and must be an array');
+    }
+
+    const topArtists = history.topArtists || [];
+    const totalScrobbles = history.totalScrobbles || history.allScrobblesSample.length;
+
     // Initialize progress
     this.progress = {
       jobId,
@@ -393,7 +401,7 @@ export class BatchProcessingEngine {
     };
 
     // Build artist tag cache
-    await this.buildArtistTagCache(history.topArtists);
+    await this.buildArtistTagCache(topArtists);
 
     // Deduplicate scrobbles into unique songs
     const uniqueSongs = this.deduplicateScrobbles(history.allScrobblesSample);
@@ -410,7 +418,7 @@ export class BatchProcessingEngine {
       const batch = batches[batchIdx];
       this.progress.currentBatch = batchIdx + 1;
 
-      await this.processBatch(jobId, batch, history.topArtists);
+      await this.processBatch(jobId, batch, topArtists);
 
       // Checkpoint
       if ((batchIdx + 1) % Math.ceil(this.config.checkpointInterval / this.config.batchSize) === 0) {
@@ -720,9 +728,11 @@ export class BatchProcessingEngine {
   // HELPER METHODS
   // ===========================================================================
 
-  private async buildArtistTagCache(artists: ArtistProfile[]): Promise<void> {
+  private async buildArtistTagCache(artists: ArtistProfile[] = []): Promise<void> {
     for (const artist of artists) {
-      this.artistTagCache.set(artist.name.toLowerCase(), artist.tags);
+      if (artist && artist.name && artist.tags) {
+        this.artistTagCache.set(artist.name.toLowerCase(), artist.tags);
+      }
     }
   }
 
@@ -865,12 +875,16 @@ export class BatchProcessingEngine {
   private updateProgress(processed: number, total: number): void {
     if (!this.progress) return;
 
-    this.progress.processedItems = processed;
-    this.progress.progressPercent = (processed / total) * 100;
+    // Guard against invalid values
+    const safeTotal = Math.max(1, total);
+    const safeProcessed = Math.max(0, processed);
+
+    this.progress.processedItems = safeProcessed;
+    this.progress.progressPercent = (safeProcessed / safeTotal) * 100;
     this.progress.currentTime = new Date();
     this.progress.elapsedSeconds = (this.progress.currentTime.getTime() - this.progress.startedAt.getTime()) / 1000;
-    this.progress.itemsPerSecond = processed / Math.max(1, this.progress.elapsedSeconds);
-    this.progress.estimatedSecondsRemaining = (total - processed) / Math.max(0.01, this.progress.itemsPerSecond);
+    this.progress.itemsPerSecond = safeProcessed / Math.max(1, this.progress.elapsedSeconds);
+    this.progress.estimatedSecondsRemaining = (safeTotal - safeProcessed) / Math.max(0.01, this.progress.itemsPerSecond);
     this.progress.estimatedCompletionTime = new Date(
       this.progress.currentTime.getTime() + this.progress.estimatedSecondsRemaining * 1000
     );
