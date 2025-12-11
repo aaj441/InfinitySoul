@@ -71,8 +71,11 @@ function logKeyValue(key: string, value: any): void {
 }
 
 function logProgress(current: number, total: number, message: string): void {
-  const percent = Math.round((current / total) * 100);
-  const bar = '█'.repeat(Math.floor(percent / 5)) + '░'.repeat(20 - Math.floor(percent / 5));
+  const safeTotal = Math.max(1, total); // Guard against zero or negative
+  const safeCurrent = Math.max(0, Math.min(current, safeTotal)); // Clamp to valid range
+  const percent = Math.round((safeCurrent / safeTotal) * 100);
+  const barLength = Math.floor(percent / 5);
+  const bar = '█'.repeat(Math.max(0, Math.min(20, barLength))) + '░'.repeat(Math.max(0, 20 - barLength));
   process.stdout.write(`\r${COLORS.cyan}[${bar}] ${percent}%${COLORS.reset} ${message}    `);
 }
 
@@ -457,10 +460,15 @@ async function cmdReport(dbPath?: string): Promise<void> {
 
   // Save report to file
   const reportPath = path.join(process.cwd(), 'data', 'analytics_report.json');
-  fs.mkdirSync(path.dirname(reportPath), { recursive: true });
-  fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
-  console.log('');
-  log(`Full report saved to: ${reportPath}`, COLORS.green);
+  try {
+    fs.mkdirSync(path.dirname(reportPath), { recursive: true });
+    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    console.log('');
+    log(`Full report saved to: ${reportPath}`, COLORS.green);
+  } catch (error: any) {
+    console.log('');
+    log(`Warning: Could not save report to file: ${error.message}`, COLORS.yellow);
+  }
 
   await db.close();
 }
@@ -471,11 +479,16 @@ async function cmdExport(outputPath: string, dbPath?: string): Promise<void> {
   const db = createMusicRiskDatabase(dbPath);
   await db.initialize();
 
-  log(`Exporting to: ${outputPath}`, COLORS.dim);
-  await db.exportToJson(outputPath);
-
-  log('✓ Export complete!', COLORS.green);
-  await db.close();
+  try {
+    log(`Exporting to: ${outputPath}`, COLORS.dim);
+    await db.exportToJson(outputPath);
+    log('✓ Export complete!', COLORS.green);
+  } catch (error: any) {
+    log(`✗ Export failed: ${error.message}`, COLORS.red);
+    throw error;
+  } finally {
+    await db.close();
+  }
 }
 
 async function cmdImport(inputPath: string, dbPath?: string): Promise<void> {
@@ -484,15 +497,20 @@ async function cmdImport(inputPath: string, dbPath?: string): Promise<void> {
   const db = createMusicRiskDatabase(dbPath);
   await db.initialize();
 
-  log(`Importing from: ${inputPath}`, COLORS.dim);
-  const result = await db.importFromJson(inputPath);
+  try {
+    log(`Importing from: ${inputPath}`, COLORS.dim);
+    const result = await db.importFromJson(inputPath);
 
-  log(`✓ Imported ${formatNumber(result.imported)} songs`, COLORS.green);
-  if (result.skipped > 0) {
-    log(`  Skipped ${formatNumber(result.skipped)} due to errors`, COLORS.yellow);
+    log(`✓ Imported ${formatNumber(result.imported)} songs`, COLORS.green);
+    if (result.skipped > 0) {
+      log(`  Skipped ${formatNumber(result.skipped)} due to errors`, COLORS.yellow);
+    }
+  } catch (error: any) {
+    log(`✗ Import failed: ${error.message}`, COLORS.red);
+    throw error;
+  } finally {
+    await db.close();
   }
-
-  await db.close();
 }
 
 async function cmdRecompute(dbPath?: string): Promise<void> {
@@ -528,13 +546,34 @@ async function cmdRecompute(dbPath?: string): Promise<void> {
   if (jobId) {
     log('Recomputation started. Job ID: ' + jobId, COLORS.dim);
 
-    // Wait for completion (in a real CLI, this would use a proper event loop)
-    while (engine.getProgress()?.status === 'running') {
+    // Wait for completion with timeout protection
+    const maxWaitTime = 3600000; // 1 hour max
+    const startTime = Date.now();
+    
+    while (true) {
+      const progress = engine.getProgress();
+      
+      // Check for terminal states
+      if (!progress || progress.status === 'completed' || progress.status === 'failed' || progress.status === 'paused') {
+        break;
+      }
+      
+      // Check timeout
+      if (Date.now() - startTime > maxWaitTime) {
+        log('\n⚠ Recomputation taking longer than expected. Job will continue in background.', COLORS.yellow);
+        break;
+      }
+      
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
     console.log('');
-    log('✓ Recomputation complete!', COLORS.green);
+    const finalProgress = engine.getProgress();
+    if (finalProgress?.status === 'completed') {
+      log('✓ Recomputation complete!', COLORS.green);
+    } else if (finalProgress?.status === 'failed') {
+      log('✗ Recomputation failed', COLORS.red);
+    }
   }
 
   await db.close();
