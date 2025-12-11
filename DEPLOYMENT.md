@@ -1,92 +1,174 @@
-# InfinitySol Deployment Guide
-**Last Updated: 2024**
-**Status:** Production-Ready Architecture (Simplified Implementation)
+# InfinitySoulAIS Deployment Guide v1.2.0
+
+**Quick Reference: For comprehensive deployment documentation, see [InfinitySoul-AIS/docs/DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md) (8,800 words)**
 
 ---
 
-## Overview
-InfinitySol is an accessibility compliance platform designed for **self-hosted deployment on your own infrastructure**. This guide covers:
+## Quick Start (5 Minutes)
 
-1. **Local Development Setup**
-2. **Docker Deployment**
-3. **Production Deployment (AWS/GCP)**
-4. **Blockchain Integration** (Polygon)
-5. **Database Setup**
-6. **Security Hardening**
+### Prerequisites
+- Node.js 20+
+- npm 10+
+- (Optional) Supabase account for evidence vault
 
----
+### Installation
 
-## Part 1: Local Development
-### Requirements
-**Node.js: 18.x or higher**
-**Python: 3.10+ (for backend scrapers)**
-**PostgreSQL: 13+ or SQLite for local dev**
-**Docker: (optional, for containerized dev)**
-
-### Quick Start (5 minutes)
 ```bash
-# 1. Clone repository
-git clone https://github.com/aaj441/InfinitySol.git
-cd InfinitySol
-# 2. Copy environment file
-cp .env.example .env
-# 3. Install dependencies
+# Clone repository
+git clone https://github.com/aaj441/InfinitySoulAIS.git
+cd InfinitySoulAIS/InfinitySoul-AIS
+
+# Install dependencies
 npm install
-# 4. For development without blockchain:
-# Edit .env:
-# USE_MOCK_BLOCKCHAIN=true
-# USE_MOCK_EMAIL=true
-# 5. Run tests
-npm run type-check
-# 6. Start dev server
+cd frontend && npm install && cd ..
+cd backend && npm install && cd ..
+
+# Configure environment (optional - works with mock data)
+cp .env.example .env
+
+# Start the system
 npm run dev
-# Server will be available at http://localhost:8000
 ```
 
-### Verification
+### Access
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:3001
+- **Health Check**: http://localhost:3001/health
 
 ---
 
-## Part 2: Vercel Deployment (Recommended for Frontend)
+## Deployment Options
 
-InfinitySoul can be deployed to Vercel for rapid frontend hosting. Backend/API must be deployed separately (see Docker/Production sections).
+### Option 1: Vercel + Railway (Recommended)
 
-### Vercel Setup
-1. **Clone the repository** (if not already):
-   ```bash
-   git clone https://github.com/aaj441/InfinitySoul.git
-   cd InfinitySoul
-   ```
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-3. **Configure Environment Variables:**
-   - Copy `.env.example` to `.env` and set required values for frontend.
-4. **Configure Vercel:**
-   - Ensure `vercel.json` exists in the repo root with the following:
-     ```json
-     {
-       "buildCommand": "cd frontend && npm install && npm run build",
-       "outputDirectory": "frontend/out",
-       "devCommand": "cd frontend && npm run dev"
-     }
-     ```
-   - Set up your Vercel project to use these settings.
-5. **Deploy:**
-   - Push changes to GitHub. Vercel will auto-deploy if connected.
+**Frontend (Vercel)**:
+```bash
+cd InfinitySoul-AIS/frontend
+vercel --prod
+```
 
-### Build/Dev Commands
-- **Install:** `npm install`
-- **Build:** `cd frontend && npm run build`
-- **Dev:** `cd frontend && npm run dev`
-- **Output Directory:** `frontend/out`
+**Backend (Railway)**:
+```bash
+cd InfinitySoul-AIS/backend
+railway up
+```
 
-### Notes
-- Only the frontend is deployed on Vercel. Backend/API must be deployed separately (see Docker/Production sections).
-- For full-stack deployment, use Docker or cloud VM as described below.
+### Option 2: Docker
+
+```bash
+cd InfinitySoul-AIS
+docker-compose up -d
+```
+
+### Option 3: Manual Deployment
+
+See the comprehensive guide: [InfinitySoul-AIS/docs/DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md)
+
+Covers:
+- Vercel deployment (detailed)
+- Railway deployment (detailed)
+- Docker deployment (Dockerfile provided)
+- AWS ECS deployment
+- Database setup (Supabase)
+- Environment variables
+- Health checks
+- Monitoring & logging
+- Scaling considerations
+- Cost estimation
 
 ---
 
-## Part 3: Docker Deployment
-... (rest of file unchanged)
+## Configuration
+
+### Required Environment Variables (None for MVP Testing!)
+
+The system works with mock data by default. For production:
+
+```env
+# Optional - AI API Keys
+OPENAI_API_KEY=your_key
+ANTHROPIC_API_KEY=your_key
+
+# Optional - Database
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_KEY=your_key
+
+# Backend
+PORT=3001
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
+
+See [.env.example](.env.example) for complete configuration options.
+
+---
+
+## Verification
+
+### Health Check
+```bash
+curl http://localhost:3001/health
+```
+
+Expected response:
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-12-10T20:00:00.000Z"
+}
+```
+
+### Test Audit
+```bash
+curl -X POST http://localhost:3001/api/audit \
+  -H "Content-Type: application/json" \
+  -d '{"url":"https://example.com"}'
+```
+
+---
+
+## Troubleshooting
+
+### Frontend won't start
+- Check Node.js version: `node --version` (should be 20+)
+- Clear cache: `rm -rf node_modules package-lock.json && npm install`
+- Check port 3000 availability
+
+### Backend won't start
+- Check port 3001 availability
+- Verify all dependencies installed: `cd backend && npm install`
+- Check backend logs for errors
+
+### Can't connect frontend to backend
+- Verify `NEXT_PUBLIC_API_URL` in `.env`
+- Check CORS settings in backend
+- Verify both services are running
+
+For detailed troubleshooting, see [InfinitySoul-AIS/docs/DEPLOYMENT.md](InfinitySoul-AIS/docs/DEPLOYMENT.md)
+
+---
+
+## Production Checklist
+
+- [ ] Environment variables configured
+- [ ] Supabase database set up (or mock mode accepted)
+- [ ] Frontend deployed to Vercel
+- [ ] Backend deployed to Railway
+- [ ] Health check endpoint responding
+- [ ] Test audit completing successfully
+- [ ] HTTPS enabled
+- [ ] Monitoring configured (optional)
+- [ ] Backup strategy in place (optional)
+
+---
+
+## Support
+
+- **Documentation**: [InfinitySoul-AIS/docs/](InfinitySoul-AIS/docs/)
+- **GitHub Issues**: https://github.com/aaj441/InfinitySoulAIS/issues
+- **Email**: hello@infinitysoulais.com
+
+---
+
+**InfinitySoulAIS v1.2.0** | **December 2024**

@@ -1,158 +1,56 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres:16-alpine
-    container_name: infinitysoul-db
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-infinitysoul}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-infinitysoul}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-infinitysoul}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # Redis Cache
-  redis:
-    image: redis:7-alpine
-    container_name: infinitysoul-redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    healthcheck:
-      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # InfinitySoul API
-  api:
+  # InfinitySoulAIS Backend API
+  backend:
     build:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: infinitysoul-api
+    container_name: infinitysoul-ais-backend
     restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://${POSTGRES_USER:-infinitysoul}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-infinitysoul}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      PORT: 3000
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      PACER_USERNAME: ${PACER_USERNAME}
-      PACER_PASSWORD: ${PACER_PASSWORD}
-      COURTLISTENER_API_KEY: ${COURTLISTENER_API_KEY}
-      JWT_SECRET: ${JWT_SECRET}
-      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
-      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      PORT: 3001
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      KIMI_API_KEY: ${KIMI_API_KEY:-}
+      SUPABASE_URL: ${SUPABASE_URL:-https://test.supabase.co}
+      SUPABASE_KEY: ${SUPABASE_KEY:-test_key}
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # InfinitySoulAIS Frontend (Next.js)
+  frontend:
+    build:
+      context: ./InfinitySoul-AIS/frontend
+      dockerfile: Dockerfile
+    container_name: infinitysoul-ais-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_URL: http://backend:3001
     ports:
       - "3000:3000"
-    volumes:
-      - ./logs:/app/logs
-      - scan_results:/app/scan-results
     healthcheck:
-      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
       interval: 30s
       timeout: 10s
       retries: 3
-
-  # Nginx Reverse Proxy
-  nginx:
-    image: nginx:alpine
-    container_name: infinitysoul-nginx
-    restart: unless-stopped
-    depends_on:
-      - api
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./ssl:/etc/nginx/ssl:ro
-      - nginx_logs:/var/log/nginx
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-
-  # Background Scanner Worker
-  scanner-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    container_name: infinitysoul-scanner
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      NODE_ENV: production
-      WORKER_TYPE: scanner
-      DATABASE_URL: postgresql://${POSTGRES_USER:-infinitysoul}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-infinitysoul}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-    command: node dist/workers/scanner.js
-    volumes:
-      - scan_results:/app/scan-results
-      - ./logs:/app/logs
-
-  # Background Intel Worker
-  intel-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: production
-    container_name: infinitysoul-intel
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      NODE_ENV: production
-      WORKER_TYPE: intel
-      DATABASE_URL: postgresql://${POSTGRES_USER:-infinitysoul}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-infinitysoul}
-      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
-      PACER_USERNAME: ${PACER_USERNAME}
-      PACER_PASSWORD: ${PACER_PASSWORD}
-      COURTLISTENER_API_KEY: ${COURTLISTENER_API_KEY}
-    command: node dist/workers/intel.js
-    volumes:
-      - ./logs:/app/logs
 
 volumes:
-  postgres_data:
-    driver: local
-  redis_data:
-    driver: local
-  scan_results:
-    driver: local
-  nginx_logs:
+  logs:
     driver: local
 
 networks:
   default:
-    name: infinitysoul-network
+    name: infinitysoul-ais-network
