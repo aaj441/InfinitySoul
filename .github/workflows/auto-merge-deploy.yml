@@ -1,0 +1,137 @@
+name: Auto Merge & Deploy to Vercel
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to merge'
+        required: true
+        type: number
+      strategy:
+        description: 'Conflict resolution strategy'
+        required: true
+        default: 'ours'
+        type: choice
+        options:
+          - ours
+          - theirs
+          - manual
+
+jobs:
+  auto-merge:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Get PR details
+        id: pr
+        run: |
+          PR_DATA=$(gh pr view ${{ inputs.pr_number }} --json headRefName,baseRefName)
+          echo "head=$(echo $PR_DATA | jq -r '.headRefName')" >> $GITHUB_OUTPUT
+          echo "base=$(echo $PR_DATA | jq -r '.baseRefName')" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Checkout PR branch
+        run: |
+          git fetch origin ${{ steps.pr.outputs.head }}
+          git checkout ${{ steps.pr.outputs.head }}
+      
+      - name: Merge base with conflict resolution
+        run: |
+          git fetch origin ${{ steps.pr.outputs.base }}
+          
+          if [ "${{ inputs.strategy }}" = "ours" ]; then
+            git merge origin/${{ steps.pr.outputs.base }} -X ours --no-edit
+          elif [ "${{ inputs.strategy }}" = "theirs" ]; then
+            git merge origin/${{ steps.pr.outputs.base }} -X theirs --no-edit
+          else
+            # Manual strategy - auto-resolve specific files
+            git merge origin/${{ steps.pr.outputs.base }} || true
+            
+            # Auto-resolve package.json by taking PR version
+            if [ -f package.json ]; then
+              git checkout --ours package.json
+              git add package.json
+            fi
+            
+            # Auto-resolve backend conflicts by taking PR version
+            if [ -f backend/intel/riskDistribution/index.ts ]; then
+              git checkout --ours backend/intel/riskDistribution/index.ts
+              git add backend/intel/riskDistribution/index.ts
+            fi
+            
+            git commit -m "chore: auto-resolve merge conflicts"
+          fi
+      
+      - name: Push resolved changes
+        run: |
+          git push origin ${{ steps.pr.outputs.head }}
+      
+      - name: Merge PR
+        run: |
+          gh pr merge ${{ inputs.pr_number }} --squash --auto
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-vercel:
+    needs: auto-merge
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./InfinitySoul-AIS
+    
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: './InfinitySoul-AIS/frontend/package-lock.json'
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+      
+      - name: Install frontend dependencies
+        working-directory: ./InfinitySoul-AIS/frontend
+        run: npm ci
+      
+      - name: Build frontend
+        working-directory: ./InfinitySoul-AIS/frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
+      
+      - name: Deploy to Vercel
+        working-directory: ./InfinitySoul-AIS/frontend
+        run: |
+          vercel --token ${{ secrets.VERCEL_TOKEN }} --prod --yes
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      
+      - name: Comment deployment URL
+        run: |
+          DEPLOY_URL=$(vercel ls --token ${{ secrets.VERCEL_TOKEN }} | head -n 1)
+          gh pr comment ${{ inputs.pr_number }} --body "✅ Deployed to Vercel: $DEPLOY_URL"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}

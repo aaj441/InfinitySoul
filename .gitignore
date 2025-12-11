@@ -29,3 +29,6 @@ consolidation.log
 evidence/
 reports/
 leads/
+# Cyber audit results
+audit-results/
+*.audit.json
