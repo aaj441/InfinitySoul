@@ -1,0 +1,584 @@
+#!/usr/bin/env node
+/**
+ * The Malcolm X of Cyber Insurance - Manifesto CLI
+ * 
+ * "By any means necessary—but the means are agents, debt, and data, not bullets."
+ * 
+ * Execute the revolution:
+ *   ./bin/manifesto scan_distressed
+ *   ./bin/manifesto deploy_agent --role underwriter
+ *   ./bin/manifesto price_out --target ransomware_gang
+ *   ./bin/manifesto community_vote --proposal "insure_crypto_custodians"
+ *   ./bin/manifesto rebase_portfolio --cut_threshold 10x
+ *   ./bin/manifesto keep_the_rails
+ */
+
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+// Color codes for terminal output
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  bold: '\x1b[1m',
+};
+
+function log(message, color = 'white') {
+  console.log(`${colors[color]}${message}${colors.reset}`);
+}
+
+function banner() {
+  log('\n╔═══════════════════════════════════════════════════════════════════╗', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('║        THE MALCOLM X OF CYBER INSURANCE - MANIFESTO CLI          ║', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('║   "By any means necessary—agents, debt, and data, not bullets"   ║', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('╚═══════════════════════════════════════════════════════════════════╝', 'cyan');
+  log('');
+}
+
+function showHelp() {
+  banner();
+  log('COMMANDS:', 'bold');
+  log('');
+  log('  scan_distressed              Scan for distressed MGAs to acquire', 'green');
+  log('  deploy_agent <--role>        Deploy agentic automation', 'green');
+  log('  price_out <--target>         Price out bad actors', 'green');
+  log('  community_vote <--proposal>  Initiate community governance vote', 'green');
+  log('  rebase_portfolio <--threshold> Rebalance portfolio based on performance', 'green');
+  log('  keep_the_rails               Show perpetual network revenue', 'green');
+  log('  daily_prayer                 Display the daily prayer', 'green');
+  log('  speech                       Show "The Ballot or the Bullet" speech template', 'green');
+  log('  acquire <--target>           Generate MGA acquisition email', 'green');
+  log('  status                       Show revolution status', 'green');
+  log('  help                         Show this help message', 'green');
+  log('');
+  log('EXAMPLES:', 'bold');
+  log('');
+  log('  ./bin/manifesto scan_distressed', 'yellow');
+  log('  ./bin/manifesto deploy_agent --role underwriter', 'yellow');
+  log('  ./bin/manifesto price_out --target ransomware_gang', 'yellow');
+  log('  ./bin/manifesto community_vote --proposal "insure_crypto_custodians"', 'yellow');
+  log('  ./bin/manifesto daily_prayer', 'yellow');
+  log('');
+}
+
+function dailyPrayer() {
+  banner();
+  log('THE DAILY PRAYER', 'bold');
+  log('(Recite Out Loud, Every Morning)', 'cyan');
+  log('');
+  log('"I am not here to sell insurance. I am here to weaponize infrastructure', 'magenta');
+  log('against those who extract rent from the security community. Today I will', 'magenta');
+  log('acquire one distressed MGA, deploy one agent, and price out one ransomware', 'magenta');
+  log('gang. By any means necessary, I will liberate the data, compound the rails,', 'magenta');
+  log('and graduate the cells. The ballot is my token. The bullet is my code.', 'magenta');
+  log('I am the Malcolm X of cyber insurance."', 'magenta');
+  log('');
+}
+
+function scanDistressed() {
+  banner();
+  log('🔍 SCANNING FOR DISTRESSED MGAs...', 'bold');
+  log('');
+  
+  log('Target Criteria:', 'cyan');
+  log('  ✓ Combined Ratio: >115% (losing money)', 'white');
+  log('  ✓ Book Value: >$5M (has real assets)', 'white');
+  log('  ✓ Claims History: 3+ years (valuable data)', 'white');
+  log('  ✓ Founder Age: >55 (wants to retire)', 'white');
+  log('  ✓ Reinsurance: Renewable treaty', 'white');
+  log('');
+  
+  log('Scanning channels:', 'yellow');
+  log('  → AM Best ratings (B+ to B-)', 'white');
+  log('  → NAIC filings (combined ratio >110%)', 'white');
+  log('  → LinkedIn (founder + selling)', 'white');
+  log('  → Industry events (RSA, Cyber Insurance Summit)', 'white');
+  log('');
+  
+  log('POTENTIAL TARGETS IDENTIFIED:', 'green');
+  log('');
+  
+  // Mock data for demonstration
+  const targets = [
+    { name: 'CyberGuard MGA', ratio: 125, book: 10, age: 58, score: 85 },
+    { name: 'SecureNet Underwriters', ratio: 118, book: 8, age: 62, score: 78 },
+    { name: 'InfoSec Insurance Co', ratio: 132, book: 12, age: 55, score: 92 },
+  ];
+  
+  targets.forEach((target, i) => {
+    log(`${i + 1}. ${target.name}`, 'bold');
+    log(`   Combined Ratio: ${target.ratio}% | Book: $${target.book}M | Founder Age: ${target.age}`, 'white');
+    log(`   Acquisition Score: ${target.score}/100`, target.score > 80 ? 'green' : 'yellow');
+    log(`   Target Price: $${(target.book * 0.5).toFixed(1)}M (0.5x book)`, 'cyan');
+    log('');
+  });
+  
+  log('💡 TIP: Run `./bin/manifesto acquire --target "CyberGuard MGA"` to generate acquisition email', 'yellow');
+  log('');
+}
+
+function deployAgent(role) {
+  banner();
+  log(`🤖 DEPLOYING ${role.toUpperCase()} AGENT...`, 'bold');
+  log('');
+  
+  const agents = {
+    underwriter: {
+      name: 'AgenticUnderwriter',
+      replaces: '3 human underwriters',
+      speed: '30 seconds (vs 30 days)',
+      savings: '$149,500/year per MGA',
+      capabilities: [
+        'Real-time risk assessment via API',
+        'Threat intel integration (CrowdStrike, Recorded Future)',
+        'Claims graph correlation',
+        'Automated quote generation',
+        'Transparent pricing logic'
+      ]
+    },
+    claims: {
+      name: 'ClaimsAgent',
+      replaces: '$500/hr adjusters',
+      speed: '1 hour (vs 10 hours)',
+      savings: '$388,000/year per MGA',
+      capabilities: [
+        'LLM-based claim investigation',
+        'Fraud detection via pattern analysis',
+        'Evidence collection automation',
+        'Settlement recommendation',
+        'Transparent decision audit trail'
+      ]
+    },
+    scout: {
+      name: 'ScoutAgent',
+      replaces: 'M&A analysts',
+      speed: 'Real-time scanning',
+      savings: '$200,000/year in advisory fees',
+      capabilities: [
+        'AM Best rating monitoring',
+        'NAIC filing analysis',
+        'LinkedIn founder tracking',
+        'Distress signal detection',
+        'Acquisition target scoring'
+      ]
+    },
+    governance: {
+      name: 'GovernanceAgent',
+      replaces: 'Manual voting processes',
+      speed: 'Instant on-chain execution',
+      savings: 'Infinite (builds community trust)',
+      capabilities: [
+        '$SOUL token vote aggregation',
+        'Proposal validation',
+        'Auto-execution of approved policies',
+        'Transparent vote history',
+        'Community notification system'
+      ]
+    }
+  };
+  
+  const agent = agents[role];
+  
+  if (!agent) {
+    log(`❌ Unknown agent role: ${role}`, 'red');
+    log('Available roles: underwriter, claims, scout, governance', 'yellow');
+    return;
+  }
+  
+  log(`Agent: ${agent.name}`, 'cyan');
+  log(`Replaces: ${agent.replaces}`, 'white');
+  log(`Speed: ${agent.speed}`, 'green');
+  log(`Annual Savings: ${agent.savings}`, 'green');
+  log('');
+  log('Capabilities:', 'bold');
+  agent.capabilities.forEach(cap => log(`  ✓ ${cap}`, 'white'));
+  log('');
+  
+  log('✅ AGENT DEPLOYMENT SIMULATED', 'green');
+  log('');
+  log('📝 Next Steps:', 'yellow');
+  log('  1. Review backend/intel/cyberInsurance/ for implementation', 'white');
+  log('  2. Configure API keys for threat intel feeds', 'white');
+  log('  3. Run integration tests', 'white');
+  log('  4. Deploy to production MGAs', 'white');
+  log('');
+}
+
+function priceOut(target) {
+  banner();
+  log(`🎯 PRICING OUT: ${target.toUpperCase()}`, 'bold');
+  log('');
+  
+  const targets = {
+    ransomware_gang: {
+      description: 'Companies with unacceptable ransomware risk',
+      criteria: [
+        'No MFA on critical systems',
+        'No EDR/XDR deployed',
+        'No backup/DR plan',
+        'Prior ransomware incident',
+        'Exposed RDP ports'
+      ],
+      action: 'Auto-decline with remediation guidance',
+      impact: 'Combined ratio improves 10-15 points'
+    },
+    lazy_brokers: {
+      description: 'Eliminate 20% broker commissions',
+      criteria: [
+        'Zero value-add (just email PDFs)',
+        'Extract $2K on $10K policy',
+        'No risk expertise'
+      ],
+      action: 'Direct API access for policyholders',
+      impact: '$0.10/quote vs $2,000 commission'
+    },
+    legacy_carriers: {
+      description: 'Undercut on price and speed',
+      criteria: [
+        '90-day quote cycles',
+        'Opaque pricing',
+        'No data sharing',
+        'Arbitrary denials'
+      ],
+      action: '30-second quotes, open-source claims graph',
+      impact: '50x faster, 10x more transparent'
+    }
+  };
+  
+  const t = targets[target];
+  
+  if (!t) {
+    log(`❌ Unknown target: ${target}`, 'red');
+    log('Available targets: ransomware_gang, lazy_brokers, legacy_carriers', 'yellow');
+    return;
+  }
+  
+  log(`Target: ${t.description}`, 'cyan');
+  log('');
+  log('Pricing Criteria:', 'bold');
+  t.criteria.forEach(c => log(`  ⚠️  ${c}`, 'yellow'));
+  log('');
+  log(`Action: ${t.action}`, 'green');
+  log(`Expected Impact: ${t.impact}`, 'green');
+  log('');
+  
+  if (target === 'ransomware_gang') {
+    log('📋 Remediation Guidance (Auto-Generated):', 'cyan');
+    log('  1. Deploy MFA on all systems (Microsoft Entra, Duo, Okta)', 'white');
+    log('  2. Deploy EDR (CrowdStrike, SentinelOne, Microsoft Defender)', 'white');
+    log('  3. Implement 3-2-1 backup strategy (3 copies, 2 media, 1 offsite)', 'white');
+    log('  4. Close RDP exposure (use VPN or zero-trust gateway)', 'white');
+    log('');
+    log('  After implementing all 4 controls, reapply for coverage.', 'yellow');
+  }
+  
+  log('');
+  log('✅ PRICING LOGIC APPLIED', 'green');
+  log('');
+}
+
+function communityVote(proposal) {
+  banner();
+  log('🗳️  INITIATING COMMUNITY VOTE', 'bold');
+  log('');
+  
+  log(`Proposal: ${proposal}`, 'cyan');
+  log('');
+  log('Vote Mechanism:', 'bold');
+  log('  • Token: $SOUL', 'white');
+  log('  • Voting Period: 7 days', 'white');
+  log('  • Quorum: 30% of outstanding tokens', 'white');
+  log('  • Pass Threshold: Simple majority (>50%)', 'white');
+  log('');
+  log('Eligible Voters:', 'bold');
+  log('  • Security practitioners', 'white');
+  log('  • Policyholders (1 token per $10K premium)', 'white');
+  log('  • Former MGA founders', 'white');
+  log('  • Community contributors', 'white');
+  log('');
+  log('Example Vote Results (Simulated):', 'cyan');
+  log('  For: 6,200 tokens (52%)', 'green');
+  log('  Against: 5,800 tokens (48%)', 'red');
+  log('  Result: APPROVED', 'green');
+  log('');
+  log('Auto-Implementation:', 'bold');
+  log('  ✓ UnderwritingAgent updated with new rules', 'green');
+  log('  ✓ Risk oracle parameters adjusted', 'green');
+  log('  ✓ Community notification sent', 'green');
+  log('');
+  log('💡 "The ballot is your token. The bullet is our code."', 'magenta');
+  log('');
+}
+
+function rebasePortfolio(threshold) {
+  banner();
+  log(`📊 REBALANCING PORTFOLIO (Threshold: ${threshold})`, 'bold');
+  log('');
+  
+  log('Kluge Exit Strategy:', 'cyan');
+  log('  • Acquire at 0.5x book', 'white');
+  log('  • Transform in 90 days', 'white');
+  log('  • Hold for 2-3 years', 'white');
+  log('  • Sell at 10x EBITDA', 'white');
+  log('  • Keep the rails (protocol fees)', 'white');
+  log('');
+  log('Current Portfolio (Simulated):', 'bold');
+  log('');
+  
+  const mgas = [
+    { name: 'CyberGuard MGA', acquired: '2025', ebitda: 1.4, multiple: 12, status: 'HOLD' },
+    { name: 'SecureNet Underwriters', acquired: '2026', ebitda: 2.1, multiple: 15, status: 'SELL' },
+    { name: 'InfoSec Insurance Co', acquired: '2026', ebitda: 0.8, multiple: 8, status: 'HOLD' },
+  ];
+  
+  mgas.forEach((mga, i) => {
+    const value = mga.ebitda * mga.multiple;
+    const color = mga.status === 'SELL' ? 'green' : 'yellow';
+    log(`${i + 1}. ${mga.name} (Acquired: ${mga.acquired})`, 'bold');
+    log(`   EBITDA: $${mga.ebitda}M | Current Multiple: ${mga.multiple}x`, 'white');
+    log(`   Est. Value: $${value.toFixed(1)}M | Status: ${mga.status}`, color);
+    log('');
+  });
+  
+  log('Recommended Actions:', 'cyan');
+  log('  • SecureNet: SELL NOW (15x multiple > 10x threshold)', 'green');
+  log('  • CyberGuard: HOLD (improving, not at peak)', 'yellow');
+  log('  • InfoSec: HOLD (still transforming)', 'yellow');
+  log('');
+  log('Post-Exit Strategy:', 'bold');
+  log('  ✓ Keep 10% network fees on sold MGAs', 'green');
+  log('  ✓ Retain claims graph data', 'green');
+  log('  ✓ Maintain protocol fee streams', 'green');
+  log('');
+}
+
+function keepTheRails() {
+  banner();
+  log('🛤️  THE RAILS FOREVER', 'bold');
+  log('');
+  
+  log('Metromedia Playbook:', 'cyan');
+  log('  • Kluge sold TV stations for $2B in 1986', 'white');
+  log('  • Kept Metromedia Fiber Network', 'white');
+  log('  • Earned $30M/year in perpetual network fees', 'white');
+  log('  • Net Present Value: $375M (at 8% discount)', 'white');
+  log('');
+  log('Your Rails (IS Cyber Fiber):', 'bold');
+  log('');
+  log('1. Claims Graph Infrastructure', 'cyan');
+  log('   • 10TB vectorized loss history', 'white');
+  log('   • Growing with every claim', 'white');
+  log('   • Revenue: $10M/year in data licensing', 'green');
+  log('');
+  log('2. Network Fees from Graduated Cells', 'cyan');
+  log('   • 10-15 spun-out MGAs paying 10% of premium', 'white');
+  log('   • Revenue: $20M/year (growing)', 'green');
+  log('');
+  log('3. Threat Oracle Subscriptions', 'cyan');
+  log('   • Real-time CVE and exploit intelligence', 'white');
+  log('   • Revenue: $5M/year from carrier subscriptions', 'green');
+  log('');
+  log('Total Perpetual Revenue: $35M/year', 'bold');
+  log('EBITDA Margin: 95% (automated)', 'green');
+  log('Your Time: 0 hours (fully autonomous)', 'green');
+  log('Net Present Value: $437M (at 8% discount)', 'green');
+  log('');
+  log('💡 "The rails are forever; the stations are free."', 'magenta');
+  log('');
+}
+
+function showSpeech() {
+  banner();
+  log('📢 "THE BALLOT OR THE BULLET" SPEECH', 'bold');
+  log('(Deliver at DefCon, RSA, or your website)', 'cyan');
+  log('');
+  log('"I\'m not here to sell you cyber insurance. I\'m here to tell you that the', 'magenta');
+  log('insurance industrial complex is predatory. They extract 20% commission while', 'magenta');
+  log('you wait 90 days for a quote that doesn\'t even cover ransomware because you', 'magenta');
+  log('didn\'t check a box.', 'magenta');
+  log('');
+  log('They say you must use human underwriters. We say: By any means necessary,', 'magenta');
+  log('we will deploy agents that quote in 30 seconds.', 'magenta');
+  log('');
+  log('They say you must fill out PDFs. We say: By any means necessary, we will', 'magenta');
+  log('ingest your logs via API and price your risk in real time.', 'magenta');
+  log('');
+  log('They say you can\'t self-govern. We say: By any means necessary, we will', 'magenta');
+  log('give you $SOUL tokens to vote on who we insure and who we price out.', 'magenta');
+  log('');
+  log('They say the data is theirs. We say: By any means necessary, we will', 'magenta');
+  log('open-source the claims graph and let you fork it if we betray you.', 'magenta');
+  log('');
+  log('This is not a product. This is protocol warfare. The ballot is your token.', 'magenta');
+  log('The bullet is our code. By any means necessary, we liberate the security', 'magenta');
+  log('community from rent extraction."', 'magenta');
+  log('');
+}
+
+function generateAcquisitionEmail(target) {
+  banner();
+  log(`📧 MGA ACQUISITION EMAIL GENERATOR`, 'bold');
+  log('');
+  log(`Target: ${target}`, 'cyan');
+  log('');
+  log('═══════════════════════════════════════════════════════════════', 'cyan');
+  log('Subject: Acquiring Your MGA – $50K Cash + 15% Revshare + 1,000 $SOUL Tokens', 'bold');
+  log('═══════════════════════════════════════════════════════════════', 'cyan');
+  log('');
+  log('[Founder Name],', 'white');
+  log('');
+  log('Your MGA is losing $2M/year. You\'re 58. You want out.', 'white');
+  log('');
+  log('I\'ll take it off your hands. You get:', 'white');
+  log('  • $50K cash (close Friday)', 'green');
+  log('  • 15% revshare (quarterly, forever)', 'green');
+  log('  • 1,000 $SOUL tokens (governance rights in the protocol)', 'green');
+  log('');
+  log('I fire your underwriters, deploy AI, and turn it profitable in 90 days.', 'white');
+  log('Your community of 800 security practitioners gets a vote on risk appetite.', 'white');
+  log('');
+  log('Decision needed by Friday. No negotiation. By any means necessary,', 'white');
+  log('we liberate this asset from failure.', 'white');
+  log('');
+  log('[Your Name]', 'white');
+  log('CEO, InfinitySoul', 'white');
+  log('www.infinitysoul.com', 'cyan');
+  log('');
+  log('═══════════════════════════════════════════════════════════════', 'cyan');
+  log('');
+  log('💡 Copy this email and customize with actual founder details', 'yellow');
+  log('');
+}
+
+function showStatus() {
+  banner();
+  log('📊 REVOLUTION STATUS', 'bold');
+  log('');
+  
+  log('Implementation Status:', 'cyan');
+  log('  ✅ Core manifesto documents created', 'green');
+  log('  ✅ Kluge playbook documented', 'green');
+  log('  ✅ Liberation theology articulated', 'green');
+  log('  ✅ MGA acquisition framework ready', 'green');
+  log('  ✅ Agentic underwriter implemented', 'green');
+  log('  ✅ Claims automation ready', 'green');
+  log('  ✅ Portfolio engine operational', 'green');
+  log('  🔄 $SOUL token governance (planned)', 'yellow');
+  log('  🔄 Community voting system (planned)', 'yellow');
+  log('  🔄 First MGA acquisition (pending)', 'yellow');
+  log('');
+  log('Key Documents:', 'bold');
+  log('  📄 MALCOLM_X_MANIFESTO.md', 'white');
+  log('  📄 KLUGE_PLAYBOOK.md', 'white');
+  log('  📄 LIBERATION_THEOLOGY.md', 'white');
+  log('');
+  log('Technical Implementation:', 'bold');
+  log('  📁 backend/intel/cyberInsurance/', 'white');
+  log('    ├── mga/ (acquisition filter)', 'white');
+  log('    ├── underwriting/ (agentic underwriter)', 'white');
+  log('    ├── portfolio/ (death star engine)', 'white');
+  log('    └── routes.ts (11 API endpoints)', 'white');
+  log('');
+  log('Next Steps:', 'cyan');
+  log('  1. Deploy token governance system', 'white');
+  log('  2. Launch community voting platform', 'white');
+  log('  3. Scan for first distressed MGA target', 'white');
+  log('  4. Deliver "Ballot or Bullet" speech at DefCon', 'white');
+  log('  5. Open-source claims graph framework', 'white');
+  log('');
+}
+
+// Main CLI handler
+function main() {
+  const args = process.argv.slice(2);
+  const command = args[0];
+  
+  if (!command || command === 'help' || command === '--help' || command === '-h') {
+    showHelp();
+    return;
+  }
+  
+  switch (command) {
+    case 'scan_distressed':
+      scanDistressed();
+      break;
+      
+    case 'deploy_agent':
+      const role = args.find(arg => arg.startsWith('--role='))?.split('=')[1] || 
+                   args[args.indexOf('--role') + 1] || 'underwriter';
+      deployAgent(role);
+      break;
+      
+    case 'price_out':
+      const target = args.find(arg => arg.startsWith('--target='))?.split('=')[1] || 
+                     args[args.indexOf('--target') + 1] || 'ransomware_gang';
+      priceOut(target);
+      break;
+      
+    case 'community_vote':
+      const proposal = args.find(arg => arg.startsWith('--proposal='))?.split('=')[1] || 
+                       args[args.indexOf('--proposal') + 1] || 'insure_crypto_custodians';
+      communityVote(proposal);
+      break;
+      
+    case 'rebase_portfolio':
+      const threshold = args.find(arg => arg.startsWith('--cut_threshold='))?.split('=')[1] || 
+                        args[args.indexOf('--cut_threshold') + 1] || '10x';
+      rebasePortfolio(threshold);
+      break;
+      
+    case 'keep_the_rails':
+      keepTheRails();
+      break;
+      
+    case 'daily_prayer':
+      dailyPrayer();
+      break;
+      
+    case 'speech':
+      showSpeech();
+      break;
+      
+    case 'acquire':
+      const acqTarget = args.find(arg => arg.startsWith('--target='))?.split('=')[1] || 
+                        args[args.indexOf('--target') + 1] || 'CyberGuard MGA';
+      generateAcquisitionEmail(acqTarget);
+      break;
+      
+    case 'status':
+      showStatus();
+      break;
+      
+    default:
+      log(`❌ Unknown command: ${command}`, 'red');
+      log('Run `./bin/manifesto help` for available commands', 'yellow');
+  }
+}
+
+// Execute
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  scanDistressed,
+  deployAgent,
+  priceOut,
+  communityVote,
+  rebasePortfolio,
+  keepTheRails,
+  dailyPrayer,
+  showSpeech,
+  generateAcquisitionEmail,
+  showStatus,
+};
