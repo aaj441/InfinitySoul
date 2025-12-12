@@ -1,0 +1,140 @@
+{
+  "generic": [
+    {
+      "carrier_name": "Coalition",
+      "min_revenue": 100000,
+      "max_revenue": 100000000,
+      "industries": ["technology", "professional services", "retail", "generic"],
+      "weight": 90,
+      "contact_info": "coalition.com"
+    },
+    {
+      "carrier_name": "Corvus",
+      "min_revenue": 500000,
+      "max_revenue": 50000000,
+      "industries": ["technology", "manufacturing", "generic"],
+      "weight": 85,
+      "contact_info": "corvusinsurance.com"
+    },
+    {
+      "carrier_name": "At-Bay",
+      "min_revenue": 250000,
+      "max_revenue": 25000000,
+      "industries": ["technology", "professional services", "generic"],
+      "weight": 80,
+      "contact_info": "at-bay.com"
+    },
+    {
+      "carrier_name": "Chubb",
+      "min_revenue": 1000000,
+      "max_revenue": 500000000,
+      "industries": ["all"],
+      "weight": 75,
+      "contact_info": "chubb.com"
+    }
+  ],
+  "healthcare": [
+    {
+      "carrier_name": "Beazley",
+      "min_revenue": 500000,
+      "max_revenue": 100000000,
+      "industries": ["healthcare", "medical"],
+      "weight": 95,
+      "contact_info": "beazley.com"
+    },
+    {
+      "carrier_name": "Coalition",
+      "min_revenue": 100000,
+      "max_revenue": 50000000,
+      "industries": ["healthcare"],
+      "weight": 90,
+      "contact_info": "coalition.com"
+    },
+    {
+      "carrier_name": "CFC Underwriting",
+      "min_revenue": 250000,
+      "max_revenue": 25000000,
+      "industries": ["healthcare"],
+      "weight": 85,
+      "contact_info": "cfcunderwriting.com"
+    }
+  ],
+  "law firm": [
+    {
+      "carrier_name": "Beazley",
+      "min_revenue": 500000,
+      "max_revenue": 100000000,
+      "industries": ["legal", "law firm"],
+      "weight": 95,
+      "contact_info": "beazley.com"
+    },
+    {
+      "carrier_name": "CFC Underwriting",
+      "min_revenue": 250000,
+      "max_revenue": 50000000,
+      "industries": ["legal", "professional services"],
+      "weight": 90,
+      "contact_info": "cfcunderwriting.com"
+    },
+    {
+      "carrier_name": "Coalition",
+      "min_revenue": 100000,
+      "max_revenue": 25000000,
+      "industries": ["legal"],
+      "weight": 85,
+      "contact_info": "coalition.com"
+    }
+  ],
+  "nonprofit": [
+    {
+      "carrier_name": "Philadelphia Insurance",
+      "min_revenue": 100000,
+      "max_revenue": 25000000,
+      "industries": ["nonprofit", "charitable"],
+      "weight": 90,
+      "contact_info": "phly.com"
+    },
+    {
+      "carrier_name": "Coalition",
+      "min_revenue": 100000,
+      "max_revenue": 25000000,
+      "industries": ["nonprofit"],
+      "weight": 85,
+      "contact_info": "coalition.com"
+    },
+    {
+      "carrier_name": "Hartford",
+      "min_revenue": 250000,
+      "max_revenue": 50000000,
+      "industries": ["nonprofit"],
+      "weight": 80,
+      "contact_info": "thehartford.com"
+    }
+  ],
+  "technology": [
+    {
+      "carrier_name": "At-Bay",
+      "min_revenue": 250000,
+      "max_revenue": 100000000,
+      "industries": ["technology", "saas", "software"],
+      "weight": 95,
+      "contact_info": "at-bay.com"
+    },
+    {
+      "carrier_name": "Coalition",
+      "min_revenue": 100000,
+      "max_revenue": 100000000,
+      "industries": ["technology"],
+      "weight": 90,
+      "contact_info": "coalition.com"
+    },
+    {
+      "carrier_name": "Corvus",
+      "min_revenue": 500000,
+      "max_revenue": 50000000,
+      "industries": ["technology"],
+      "weight": 85,
+      "contact_info": "corvusinsurance.com"
+    }
+  ]
+}

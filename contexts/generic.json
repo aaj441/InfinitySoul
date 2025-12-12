@@ -1,0 +1,46 @@
+{
+  "id": "generic",
+  "name": "Generic Business",
+  "description": "General business cyber insurance context",
+  "risk_factors": [
+    "revenue_size",
+    "employee_count",
+    "security_controls",
+    "backup_frequency",
+    "prior_claims"
+  ],
+  "key_questions": [
+    "Do you handle customer payment information?",
+    "Do you store sensitive customer data?",
+    "What is your primary business model?"
+  ],
+  "coverage_priorities": [
+    "Data breach response",
+    "Business interruption",
+    "Ransomware & extortion",
+    "Social engineering fraud",
+    "Regulatory defense & fines"
+  ],
+  "typical_limits": {
+    "min": 250000,
+    "recommended": 1000000,
+    "max": 5000000
+  },
+  "outreach_templates": {
+    "subject_line": "Protect Your Business from Cyber Threats - Free Risk Assessment",
+    "opening": "In today's digital landscape, cyber threats are a when, not if. Let us help you understand your risk exposure.",
+    "pain_points": [
+      "Ransomware attacks disrupting operations",
+      "Data breaches exposing customer information",
+      "Business email compromise fraud",
+      "Regulatory fines and legal costs"
+    ],
+    "cta": "Get your free cyber risk assessment in 60 seconds"
+  },
+  "discovery_script_focus": [
+    "Current cybersecurity measures",
+    "Data sensitivity and volume",
+    "Business continuity planning",
+    "Budget for risk management"
+  ]
+}

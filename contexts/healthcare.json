@@ -1,0 +1,57 @@
+{
+  "id": "healthcare",
+  "name": "Healthcare Practice",
+  "description": "Medical, dental, and healthcare practice cyber insurance context",
+  "risk_factors": [
+    "patient_records_volume",
+    "hipaa_compliance",
+    "ehr_system_security",
+    "employee_training",
+    "prior_breaches"
+  ],
+  "key_questions": [
+    "How many patient records do you maintain?",
+    "Is your EHR/EMR system cloud-based or on-premise?",
+    "Have you had a HIPAA audit or breach in the past 5 years?",
+    "Do you have a Business Associate Agreement (BAA) with vendors?"
+  ],
+  "coverage_priorities": [
+    "HIPAA breach notification and response",
+    "Protected Health Information (PHI) exposure",
+    "Regulatory defense (OCR investigations)",
+    "Crisis management and PR",
+    "Forensic investigation",
+    "Business interruption (EHR downtime)",
+    "Ransomware & extortion"
+  ],
+  "typical_limits": {
+    "min": 500000,
+    "recommended": 2000000,
+    "max": 10000000
+  },
+  "outreach_templates": {
+    "subject_line": "HIPAA Breach Costs Average $408 Per Record - Is Your Practice Protected?",
+    "opening": "Healthcare practices face unique cyber risks. A single breach can cost hundreds of thousands in HIPAA fines alone.",
+    "pain_points": [
+      "HIPAA violations and OCR investigations",
+      "Patient data exposure and notification costs",
+      "EHR ransomware attacks disrupting patient care",
+      "Business Associate breaches affecting your practice"
+    ],
+    "cta": "Get a healthcare-specific cyber risk assessment"
+  },
+  "discovery_script_focus": [
+    "EHR/EMR system and security controls",
+    "HIPAA compliance program maturity",
+    "Patient data volume and sensitivity",
+    "Vendor management (Business Associates)",
+    "Incident response and breach notification plan",
+    "Employee training on PHI handling"
+  ],
+  "compliance_considerations": [
+    "HIPAA Security Rule requirements",
+    "HITECH Act breach notification",
+    "State privacy laws (CCPA, etc.)",
+    "OCR audit readiness"
+  ]
+}
