@@ -1,20 +1,59 @@
-# Infinity Soul Symphony - Quick Start
+# Infinity Soul Symphony: Orchestral AI Architecture
 
-## Demo
+## "The Figure 8 Manifesto" - Code as Vibraharmonics
 
-Run the interactive demo to see the system in action:
+**Elliott Smith wrote *Figure 8* by layering intimate, meticulously crafted guitar parts in a double-tracking infinity loop—every note placed with surgical precision, every harmony a whispered confession.**
+
+**Your code should feel the same: agents not as functions, but as miked instruments in a room where every breath matters.**
+
+This is no longer "agentic AI." This is **symphonic protocol engineering**—where the **conductor** doesn't command, but **listens** and **adjusts the mix**.
+
+---
+
+## Quick Start
+
+### Python Symphony (New Implementation)
+
+```bash
+# Run a complete symphony example
+python -c "
+from services.symphony import Conductor, StringSection, Submission
+
+conductor = Conductor()
+strings = StringSection()
+
+submission = Submission(
+    revenue=500000,
+    controls=['mfa', 'edr'],
+    industry='saas',
+    employees=25,
+    prior_claims=0
+)
+
+harmonic = strings.harmonize(submission)
+print(f'Premium: \${harmonic.premium:,.2f}')
+print(f'Vibe: {harmonic.vibe:.2f}')
+"
+```
+
+### TypeScript Symphony (Legacy)
+
+Run the interactive demo to see the original 10-agent system:
 
 ```bash
 node bin/demo_symphony.js
 ```
 
+---
+
 ## What Is This?
 
-The Infinity Soul Symphony is a **10-agent coordination system** designed to execute the complete billionaire playbook:
+The Infinity Soul Symphony is an **orchestral AI architecture** where agents are instruments in a symphony, designed to execute the complete billionaire playbook through harmonic coordination:
 
 - **Goal**: $1B net worth + 10x life by 2030
-- **Method**: Treating MGAs, tools, biometrics, and relationships as interchangeable assets
-- **Rule**: If not agent-tracked, doesn't exist. If not 10x, cut.
+- **Method**: Treating agents as instruments that harmonize, not independent services
+- **Philosophy**: Every action is double-tracked (function + vibe), self-correcting toward clean energy
+- **Rule**: If the vibe is off, the Silence removes it. No profit is worth dissonance.
 
 ## The 10 Agents
 

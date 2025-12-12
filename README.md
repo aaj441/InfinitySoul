@@ -16,6 +16,8 @@ InfinitySoul is executing a revolutionary strategy to **liberate the security co
 **🗳️ Liberation Theology:** [LIBERATION_THEOLOGY.md](./LIBERATION_THEOLOGY.md)  
 **⚡ Execute the Revolution:** `./bin/manifesto --help`  
 **🔫 RAWKUS AI Debt Neutralization:** [RAWKUS_README.md](./RAWKUS_README.md) - Transform $400k debt into a rounding error in 60 minutes
+**🏛️ The RAWKUS Protocol:** [THE_RAWKUS_PROTOCOL.md](./THE_RAWKUS_PROTOCOL.md) - 48 Pillars of Ironclad Dominance  
+**⚡ Execute the Revolution:** `./bin/manifesto --help`
 
 ---
 

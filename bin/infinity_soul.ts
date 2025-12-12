@@ -12,6 +12,7 @@
  *   ./infinity_soul syndicate_cognition
  *   ./infinity_soul house_committee_vote
  *   ./infinity_soul rebalance_portfolio --cut_threshold 10
+ *   ./infinity_soul approve_all_requests
  *   ./infinity_soul end_day
  */
 
@@ -152,6 +153,23 @@ program
       process.exit(0);
     } catch (error) {
       console.error('❌ Error rebalancing portfolio:', error);
+      process.exit(1);
+    }
+  });
+
+// ============================================================================
+// APPROVE ALL REQUESTS (AGENTIC)
+// ============================================================================
+
+program
+  .command('approve_all_requests')
+  .description('Agentically approve all pending requests (relationship pings, content drafts, governance votes)')
+  .action(async () => {
+    try {
+      await orchestrator.approveAllRequests();
+      process.exit(0);
+    } catch (error) {
+      console.error('❌ Error approving requests:', error);
       process.exit(1);
     }
   });

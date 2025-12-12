@@ -1,0 +1,246 @@
+# RAWKUS Ethics Lab Configuration
+# Major label money funds indie beats
+
+ethics_lab:
+  name: "RAWKUS Ethics Lab"
+  ein: "00-0000000"  # To be filed
+  jurisdiction: "Delaware (501c3)"
+  fiscal_year: "Calendar year"
+  
+  # Budget: $6.2M Annual
+  budget:
+    annual_total: "$6.2M"
+    
+    sources:
+      holdco_tithe:
+        amount: "$5.0M"
+        description: "10% of RAWKUS AI LLC net revenue"
+        
+      carrier_ethics_tax:
+        amount: "$0.5M"
+        description: "50 carriers × $10K annual"
+        
+      academic_grants:
+        amount: "$0.5M"
+        sources:
+          - "NSF"
+          - "DARPA"
+          - "Sloan Foundation"
+        
+      individual_donations:
+        amount: "$0.2M"
+        sources:
+          - "Indie hackers"
+          - "Telluride alums"
+          - "Community members"
+    
+    expenses:
+      salaries:
+        amount: "$1.5M"
+        breakdown: "15 people × $100K (indie salaries)"
+        
+      grants:
+        amount: "$1.5M"
+        description: "Direct grants to fellows and researchers"
+        
+      bounties:
+        amount: "$0.2M"
+        description: "Ethical exploit rewards, adversarial testing"
+        
+      operations:
+        amount: "$0.1M"
+        breakdown:
+          - "Discord"
+          - "GitHub"
+          - "Domains"
+          - "Infrastructure"
+        
+      legal:
+        amount: "$0.05M"
+        description: "501(c)(3) compliance, sample clearance"
+        
+      reserve:
+        amount: "$2.95M"
+        description: "3-year runway buffer"
+
+  # Governance: House Committee
+  governance:
+    house_committee:
+      members:
+        - name: "Telluride Alum #1"
+          vote_weight: 0.20
+          role: "A&R #1 (community advocate)"
+          
+        - name: "Telluride Alum #2"
+          vote_weight: 0.20
+          role: "A&R #2 (practitioner perspective)"
+          
+        - name: "AI Researcher #1"
+          vote_weight: 0.15
+          role: "Producer #1 (technical oversight)"
+          
+        - name: "AI Researcher #2"
+          vote_weight: 0.15
+          role: "Producer #2 (ethics oversight)"
+          
+        - name: "Policyholder Representative"
+          vote_weight: 0.10
+          role: "The crowd (user voice)"
+          
+        - name: "Security Practitioner"
+          vote_weight: 0.10
+          role: "Street team (operational insight)"
+          
+        - name: "Founder"
+          vote_weight: 0.10
+          role: "Label head (tie-breaker only)"
+    
+    quorum: 0.40  # 40% of voting power must be present
+    threshold: 0.60  # 60% approval required
+    cadence: "weekly"  # A&Rs meet every week
+
+  # Programs
+  programs:
+    fellowship:
+      budget: "$1.0M"
+      structure: "10 fellows × $100K/year"
+      duration: "1-year renewable"
+      
+      focus_areas:
+        - "Ethical AI in insurance"
+        - "Open-source risk modeling"
+        - "Community governance protocols"
+        - "Adversarial security testing"
+      
+      selection_criteria:
+        - "Demonstrated commitment to open-source"
+        - "Track record in security or AI ethics"
+        - "Community endorsement (Discord votes)"
+        - "Alignment with RAWKUS principles"
+      
+      examples:
+        - "@hacker_on_probation (ethical exploit research)"
+        - "@union_ai (labor rights in AI deployment)"
+        - "Former MGA founders (industry transformation)"
+    
+    grants:
+      budget: "$0.5M"
+      structure: "$10K-$50K grants for specific projects"
+      review_process: "House Committee votes quarterly"
+      
+      eligible_projects:
+        - "Open-source insurance protocols"
+        - "Ethical constraint engines"
+        - "Community governance tools"
+        - "Security practitioner training programs"
+    
+    bounties:
+      budget: "$0.2M"
+      
+      categories:
+        ethical_violations:
+          range: "$5K-$25K"
+          description: "Identifying biased or unfair agent behavior"
+          
+        security_exploits:
+          range: "$10K-$50K"
+          description: "Responsible disclosure of vulnerabilities"
+          
+        protocol_improvements:
+          range: "$1K-$10K"
+          description: "Accepted protocol enhancements"
+      
+      submission: "Discord #bounty-submissions"
+    
+    publications:
+      budget: "$0"
+      format: "Raw markdown, no gatekeepers"
+      
+      distribution:
+        - "GitHub"
+        - "Discord"
+        - "Twitter/X"
+      
+      philosophy:
+        - "No academic journals (too slow, too gatekept)"
+        - "No peer review gatekeeping (community review instead)"
+        - "Public from day one (no embargoes)"
+        - "CC-BY-SA licensed (open forever)"
+      
+      examples:
+        - "The Rawkus Bar: Ethical Constraints as Lyrical Integrity"
+        - "30-Second Underwriting: Boom-Bap for Insurance"
+        - "Community Governance: Token Votes as A&Rs"
+    
+    training:
+      budget: "Funded via HoldCo operations"
+      model: "Free security training (Telluride model)"
+      goal: "Train 1,000 liberated practitioners"
+      
+      curriculum:
+        - "Ethical AI deployment"
+        - "Open-source risk modeling"
+        - "Community governance participation"
+        - "Adversarial security testing"
+
+  # Carrier Ethics Tax
+  carrier_ethics_tax:
+    amount_per_carrier: "$10K"
+    number_of_carriers: 50
+    total_revenue: "$500K"
+    
+    benefits:
+      - "Access to RAWKUS Ethics Lab research"
+      - "Community governance participation rights"
+      - "Rawkus Seal certification (soundwave → shield logo)"
+      - "Public recognition as ethical AI adopter"
+
+  # Transparency: Public Ledger
+  transparency:
+    publication_location: "ethics_lab/governance/financial_ledger.md"
+    update_frequency: "First Monday of each month"
+    audit_frequency: "Annual independent audit"
+    
+    published_data:
+      - "Revenue sources and amounts"
+      - "Grant recipients and project descriptions"
+      - "Fellowship awards and research focus"
+      - "Bounty payouts and findings"
+      - "Operating expenses (categorized)"
+
+  # Indie Philosophy
+  indie_philosophy:
+    - "Artists own their work (fellows retain all IP rights)"
+    - "No gatekeepers (publications are raw markdown)"
+    - "Community A&Rs (Discord votes on grants)"
+    - "Major label money, indie soul (10% tithe from HoldCo)"
+    - "Open-source forever (all research is CC-BY-SA)"
+
+  # The Telluride Model
+  telluride_model:
+    principles:
+      - "Self-governance by the community"
+      - "Deep intellectual engagement"
+      - "Commitment to social good"
+      - "Lifelong network effects"
+      - "No hierarchical gatekeeping"
+    
+    goal: "Create 1,000 RAWKUS alumni who:"
+    alumni_characteristics:
+      - "Own their research (they keep their masters)"
+      - "Participate in governance (they are the A&Rs)"
+      - "Build the future of ethical AI (they write the rhymes)"
+
+  # The Covenant
+  covenant:
+    lab_commits_to:
+      - "Transparency: Public ledger, monthly updates"
+      - "Independence: No HoldCo control over research agenda"
+      - "Community governance: Token holders + House Committee"
+      - "Open-source: All research is CC-BY-SA"
+      - "Sustainability: 3-year reserve minimum"
+    
+    community_commits_to:
+      - "Participation: Vote on grants, review research"
+      - "Integrity: Report violations, submit bounties"
+      - "Building: Create the future of ethical AI"

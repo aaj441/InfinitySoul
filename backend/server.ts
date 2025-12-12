@@ -18,6 +18,11 @@ import evidenceRouter from './routes/evidence';
 import automationRouter from './routes/automation';
 import cyberInsuranceRouter from './intel/cyberInsurance/routes';
 import cyberAuditRouter from './routes/cyberAudit';
+import insuranceHubRouter from './routes/insuranceHub';
+import revenueAnalyticsRouter from './routes/revenueAnalytics';
+import croRouter from './routes/cro';
+import pricingRouter from './routes/pricing';
+import analyticsRouter from './routes/analytics';
 import { enqueueScan, getJobStatus, getQueueStats, checkQueueHealth } from './services/queue';
 
 dotenv.config();
@@ -289,6 +294,11 @@ app.use('/api/evidence', evidenceRouter);
 app.use('/api/automation', automationRouter);
 app.use('/api/cyber-insurance', cyberInsuranceRouter);
 app.use('/api/cyber-audit', cyberAuditRouter);
+app.use('/api/insurance-hub', insuranceHubRouter);
+app.use('/api/analytics', revenueAnalyticsRouter);
+app.use('/api/cro', croRouter);
+app.use('/api/pricing', pricingRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // ============ HEALTH CHECK ============
 

@@ -1,0 +1,114 @@
+# RAWKUS AI LLC - Holding Company Configuration
+# The Murdoch Money Stack: Major Label Advance Meets Indie Soul
+
+holdco:
+  name: "RAWKUS AI LLC"
+  
+  # Legal Structure
+  structure:
+    delaware_llc: "RAWKUS AI LLC"              # The label (HoldCo)
+    cayman_ip: "RAWKUS Fiber Holdings"          # The masters (IP ownership)
+    wyoming_mga_parent: "RAWKUS Cyber Systems"  # The artists (MGA parent)
+    swiss_foundation: "RAWKUS Data Commons"     # The crate diggers (research)
+  
+  # Cap Table: Artists Own 20%
+  cap_table:
+    founder: 0.40      # You keep the masters
+    vc: 0.30           # Murdoch money (a16z seed + Series A)
+    community: 0.20    # Artists own 20% (token pool)
+    team: 0.10         # The crew (4-year vest)
+  
+  # Debt/Equity Ratio: 3:1 (Kluge's Leverage)
+  debt_equity_ratio: 3.0
+  
+  # Funding Stack
+  funding:
+    cloud_credits:
+      amount: "$400K"
+      source: "AWS, GCP, Azure"
+      use: "Infrastructure (indie distro)"
+    
+    venture_debt:
+      amount: "$50M"
+      source: "SVB"
+      rate: 0.12
+      term_years: 5
+      use: "MGA acquisitions"
+    
+    seller_financing:
+      amount: "$15M"
+      structure: "Revshare notes"
+      rate: "5% of premium"
+      use: "Founder buyouts (artist-friendly)"
+    
+    equity:
+      amount: "$20M"
+      source: "a16z Seed + Series A"
+      use: "Protocol development"
+  
+  # Total Capital: $85.4M (Debt/Equity = 3.27:1)
+  
+  # The Tithe: 10% to RAWKUS Ethics Lab
+  tithe:
+    ethics_lab: 0.10           # 10% to RAWKUS Ethics Lab (501c3)
+    community_buyback: 0.20    # 20% to $SOUL buyback (artist royalties)
+    retain: 0.70               # 70% retained for acquisitions & ops
+  
+  # The Three Exits: Sell High, Keep the Rails
+  exits:
+    mga_sale_2027:
+      buyer: "Berkshire Hathaway"
+      valuation_multiple: 10.0  # 10x EBITDA
+      estimated_value: "$600M"
+      community_share: 0.20     # $120M to $SOUL holders
+      retain: "IS Fiber network fees"
+    
+    protocol_sale_2030:
+      buyer: "Salesforce"
+      valuation_multiple: 18.0  # 18x ARR
+      estimated_value: "$900M"
+      community_share: 0.20     # $180M to $SOUL holders
+      retain: "IS Fiber perpetual fees"
+    
+    is_fiber_forever:
+      revenue_annual: "$30M"
+      model: "10% of all premiums"
+      purpose: "The rails are forever; the stations are free"
+
+# The Kluge Principles
+kluge_principles:
+  - "Buy distressed (MGAs at 0.5x book value)"
+  - "Centralize ops (shared underwriting, claims, reinsurance)"
+  - "Cut costs ruthlessly (agents replace humans where possible)"
+  - "Graduate cells (spin out profitable MGAs as standalone entities)"
+  - "Keep the rails (IS Fiber network fees in perpetuity)"
+  - "Sell at peak (10x-18x exits to strategic buyers)"
+
+# Community Covenant
+community:
+  equity_guarantee: 0.20  # 20% equity across all entities
+  
+  governance_rights:
+    - "Vote on risk appetite"
+    - "Vote on carrier partnerships"
+    - "Vote on MGA acquisitions"
+    - "Vote on protocol upgrades"
+  
+  distribution_rights:
+    - "Pro-rata share of all exits"
+    - "Pro-rata share of IS Fiber network fees"
+    - "Pro-rata share of HoldCo dividends"
+
+# The Murdoch Money, Indie Soul Promise
+promise:
+  major_label_money:
+    - "VC, debt, cloud credits fund acquisitions"
+    - "Agent development infrastructure"
+    - "Scaling operations"
+  
+  indie_soul:
+    - "Artists (researchers) own 20%"
+    - "Lyrics (protocols) are public (CC-BY-SA)"
+    - "A&Rs (governance) are the community"
+    - "The label head keeps the rails"
+    - "The stations are free (spun-out cells)"
