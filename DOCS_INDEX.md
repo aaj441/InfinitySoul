@@ -58,6 +58,28 @@ Once you're ready to build, reference these technical documents:
 - Secrets management
 - Environment variables
 
+### For Strategic Planning
+
+**[MALCOLM_X_MANIFESTO.md](MALCOLM_X_MANIFESTO.md)** - The philosophical foundation
+- Self-determination, self-respect, self-defense in cyber insurance
+- Revolutionary strategy for liberating the security community
+- Community ownership via $SOUL tokens
+
+**[KLUGE_PLAYBOOK.md](KLUGE_PLAYBOOK.md)** - The operational playbook
+- Distressed MGA acquisition strategy
+- Buy low, optimize, sell high, keep the rails
+- Transformation plans and deal structures
+
+**[THE_RAWKUS_PROTOCOL.md](THE_RAWKUS_PROTOCOL.md)** - 48 Pillars of tactical execution
+- Infrastructure Moats (Pillars 1-12)
+- Tokenomic Armor (Pillars 13-24)
+- Protocol Warfare (Pillars 25-36)
+- Operational Fortress (Pillars 37-48)
+
+**[LIBERATION_THEOLOGY.md](LIBERATION_THEOLOGY.md)** - The ethical framework
+- Community-first insurance principles
+- Democratic governance structures
+
 ---
 
 ## 🗺️ Document Purpose Map
@@ -81,6 +103,15 @@ Once you're ready to build, reference these technical documents:
 
 **...integrate the LIFE OS 10X dashboard**
 → Read [LIFE-OS-MERGER-GUIDE.md](LIFE-OS-MERGER-GUIDE.md)
+
+**...understand the revolutionary strategy**
+→ Read [MALCOLM_X_MANIFESTO.md](MALCOLM_X_MANIFESTO.md)
+
+**...learn the MGA acquisition playbook**
+→ Read [KLUGE_PLAYBOOK.md](KLUGE_PLAYBOOK.md)
+
+**...execute tactical competitive advantages**
+→ Read [THE_RAWKUS_PROTOCOL.md](THE_RAWKUS_PROTOCOL.md)
 
 **...find a specific command**
 → Search [COMPLETE-DELIVERY-SUMMARY.md](COMPLETE-DELIVERY-SUMMARY.md) "Command Quick Reference"

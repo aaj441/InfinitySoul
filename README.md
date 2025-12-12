@@ -14,6 +14,7 @@ InfinitySoul is executing a revolutionary strategy to **liberate the security co
 **📖 Read the Manifesto:** [MALCOLM_X_MANIFESTO.md](./MALCOLM_X_MANIFESTO.md)  
 **💰 The Kluge Playbook:** [KLUGE_PLAYBOOK.md](./KLUGE_PLAYBOOK.md)  
 **🗳️ Liberation Theology:** [LIBERATION_THEOLOGY.md](./LIBERATION_THEOLOGY.md)  
+**🏛️ The RAWKUS Protocol:** [THE_RAWKUS_PROTOCOL.md](./THE_RAWKUS_PROTOCOL.md) - 48 Pillars of Ironclad Dominance  
 **⚡ Execute the Revolution:** `./bin/manifesto --help`
 
 ---
