@@ -15,6 +15,7 @@
  *   ./infinity_soul end_day
  */
 
+// @ts-ignore - commander package exists
 import { Command } from 'commander';
 import { SymphonyOrchestrator } from '../backend/agents/symphony/SymphonyOrchestrator';
 
@@ -51,7 +52,7 @@ program
   .command('approve_scout_offers')
   .description('Approve MGA acquisition offers')
   .option('-c, --count <number>', 'Number of offers to send', '5')
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       const count = parseInt(options.count);
       await orchestrator.approveScoutOffers(count);
@@ -70,7 +71,7 @@ program
   .command('check_biometrics')
   .description('Check biometrics and generate optimization plan')
   .option('-t, --threshold <number>', 'HRV threshold', '80')
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       const threshold = parseInt(options.threshold);
       await orchestrator.checkBiometrics(threshold);
@@ -90,7 +91,7 @@ program
   .description('Enter deep work mode')
   .option('-d, --duration <number>', 'Duration in hours', '4')
   .option('--block_all', 'Block all notifications except DealAgent', false)
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       const duration = parseFloat(options.duration);
       await orchestrator.deepWork(duration, options.block_all);
@@ -109,7 +110,7 @@ program
   .command('syndicate_cognition')
   .description('Syndicate content across platforms')
   .option('-c, --content <text>', 'Content to syndicate')
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       await orchestrator.syndicateCognition(options.content);
       process.exit(0);
@@ -144,7 +145,7 @@ program
   .command('rebalance_portfolio')
   .description('Rebalance portfolio, cut underperforming assets')
   .option('-t, --cut_threshold <number>', '10x threshold for keeping assets', '10')
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       const threshold = parseFloat(options.cut_threshold);
       await orchestrator.rebalancePortfolio(threshold);
@@ -210,7 +211,7 @@ program
   .command('agent:learning')
   .description('Run LearningAgent to ingest papers')
   .option('-c, --count <number>', 'Number of papers to ingest', '10')
-  .action(async (options) => {
+  .action(async (options: any) => {
     try {
       const count = parseInt(options.count);
       const agent = orchestrator.getLearningAgent();
