@@ -33,7 +33,17 @@
     "agents:collective-risk": "npm run agents collective-risk",
     "agents:insurer-report": "npm run agents insurer-report",
     "agents:regulator-brief": "npm run agents regulator-brief",
-    "scan:domain": "npx ts-node scripts/scan-domain.ts"
+    "scan:domain": "npx ts-node scripts/scan-domain.ts",
+    "symphony": "npx ts-node bin/infinity_soul.ts",
+    "symphony:start": "npx ts-node bin/infinity_soul.ts start_day",
+    "symphony:scout": "npx ts-node bin/infinity_soul.ts approve_scout_offers",
+    "symphony:biometrics": "npx ts-node bin/infinity_soul.ts check_biometrics",
+    "symphony:deep-work": "npx ts-node bin/infinity_soul.ts deep_work",
+    "symphony:syndicate": "npx ts-node bin/infinity_soul.ts syndicate_cognition",
+    "symphony:vote": "npx ts-node bin/infinity_soul.ts house_committee_vote",
+    "symphony:rebalance": "npx ts-node bin/infinity_soul.ts rebalance_portfolio",
+    "symphony:end": "npx ts-node bin/infinity_soul.ts end_day",
+    "symphony:demo": "npx ts-node bin/infinity_soul.ts demo"
   },
   "dependencies": {
     "commander": "^11.1.0",
