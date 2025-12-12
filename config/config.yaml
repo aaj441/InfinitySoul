@@ -1,0 +1,56 @@
+---
+# InfinitySoul Configuration
+app:
+  name: "InfinitySoul Cyber Insurance Platform"
+  version: "1.0.0"
+  environment: "development"
+
+# Paths
+paths:
+  carrier_matrix: "config/carrier_matrix.json"
+  contexts_dir: "contexts"
+  workflows_dir: "workflows"
+
+# Default settings
+defaults:
+  niche: "generic"
+  min_revenue_threshold: 100000
+
+# Workflow settings
+workflows:
+  sales_funnel:
+    enabled: true
+    auto_qualify: true
+    auto_risk_assessment: true
+  
+  risk_assessment:
+    enabled: true
+    loss_probability_cap: 0.25
+
+# Quest system
+quests:
+  enabled: true
+  panic_mode_enabled: true
+  daily_limit: 10
+
+# Integration settings
+integrations:
+  crm:
+    enabled: false
+    provider: "stub"
+  
+  calendar:
+    enabled: false
+    provider: "stub"
+  
+  email:
+    enabled: false
+    provider: "stub"
+
+# API settings
+api:
+  port: 8000
+  cors_origins:
+    - "http://localhost:3000"
+    - "https://*.vercel.app"
+  rate_limit: 100

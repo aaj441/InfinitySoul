@@ -1,0 +1,69 @@
+{
+  "id": "law_firm",
+  "name": "Law Firm",
+  "description": "Legal practice cyber insurance context",
+  "risk_factors": [
+    "client_matter_sensitivity",
+    "document_volume",
+    "encryption_practices",
+    "attorney_count",
+    "practice_areas"
+  ],
+  "key_questions": [
+    "What are your primary practice areas?",
+    "How many active client matters do you handle?",
+    "Do you encrypt client communications and documents?",
+    "Have you experienced any security incidents?",
+    "Do you have cyber liability coverage through your bar association?"
+  ],
+  "coverage_priorities": [
+    "Client data breach notification",
+    "Professional liability (cyber E&O)",
+    "Regulatory defense (state bar complaints)",
+    "Social engineering fraud (wire transfer fraud)",
+    "Ransomware & extortion",
+    "Business interruption",
+    "Crisis management",
+    "Digital asset restoration"
+  ],
+  "typical_limits": {
+    "min": 500000,
+    "recommended": 2000000,
+    "max": 10000000
+  },
+  "outreach_templates": {
+    "subject_line": "Law Firms Are Prime Targets for Cybercriminals - Protect Client Trust",
+    "opening": "Your clients trust you with their most sensitive information. A data breach can destroy that trust and your reputation overnight.",
+    "pain_points": [
+      "Client data breaches exposing privileged information",
+      "Wire transfer fraud targeting real estate closings",
+      "Ransomware attacks locking case files",
+      "State bar ethics complaints from security failures",
+      "Loss of attorney-client privilege"
+    ],
+    "cta": "Get a law firm-specific cyber risk assessment"
+  },
+  "discovery_script_focus": [
+    "Practice areas and client data sensitivity",
+    "Document management and encryption",
+    "Email security (especially wire transfer protocols)",
+    "Employee and attorney security training",
+    "Incident response plan",
+    "Cyber insurance through bar association (gaps)",
+    "Cloud vs. on-premise infrastructure",
+    "Client trust account security"
+  ],
+  "compliance_considerations": [
+    "ABA Model Rule 1.6 (confidentiality)",
+    "State bar ethics opinions on cybersecurity",
+    "Client notification obligations",
+    "Attorney-client privilege preservation"
+  ],
+  "high_risk_practice_areas": [
+    "Real estate (wire fraud)",
+    "Corporate/M&A (trade secrets)",
+    "Family law (sensitive personal data)",
+    "Intellectual property (valuable assets)",
+    "Personal injury (medical records)"
+  ]
+}

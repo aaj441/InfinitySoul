@@ -1,0 +1,69 @@
+{
+  "id": "nonprofit",
+  "name": "Nonprofit Organization",
+  "description": "Charitable and nonprofit organization cyber insurance context",
+  "risk_factors": [
+    "donor_data_volume",
+    "online_donation_processing",
+    "volunteer_access",
+    "budget_constraints",
+    "grant_compliance"
+  ],
+  "key_questions": [
+    "How many donor records do you maintain?",
+    "Do you process online donations and payments?",
+    "How many volunteers have system access?",
+    "What is your annual operating budget?",
+    "Do you have grant requirements for cybersecurity?"
+  ],
+  "coverage_priorities": [
+    "Donor data breach notification",
+    "Payment card data exposure (PCI-DSS)",
+    "Regulatory defense",
+    "Funds transfer fraud",
+    "Ransomware & extortion",
+    "Business interruption",
+    "Crisis management and PR",
+    "Volunteer training liability"
+  ],
+  "typical_limits": {
+    "min": 250000,
+    "recommended": 1000000,
+    "max": 5000000
+  },
+  "outreach_templates": {
+    "subject_line": "Protect Your Donors and Mission - Affordable Cyber Insurance for Nonprofits",
+    "opening": "Nonprofits are increasingly targeted by cybercriminals. Protect your donors' trust and your mission-critical operations.",
+    "pain_points": [
+      "Donor data breaches damaging reputation and fundraising",
+      "Online donation system compromises",
+      "Ransomware attacks disrupting programs and services",
+      "Limited IT budgets for cybersecurity",
+      "Volunteer access creating security gaps"
+    ],
+    "cta": "Get a nonprofit-specific cyber risk assessment"
+  },
+  "discovery_script_focus": [
+    "Donor database and CRM security",
+    "Online donation platforms and PCI compliance",
+    "Volunteer and staff access controls",
+    "Budget for cybersecurity and insurance",
+    "Grant requirements for data protection",
+    "Program delivery systems (if service-focused)",
+    "Third-party vendor management",
+    "Board awareness and governance"
+  ],
+  "compliance_considerations": [
+    "State charity registration requirements",
+    "PCI-DSS (if processing payments)",
+    "Grant funder cybersecurity requirements",
+    "IRS Form 990 disclosures",
+    "State privacy laws"
+  ],
+  "budget_friendly_options": [
+    "Shared coverage through nonprofit associations",
+    "Basic coverage with high deductibles",
+    "Grant funding for cybersecurity improvements",
+    "Tiered pricing based on budget size"
+  ]
+}

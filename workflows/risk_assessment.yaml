@@ -1,0 +1,25 @@
+---
+# Risk Assessment Workflow
+# Lightweight workflow for cyber risk assessment only
+
+name: RiskAssessment
+trigger: manual_or_api
+description: >
+  Run a focused cyber risk assessment for an existing or
+  pre-qualified prospect. Used by /cyber_copilot endpoint.
+
+steps:
+  - name: RunRiskAssessment
+    agent: CyberRiskAssessmentAgent
+    input:
+      - client_profile
+      - niche
+    output:
+      - risk_report
+      - coverage_map
+      - recommended_carriers
+
+final_output:
+  RiskReport: risk_report
+  CoverageMap: coverage_map
+  RecommendedCarriers: recommended_carriers

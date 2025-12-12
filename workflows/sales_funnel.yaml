@@ -1,0 +1,69 @@
+---
+# Sales Funnel Workflow
+# Transforms raw leads into qualified prospects with full cyber risk assessment
+
+name: NewLead
+trigger: manual_or_api
+description: >
+  Intake a new prospect, qualify, run cyber risk assessment,
+  and generate outreach + discovery materials.
+
+steps:
+  - name: QualifyLead
+    agent: QualificationAgent
+    input:
+      - lead_data
+    output:
+      - qualification_status
+      - niche
+      - enriched_lead_data
+
+  - name: RunRiskAssessment
+    agent: CyberRiskAssessmentAgent
+    condition: qualification_status == "qualified"
+    input:
+      - enriched_lead_data
+      - niche
+    output:
+      - risk_report
+      - coverage_map
+      - recommended_carriers
+
+  - name: GenerateDiscoveryScript
+    agent: DiscoveryScriptAgent
+    input:
+      - niche
+      - enriched_lead_data
+      - risk_report
+    output:
+      - discovery_call_script
+
+  - name: GenerateOutreachSequence
+    agent: OutreachAgent
+    input:
+      - niche
+      - enriched_lead_data
+      - risk_report
+    output:
+      - email_sequence
+      - followup_cadence
+
+  - name: CalendarLink
+    agent: CalendarAgent
+    condition: qualification_status == "qualified"
+    input:
+      - enriched_lead_data
+    output:
+      - booking_link
+
+final_output:
+  QualifiedLead: enriched_lead_data
+  QualificationStatus: qualification_status
+  Niche: niche
+  RiskReport: risk_report
+  CoverageMap: coverage_map
+  RecommendedCarriers: recommended_carriers
+  DiscoveryScript: discovery_call_script
+  OutreachSequence: email_sequence
+  FollowupCadence: followup_cadence
+  BookingLink: booking_link
