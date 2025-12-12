@@ -349,7 +349,6 @@ export function validateUrl(
         hostname.startsWith('10.') ||
         /^172\.(1[6-9]|2[0-9]|3[01])\./.test(hostname) || // 172.16.0.0/12
         hostname.startsWith('192.168.') ||
-        hostname === '0.0.0.0' ||
         hostname.startsWith('169.254.')
       ) {
         return {
