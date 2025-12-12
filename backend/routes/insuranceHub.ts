@@ -137,7 +137,14 @@ router.get('/config/industries/:industry/recommended', (req: Request, res: Respo
 router.get('/lead-magnets', (req: Request, res: Response) => {
   try {
     const line = req.query.line as InsuranceLine | undefined;
-    const leadMagnets = insuranceHub.getLeadMagnets(line);
+
+    if (line && !INSURANCE_LINE_CONFIGS[line]) {
+      return res.status(400).json({
+        success: false,
+        error: `Insurance line '${line}' not found`,
+      });
+    }
+
 
     res.json({
       success: true,
