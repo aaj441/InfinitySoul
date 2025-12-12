@@ -312,6 +312,12 @@ router.post('/lucy/chat', async (req: Request, res: Response) => {
       });
     }
 
+    if (!insuranceHub) {
+      return res.status(500).json({
+        success: false,
+        error: 'Internal server error: insuranceHub is not initialized',
+      });
+    }
     const lucy = insuranceHub.getLucy();
     const result = await lucy.chat(request);
 
