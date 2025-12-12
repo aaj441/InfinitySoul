@@ -1,0 +1,145 @@
+# RAWKUS AI - Holding Company Configuration
+# "The debt is leverage, not liability. Deploying at max warp."
+
+company:
+  name: "InfinitySoul Holdings"
+  founded: "2024"
+  mission: "Weaponize infrastructure against rent extraction"
+
+# Financial Configuration
+financial:
+  debt: 400000  # Current debt in USD
+  equity: 0     # Current equity value in USD
+  
+  # Debt-to-Equity Ratio
+  # Traditional max: 2.0
+  # Kluge max: 4.0 (Infrastructure arbitrage allows higher leverage)
+  debt_equity_ratio: 4.0
+  
+  # Revenue Projections (USD/year)
+  projections:
+    month_0:
+      protocol_revenue: 0
+      equity_value: 0
+      debt_pct_of_net_worth: "Infinite"
+      
+    month_6:
+      protocol_revenue: 5_000_000
+      equity_value: 40_000_000
+      company_valuation: 400_000_000
+      ownership_stake: 0.40
+      debt_pct_of_net_worth: 0.01  # 1%
+      
+    month_12:
+      protocol_revenue: 20_000_000
+      equity_value: 240_000_000
+      company_valuation: 600_000_000
+      ownership_stake: 0.40
+      debt_pct_of_net_worth: 0.0017  # 0.17%
+      
+    month_18:
+      protocol_revenue: 120_000_000  # $400k DAILY fees
+      equity_value: 480_000_000
+      company_valuation: 1_200_000_000
+      ownership_stake: 0.40
+      debt_pct_of_net_worth: 0.0008  # 0.08%
+      
+    year_5_plus:
+      protocol_revenue: 30_000_000  # Perpetual network fees
+      protocol_npv: 300_000_000     # 10% discount rate
+      debt_pct_of_npv: 0.0013       # 0.13%
+
+# Asset Acquisition Strategy (Kluge Playbook)
+acquisition:
+  target: "Distressed MGAs"
+  criteria:
+    combined_ratio: ">115%"  # Losing money
+    premium_range: "$5M-$20M/year"
+    founder_age: ">55"  # Estate sale opportunity
+    data_years: ">3"  # Valuable claims history
+    community_size: ">500"  # Discord members
+  
+  offer_structure:
+    cash_at_close: 50000  # $50K
+    revshare_percent: 15  # 15% of future revenue
+    soul_tokens: 1000     # Governance tokens
+  
+  expected_roi: 240  # 240x in Year 1
+  
+# Automation Strategy
+automation:
+  scout_agent:
+    enabled: true
+    target_count: 3  # MGAs to contact per deployment
+    expected_response_rate: 0.33  # 33%
+    
+  underwriting_agent:
+    enabled: true
+    cost_per_quote: 0.10  # $0.10 vs $100 human
+    capacity: "unlimited"
+    replacement_savings: 100000  # $100K per underwriter/year
+    
+  governance_agent:
+    enabled: true
+    voting_threshold: 0.50  # Simple majority
+    
+# Cost Reduction Targets
+cost_reduction:
+  underwriters_to_replace: 10
+  annual_savings_per_position: 100000
+  total_annual_savings: 1000000
+  months_to_neutralize_debt: 4.8
+
+# Protocol Hardening
+security:
+  intrusion_prevention:
+    - personal_social_media_intrusion
+    - notification_intrusion
+    - email_intrusion
+  
+  focus_mode:
+    enabled: true
+    work_hours: "6am-8pm"
+    whitelisted_notifications:
+      - DealAgent
+  
+  biometric_auth: true
+  panic_button: true
+
+# KPIs - Debt Neutralization Progress
+kpis:
+  current:
+    debt: 400000
+    equity: 0
+    monthly_burn: 0
+    
+  targets:
+    month_6_equity: 40_000_000
+    month_12_equity: 240_000_000
+    month_18_equity: 480_000_000
+    perpetual_revenue: 30_000_000
+    
+  success_metrics:
+    debt_becomes_rounding_error_at: "Month 6"
+    debt_neutralized_by: "Month 5"
+    exit_multiple: "18x on protocol, 10x on MGAs"
+
+# The Oath
+oath: |
+  I am not a person with $400k debt.
+  I am a PROTOCOL that generates $400k in DAILY FEES by Month 18.
+  The debt is a DEPRECATED variable.
+  I revoke its power by EXECUTING THE SCRIPT.
+  I do not "try." I DEPLOY.
+  I do not "die." I COMPOUND.
+  I do not "disrupt." I REPLACE.
+  RAWKUS AI is loaded. My finger is on the trigger. I pull it now.
+
+# Deployment Commands
+commands:
+  deploy_scout: "./bin/rawkus deploy_scout_agent --count 3 --offer '$50K + 15% revshare' --execute"
+  deploy_underwriter: "./bin/rawkus deploy_underwriting_agent --cell 'mga_001' --data_path 'claims_csv'"
+  deploy_governance: "./bin/rawkus deploy_governance_agent --proposal 'ban_personal_social_media_during_work' --vote"
+  fire_underwriters: "./bin/rawkus fire_underwriters --count 10 --confirm"
+  harden_protocol: "./bin/rawkus harden_protocol --block 'personal_social_media_intrusion'"
+  check_status: "./bin/rawkus status --net_worth --debt_ratio"

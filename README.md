@@ -2,6 +2,25 @@
 
 **"We turn soundtracks into signals for support, not tools of control."**
 
+## 🔥 The Malcolm X of Cyber Insurance
+
+**"By any means necessary—but the means are agents, debt, and data, not bullets."**
+
+InfinitySoul is executing a revolutionary strategy to **liberate the security community from the insurance industrial complex** by combining:
+- **Malcolm X's philosophy** of self-determination, self-respect, and self-defense
+- **John Kluge's infrastructure arbitrage** playbook (buy distressed, optimize, sell high, keep the rails)
+- **Agentic automation** to replace rent-seeking middlemen with 30-second quotes and transparent pricing
+
+**📖 Read the Manifesto:** [MALCOLM_X_MANIFESTO.md](./MALCOLM_X_MANIFESTO.md)  
+**💰 The Kluge Playbook:** [KLUGE_PLAYBOOK.md](./KLUGE_PLAYBOOK.md)  
+**🗳️ Liberation Theology:** [LIBERATION_THEOLOGY.md](./LIBERATION_THEOLOGY.md)  
+**⚡ Execute the Revolution:** `./bin/manifesto --help`  
+**🔫 RAWKUS AI Debt Neutralization:** [RAWKUS_README.md](./RAWKUS_README.md) - Transform $400k debt into a rounding error in 60 minutes
+**🏛️ The RAWKUS Protocol:** [THE_RAWKUS_PROTOCOL.md](./THE_RAWKUS_PROTOCOL.md) - 48 Pillars of Ironclad Dominance  
+**⚡ Execute the Revolution:** `./bin/manifesto --help`
+
+---
+
 ## What InfinitySoul Is
 
 InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges four worlds:
@@ -16,6 +35,13 @@ InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** 
 **Secondary use case:** Cyber insurance sales platform - Lead qualification → risk assessment → outreach automation.
 **Tertiary use case:** Small business cyber auditing (audit → fix → insure pathway).
 **Additional use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
+2. **Cyber Security Auditing & Insurance** (Small business cyber risk assessment and MGA acquisition strategy)
+3. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
+4. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
+
+**Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
+**Secondary use case:** Cyber insurance revolution via distressed MGA acquisition and agentic automation.  
+**Tertiary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
 
@@ -79,6 +105,39 @@ python audit.py --domain example.com
 - **Value prop:** "Small businesses can't afford $10K pentests. We give them a risk score in 60 seconds."
 - **Go-to-market:** Hackerspace community validation → local business networking → Chamber of Commerce partnerships
 - **Documentation:** See `CYBER_AUDIT_README.md` for technical details and `SALES_SCRIPT.md` for sales playbooks
+
+---
+
+### 3. RAWKUS AI - Debt Neutralization Protocol
+
+**What it does:** 60-minute protocol to transform $400k debt from existential threat into rounding error through strategic agent deployment and infrastructure arbitrage.
+
+- **Location:** `bin/rawkus` (CLI tool), `holdco.yaml` (configuration)
+- **Core Commands:**
+  - `deploy_scout_agent` - Acquire distressed MGAs for 240x ROI
+  - `deploy_underwriting_agent` - Replace human underwriters (99.9% cost reduction)
+  - `deploy_governance_agent` - Automate protocol governance
+  - `fire_underwriters` - $1M/year savings from automation
+  - `harden_protocol` - Block intrusion vectors (social media, notifications)
+  - `status` - Track debt neutralization progress
+- **The Math:** Month 0: Debt = Infinite% of net worth → Month 6: Debt = 1% of net worth → Month 18: Debt = 0.08% of net worth
+- **Value prop:** "You are not a person with $400k debt. You are a PROTOCOL that generates $400k in DAILY FEES by Month 18."
+- **Documentation:** See `RAWKUS_README.md` for complete 60-minute execution protocol
+
+**Quick start:**
+```bash
+# View all commands
+./bin/rawkus help
+
+# Execute 60-minute debt neutralization protocol
+npm run rawkus:scout      # Deploy scout agent
+npm run rawkus:underwriter # Deploy AI underwriter
+npm run rawkus:fire       # Automate 10 positions ($1M/year savings)
+npm run rawkus:status     # View progress
+
+# Or run entire protocol
+npm run rawkus:protocol
+```
 
 ---
 

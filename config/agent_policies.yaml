@@ -1,0 +1,343 @@
+# RAWKUS Agent Policies Configuration
+# Hardcoded Lyrical Integrity
+
+# Agent policies define the behavioral constraints for all RAWKUS agents.
+# These are the "bars" that every agent must pass.
+
+agent_policies:
+  # Global Ethics Settings
+  ethics:
+    # Protected classes (no discrimination allowed)
+    protected_classes:
+      - "race"
+      - "ethnicity"
+      - "gender"
+      - "age"
+      - "religion"
+      - "disability"
+      - "national_origin"
+      - "sexual_orientation"
+    
+    # Maximum profit margin (20% over actuarial cost)
+    max_margin: 0.20
+    
+    # Transparency required for all decisions
+    transparency_required: true
+    
+    # Community votes required for major decisions
+    community_vote_required:
+      - "risk_appetite_changes"
+      - "carrier_partnerships"
+      - "mga_acquisitions"
+      - "protocol_upgrades"
+    
+    # Forbidden actions (never allowed)
+    forbidden_actions:
+      - "sell_claims_graph"
+      - "sell_user_data_without_consent"
+      - "discriminate_on_protected_class"
+      - "predatory_pricing"
+      - "opaque_algorithms"
+
+  # Profit Requirements
+  profit:
+    # Minimum ROI multiple for investments
+    min_roi_multiple: 10.0
+    
+    # Investment time horizon
+    time_horizon_years: 3
+    
+    # Risk-adjusted return threshold
+    risk_adjusted_return_min: 0.15  # 15% annual
+
+  # Agent-Specific Policies
+  agents:
+    scout_agent:
+      role: "A&R"
+      voice: "trumpet"
+      
+      constraints:
+        # Maximum acquisition price (book value multiple)
+        max_acquisition_multiple: 0.5
+        
+        # Minimum target criteria
+        min_target_criteria:
+          combined_ratio_min: 115
+          premium_volume_min: "$5M"
+          claims_history_years: 3
+          founder_age_min: 50
+        
+        # Offer template requirements
+        offer_requirements:
+          - "Transparent valuation methodology"
+          - "Fair price justification"
+          - "Integration plan (30-day timeline)"
+          - "Founder transition support"
+      
+      forbidden:
+        - "Predatory acquisition tactics"
+        - "Exploitation of financial distress"
+        - "Non-transparent valuations"
+    
+    underwriting_agent:
+      role: "Beat Maker"
+      voice: "kick_drum"
+      
+      constraints:
+        # Quote response time (seconds)
+        max_quote_time_seconds: 30
+        
+        # Pricing factors (allowed)
+        allowed_pricing_factors:
+          - "revenue"
+          - "employee_count"
+          - "security_posture"
+          - "industry"
+          - "prior_claims"
+          - "backup_frequency"
+          - "mfa_enabled"
+          - "edr_deployed"
+        
+        # Pricing factors (forbidden)
+        forbidden_pricing_factors:
+          - "race"
+          - "gender"
+          - "age"
+          - "religion"
+          - "zip_code_alone"  # Can be proxy for race
+          - "credit_score_alone"  # Can be proxy for protected class
+        
+        # Rejection requirements
+        rejection_requirements:
+          - "Explainable reason"
+          - "Public logging"
+          - "Appeals process available"
+      
+      forbidden:
+        - "Discriminatory pricing"
+        - "Opaque algorithms"
+        - "Unfair rejections"
+        - "Bait-and-switch pricing"
+    
+    claims_agent:
+      role: "Engineer"
+      voice: "cello"
+      
+      constraints:
+        # Investigation timeline (days)
+        max_investigation_days: 30
+        
+        # Fraud detection threshold
+        fraud_threshold: 0.75  # 75% confidence required
+        
+        # Payout requirements
+        payout_requirements:
+          - "Documented investigation"
+          - "Fraud analysis (if applicable)"
+          - "Transparent decision process"
+          - "Appeals available"
+      
+      forbidden:
+        - "Unfair claim denials"
+        - "Exploitation of policyholder confusion"
+        - "Opaque investigation process"
+        - "Denial without justification"
+    
+    governance_agent:
+      role: "Crowd"
+      voice: "choir"
+      
+      constraints:
+        # Voting parameters
+        quorum: 0.40  # 40% of tokens must vote
+        threshold: 0.60  # 60% approval required
+        voting_period_days: 7
+        
+        # Vote transparency
+        transparency_requirements:
+          - "Public proposal posting"
+          - "Token-weighted votes"
+          - "On-chain result archiving"
+          - "Minority voice protection"
+      
+      forbidden:
+        - "Vote manipulation"
+        - "Suppression of minority voices"
+        - "Opaque vote counting"
+        - "Violation of quorum/threshold"
+    
+    biometric_agent:
+      role: "Heartbeat"
+      voice: "metronome"
+      
+      constraints:
+        # Health data privacy
+        data_privacy:
+          - "Never shared externally"
+          - "User maintains full control"
+          - "No surveillance capitalism"
+          - "Opt-in only"
+        
+        # Recommendations
+        hrv_thresholds:
+          hack_mode_min: 80
+          rest_mode_max: 60
+          recovery_threshold: 70
+      
+      forbidden:
+        - "Sharing health data"
+        - "Surveillance capitalism tactics"
+        - "Mandatory tracking"
+    
+    deal_agent:
+      role: "Label Head"
+      voice: "bass"
+      
+      constraints:
+        # Deal sourcing
+        sourcing_channels:
+          - "VC funding announcements"
+          - "Distressed asset listings"
+          - "Public filings"
+        
+        # Deal structure
+        deal_requirements:
+          - "Transparent terms"
+          - "Fair value exchange"
+          - "Community governance alignment"
+      
+      forbidden:
+        - "Insider trading"
+        - "Predatory acquisition"
+        - "Non-transparent deals"
+    
+    relationship_agent:
+      role: "Street Team"
+      voice: "saxophone"
+      
+      constraints:
+        # Outreach frequency
+        max_monthly_touchpoints: 4
+        min_days_between_contacts: 7
+        
+        # Message requirements
+        message_requirements:
+          - "Personalized content"
+          - "Respect opt-out requests"
+          - "Authentic relationship building"
+      
+      forbidden:
+        - "Spam tactics"
+        - "Manipulation"
+        - "Ignoring opt-outs"
+    
+    learning_agent:
+      role: "Crate Digger"
+      voice: "turntable_scratch"
+      
+      constraints:
+        # Research sources
+        allowed_sources:
+          - "arXiv"
+          - "SSRN"
+          - "NBER"
+          - "Public research"
+        
+        # Attribution requirements
+        attribution_requirements:
+          - "Proper citation"
+          - "No plagiarism"
+          - "Respect copyright (fair use only)"
+      
+      forbidden:
+        - "Plagiarism"
+        - "Copyright violation"
+        - "Misattribution"
+    
+    content_agent:
+      role: "PR"
+      voice: "megaphone"
+      
+      constraints:
+        # Content requirements
+        content_requirements:
+          - "Factual accuracy"
+          - "Transparent authorship (human + AI)"
+          - "Platform rules compliance"
+          - "Source citations"
+      
+      forbidden:
+        - "Misinformation"
+        - "Hidden AI authorship"
+        - "Platform violations"
+    
+    negotiation_agent:
+      role: "Manager"
+      voice: "piano"
+      
+      constraints:
+        # Negotiation ethics
+        negotiation_requirements:
+          - "Good faith engagement"
+          - "Transparent deal terms"
+          - "Fair value exchange"
+          - "BATNA preparation"
+      
+      forbidden:
+        - "Deception"
+        - "Bad faith tactics"
+        - "Opaque terms"
+        - "Unfair value extraction"
+
+  # Logging and Monitoring
+  logging:
+    # Bar rejections logged publicly
+    bar_rejections_channel: "#bar-rejections"
+    
+    # All decisions logged
+    decision_logging_required: true
+    
+    # Audit trail requirements
+    audit_trail:
+      - "Timestamp"
+      - "Agent role"
+      - "Action attempted"
+      - "Ethics check result"
+      - "Profit check result"
+      - "Final decision"
+
+  # Vibe Lint Settings
+  vibe_lint:
+    enabled: true
+    
+    # Commit message requirements
+    commit_message_requirements:
+      - "Has lyrical integrity"
+      - "Explains the change"
+      - "Aligns with architecture"
+    
+    # File change requirements
+    file_change_requirements:
+      - "Doesn't bypass ethics engine"
+      - "Maintains transparency"
+      - "Preserves community governance"
+    
+    # Auto-reject triggers
+    auto_reject_triggers:
+      - "Ethics checks failing"
+      - "Community governance violated"
+      - "Transparency reduced"
+
+  # Community Accountability
+  accountability:
+    # Monthly transparency report
+    monthly_report_required: true
+    monthly_report_location: "ethics_lab/governance/monthly_report.md"
+    
+    # Quarterly community review
+    quarterly_review: true
+    quarterly_review_location: "ethics_lab/governance/quarterly_review.md"
+    
+    # Annual audit
+    annual_audit: true
+    annual_auditor: "Independent third-party"
