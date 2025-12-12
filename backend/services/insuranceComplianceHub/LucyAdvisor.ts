@@ -25,6 +25,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { LRUCache } from 'lru-cache';
 import {
   InsuranceLead,
   InsuranceLine,
@@ -281,7 +282,17 @@ Most small businesses get umbrella for the broader protection. Which are you lea
  * Lucy AI Advisor service
  */
 export class LucyAdvisor {
-  private conversations: Map<string, LucyConversation> = new Map();
+  private conversations: LRUCache<string, LucyConversation>;
+
+  constructor() {
+    // Initialize LRU cache with max size and TTL
+    this.conversations = new LRUCache<string, LucyConversation>({
+      max: 1000, // Maximum 1000 conversations
+      ttl: 1000 * 60 * 60 * 24, // 24 hours TTL
+      updateAgeOnGet: true, // Refresh TTL on access
+      updateAgeOnHas: false,
+    });
+  }
 
   /**
    * Get a welcome greeting for a new or returning user
@@ -300,7 +311,12 @@ export class LucyAdvisor {
     // Get or create conversation
     let conversation: LucyConversation;
     if (request.conversationId) {
-      conversation = this.conversations.get(request.conversationId) || this.createConversation();
+      const existing = this.conversations.get(request.conversationId);
+      if (!existing) {
+        // Return 404 error when conversationId provided but not found
+        throw new Error('Conversation not found');
+      }
+      conversation = existing;
     } else {
       conversation = this.createConversation();
     }

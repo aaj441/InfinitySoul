@@ -441,7 +441,7 @@ export default function InsuranceHubPage() {
       {/* Lucy Chat Widget */}
       <LucyChatWidget
         isOpen={showLucy}
-        onToggle={() => setShowLucy(!showLucy)}
+        onToggle={() => setShowLucy(prev => !prev)}
       />
     </div>
   );

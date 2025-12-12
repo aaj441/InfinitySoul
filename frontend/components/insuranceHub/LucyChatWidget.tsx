@@ -56,6 +56,18 @@ export function LucyChatWidget({ isOpen, onToggle }: LucyChatWidgetProps) {
     scrollToBottom();
   }, [messages]);
 
+  // Handle escape key to close chat
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onToggle();
+      }
+    };
+
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [isOpen, onToggle]);
+
   const handleSend = async (message?: string) => {
     const text = message || input;
     if (!text.trim()) return;
@@ -83,6 +95,27 @@ export function LucyChatWidget({ isOpen, onToggle }: LucyChatWidgetProps) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  // Handle call-to-action buttons
+  const handleCTAAction = (action: string) => {
+    switch (action) {
+      case 'RUN_AUDIT':
+        // Trigger audit flow
+        handleSend('I want to run a compliance audit on my website');
+        break;
+      case 'GET_QUOTE':
+        // Trigger quote request
+        handleSend('I\'d like to get a quote');
+        break;
+      case 'SCHEDULE_CALL':
+        // Open calendar or trigger scheduling
+        handleSend('I want to schedule a consultation');
+        break;
+      default:
+        // Generic action handler
+        handleSend(`I'm interested in: ${action}`);
     }
   };
 
@@ -169,7 +202,10 @@ export function LucyChatWidget({ isOpen, onToggle }: LucyChatWidgetProps) {
                   {/* Call to action */}
                   {message.role === 'lucy' && message.callToAction && (
                     <div className="mt-3">
-                      <button className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors">
+                      <button 
+                        onClick={() => handleCTAAction(message.callToAction!.action)}
+                        className="text-sm bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
                         {message.callToAction.label}
                       </button>
                     </div>
