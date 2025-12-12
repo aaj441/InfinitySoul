@@ -18,7 +18,7 @@ const config: Config = {
         alert: "#ff3366",      // Distressed Asset Red
       },
       fontFamily: {
-        mono: ["Geist Mono", "monospace"], // Google-style engineered font
+        mono: ["Geist Mono", "monospace"], // Vercel's engineered monospace font
       },
       animation: {
         "spin-slow": "spin 3s linear infinite",

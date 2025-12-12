@@ -26,6 +26,8 @@ COPY --from=builder /app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
 # Copy the orchestrator and agent code
+# Note: Build context should be the repository root
+# Build with: docker build -f services/orchestrator/Dockerfile .
 COPY services/orchestrator ./services/orchestrator
 COPY services/agents ./services/agents
 

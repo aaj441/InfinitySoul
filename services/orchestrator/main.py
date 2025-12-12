@@ -2,13 +2,13 @@ from fastapi import FastAPI, BackgroundTasks, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List, Optional
-import sys
-import os
-
-# Add the parent directory to the path so we can import agents
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from agents import scout_agent, wcag_agent
+# Import agents using relative imports from the services package
+# The parent directory is already in the path when running from repo root
+try:
+    from services.agents import scout_agent, wcag_agent
+except ImportError:
+    # Fallback for different execution contexts
+    from agents import scout_agent, wcag_agent
 
 app = FastAPI(
     title="Infinity Soul Protocol",
@@ -48,16 +48,10 @@ class WCAGAuditResponse(BaseModel):
     issues: List[str] = []
 
 # --- Dependencies ---
-async def get_db_session():
-    """Placeholder for PostgreSQL connection yielding"""
-    # In production, this would yield a database session
-    # from sqlalchemy.orm import Session
-    # db = SessionLocal()
-    # try:
-    #     yield db
-    # finally:
-    #     db.close()
-    pass
+# TODO: Database integration planned for Phase 2
+# async def get_db_session():
+#     """PostgreSQL connection will be added when Prisma/SQLAlchemy is integrated"""
+#     pass
 
 # --- Endpoints ---
 
