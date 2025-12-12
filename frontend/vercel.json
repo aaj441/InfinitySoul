@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": ".next",
+  "regions": ["iad1"],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/v1/:path*",
+      "destination": "${BACKEND_URL}/api/v1/:path*"
+    },
+    {
+      "source": "/api/acquisition/:path*",
+      "destination": "${BACKEND_URL}/api/acquisition/:path*"
+    },
+    {
+      "source": "/api/governance/:path*",
+      "destination": "${BACKEND_URL}/api/governance/:path*"
+    },
+    {
+      "source": "/api/insurance/:path*",
+      "destination": "${BACKEND_URL}/api/insurance/:path*"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_APP_NAME": "Infinity Soul",
+    "NEXT_PUBLIC_APP_VERSION": "1.0.0"
+  }
+}
