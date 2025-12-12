@@ -23,7 +23,7 @@ import type {
   IndustryVertical,
 } from '../services/insuranceComplianceHub/types';
 // Nitpick #8: Import safe parsing utilities
-import { safeParseInt } from '../utils/errors';
+import { safeParseInt, validateUrl, formatErrorResponse, parseRangeValue } from '../utils/errors';
 
 const router = Router();
 
@@ -43,10 +43,7 @@ router.get('/config/lines', (_req: Request, res: Response) => {
       data: lines,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -71,10 +68,7 @@ router.get('/config/lines/:line', (req: Request, res: Response) => {
       data: config,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -89,10 +83,7 @@ router.get('/config/industries', (_req: Request, res: Response) => {
       data: INDUSTRY_RISK_PROFILES,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -117,10 +108,7 @@ router.get('/config/industries/:industry', (req: Request, res: Response) => {
       data: profile,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -138,10 +126,7 @@ router.get('/config/industries/:industry/recommended', (req: Request, res: Respo
       data: recommended,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -159,10 +144,7 @@ router.get('/lead-magnets', (req: Request, res: Response) => {
       data: leadMagnets,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -192,10 +174,7 @@ router.post('/assessment/start', async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -224,10 +203,7 @@ router.post('/assessment/:id/submit', async (req: Request, res: Response) => {
         error: 'Assessment not found',
       });
     }
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -251,10 +227,7 @@ router.get('/assessment/:id/status', async (req: Request, res: Response) => {
         error: 'Assessment not found',
       });
     }
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -273,8 +246,8 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
       });
     }
 
-    // Nitpick #8: Use safeParseInt with validation instead of raw parseInt
-    const employeeResult = safeParseInt(employeeCount, { min: 1, max: 1000000 });
+    // Nitpick #8: Use parseRangeValue to handle ranges like "1-10" or "500K-2M"
+    const employeeResult = parseRangeValue(employeeCount);
     if (!employeeResult.success) {
       return res.status(400).json({
         success: false,
@@ -282,7 +255,7 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
       });
     }
 
-    const revenueResult = safeParseInt(annualRevenue, { min: 0 });
+    const revenueResult = parseRangeValue(annualRevenue);
     if (!revenueResult.success) {
       return res.status(400).json({
         success: false,
@@ -309,10 +282,7 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -343,10 +313,7 @@ router.post('/lucy/chat', async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -369,10 +336,7 @@ router.get('/lucy/greeting', async (req: Request, res: Response) => {
       data: { greeting },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -391,10 +355,7 @@ router.get('/lucy/topic/:topic', (req: Request, res: Response) => {
       data: { intro },
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -428,10 +389,7 @@ router.get('/lucy/knowledge', (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -454,6 +412,15 @@ router.post('/audit', async (req: Request, res: Response) => {
       });
     }
 
+    // Validate URL to prevent SSRF
+    const urlValidation = validateUrl(websiteUrl);
+    if (!urlValidation.success) {
+      return res.status(400).json({
+        success: false,
+        error: urlValidation.error.message,
+      });
+    }
+
     const complianceDisplay = insuranceHub.getComplianceDisplay();
     const summary = await complianceDisplay.runAudit(websiteUrl, industry);
 
@@ -462,10 +429,7 @@ router.post('/audit', async (req: Request, res: Response) => {
       data: summary,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -484,6 +448,15 @@ router.post('/audit/report', async (req: Request, res: Response) => {
       });
     }
 
+    // Validate URL to prevent SSRF
+    const urlValidation = validateUrl(websiteUrl);
+    if (!urlValidation.success) {
+      return res.status(400).json({
+        success: false,
+        error: urlValidation.error.message,
+      });
+    }
+
     const complianceDisplay = insuranceHub.getComplianceDisplay();
     const summary = await complianceDisplay.runAudit(websiteUrl, industry || 'other');
     const report = await complianceDisplay.generateReport(websiteUrl, summary, industry || 'other');
@@ -493,10 +466,7 @@ router.post('/audit/report', async (req: Request, res: Response) => {
       data: report,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -532,10 +502,7 @@ router.post('/quote', async (req: Request, res: Response) => {
         error: 'Lead not found',
       });
     }
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -557,10 +524,7 @@ router.get('/funnel/metrics', (_req: Request, res: Response) => {
       data: metrics,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -578,10 +542,7 @@ router.get('/funnel/sequences', (_req: Request, res: Response) => {
       data: sequences,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -600,10 +561,7 @@ router.get('/funnel/priority-leads', (req: Request, res: Response) => {
       data: leads,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 
@@ -624,10 +582,7 @@ router.get('/commissions', async (_req: Request, res: Response) => {
       data: summary,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    res.status(500).json(formatErrorResponse(error));
   }
 });
 

@@ -196,6 +196,86 @@ export function safeParseInt(
 }
 
 /**
+ * Parse range strings like "1-10" or "500K-2M" to their midpoint or minimum value
+ */
+export function parseRangeValue(
+  value: string | number | undefined,
+  options?: { useMidpoint?: boolean }
+): { success: true; value: number } | { success: false; error: ValidationError } {
+  const { useMidpoint = true } = options || {};
+
+  if (value === undefined || value === null || value === '') {
+    return {
+      success: false,
+      error: new ValidationError('Value is required'),
+    };
+  }
+
+  // If already a number, return it
+  if (typeof value === 'number') {
+    return { success: true, value };
+  }
+
+  const str = String(value).trim();
+
+  // Try to parse as plain number first
+  const plainNumber = parseFloat(str);
+  if (!isNaN(plainNumber) && !str.includes('-') && !str.includes('+')) {
+    return { success: true, value: plainNumber };
+  }
+
+  // Handle range format: "1-10", "100-500", etc.
+  const rangeMatch = str.match(/^(\d+(?:\.\d+)?)\s*-\s*(\d+(?:\.\d+)?)$/);
+  if (rangeMatch) {
+    const min = parseFloat(rangeMatch[1]);
+    const max = parseFloat(rangeMatch[2]);
+    const result = useMidpoint ? (min + max) / 2 : min;
+    return { success: true, value: result };
+  }
+
+  // Handle K/M notation: "500K", "2M", "500K-2M"
+  const kNotationMatch = str.match(/^(\d+(?:\.\d+)?)\s*K\s*-\s*(\d+(?:\.\d+)?)\s*M$/i);
+  if (kNotationMatch) {
+    const min = parseFloat(kNotationMatch[1]) * 1000;
+    const max = parseFloat(kNotationMatch[2]) * 1000000;
+    const result = useMidpoint ? (min + max) / 2 : min;
+    return { success: true, value: result };
+  }
+
+  const kRangeMatch = str.match(/^(\d+(?:\.\d+)?)\s*K\s*-\s*(\d+(?:\.\d+)?)\s*K$/i);
+  if (kRangeMatch) {
+    const min = parseFloat(kRangeMatch[1]) * 1000;
+    const max = parseFloat(kRangeMatch[2]) * 1000;
+    const result = useMidpoint ? (min + max) / 2 : min;
+    return { success: true, value: result };
+  }
+
+  const mRangeMatch = str.match(/^(\d+(?:\.\d+)?)\s*M\s*-\s*(\d+(?:\.\d+)?)\s*M$/i);
+  if (mRangeMatch) {
+    const min = parseFloat(mRangeMatch[1]) * 1000000;
+    const max = parseFloat(mRangeMatch[2]) * 1000000;
+    const result = useMidpoint ? (min + max) / 2 : min;
+    return { success: true, value: result };
+  }
+
+  const singleKMatch = str.match(/^(\d+(?:\.\d+)?)\s*K$/i);
+  if (singleKMatch) {
+    return { success: true, value: parseFloat(singleKMatch[1]) * 1000 };
+  }
+
+  const singleMMatch = str.match(/^(\d+(?:\.\d+)?)\s*M$/i);
+  if (singleMMatch) {
+    return { success: true, value: parseFloat(singleMMatch[1]) * 1000000 };
+  }
+
+  return {
+    success: false,
+    error: new ValidationError(`Unable to parse value: '${value}'`),
+  };
+}
+
+
+/**
  * Type guard to check if value is non-null/undefined
  */
 export function isDefined<T>(value: T | null | undefined): value is T {
@@ -213,3 +293,96 @@ export function assertDefined<T>(
     throw new ValidationError(`${name} is required but was ${value}`);
   }
 }
+
+/**
+ * Validate and sanitize URL to prevent SSRF attacks
+ * Only allows http and https protocols with valid hostnames
+ */
+export function validateUrl(
+  urlString: string,
+  options?: {
+    allowedProtocols?: string[];
+    allowLocalhost?: boolean;
+    allowPrivateIPs?: boolean;
+  }
+): { success: true; url: URL } | { success: false; error: ValidationError } {
+  const {
+    allowedProtocols = ['http:', 'https:'],
+    allowLocalhost = false,
+    allowPrivateIPs = false,
+  } = options || {};
+
+  try {
+    const url = new URL(urlString);
+
+    // Check protocol
+    if (!allowedProtocols.includes(url.protocol)) {
+      return {
+        success: false,
+        error: new ValidationError(
+          `Invalid protocol. Only ${allowedProtocols.join(', ')} are allowed`
+        ),
+      };
+    }
+
+    // Check for localhost
+    if (!allowLocalhost && (url.hostname === 'localhost' || url.hostname === '127.0.0.1')) {
+      return {
+        success: false,
+        error: new ValidationError('Localhost URLs are not allowed'),
+      };
+    }
+
+    // Check for private IP ranges (basic check)
+    if (!allowPrivateIPs) {
+      const hostname = url.hostname;
+      if (
+        hostname.startsWith('10.') ||
+        hostname.startsWith('172.16.') ||
+        hostname.startsWith('192.168.') ||
+        hostname === '0.0.0.0' ||
+        hostname.startsWith('169.254.')
+      ) {
+        return {
+          success: false,
+          error: new ValidationError('Private IP addresses are not allowed'),
+        };
+      }
+    }
+
+    return { success: true, url };
+  } catch (error) {
+    return {
+      success: false,
+      error: new ValidationError(
+        `Invalid URL format: ${error instanceof Error ? error.message : 'Unknown error'}`
+      ),
+    };
+  }
+}
+
+/**
+ * Format error for client response (prevents information leakage)
+ */
+export function formatErrorResponse(error: unknown): {
+  success: false;
+  error: string;
+  code?: string;
+} {
+  if (error instanceof AppError) {
+    return {
+      success: false,
+      error: error.message,
+      code: error.code,
+    };
+  }
+
+  // Log the full error server-side but return generic message to client
+  console.error('Unexpected error:', error);
+  return {
+    success: false,
+    error: 'An unexpected error occurred. Please try again later.',
+    code: 'INTERNAL_ERROR',
+  };
+}
+

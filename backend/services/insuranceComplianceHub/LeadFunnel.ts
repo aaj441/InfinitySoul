@@ -711,7 +711,10 @@ export class LeadFunnel {
     let totalTimeToClose = 0;
 
     for (const lead of leads) {
-      byStage[lead.status]++;
+      // Validate status exists in byStage before incrementing
+      if (lead.status in byStage) {
+        byStage[lead.status]++;
+      }
 
       if (lead.status === 'closed_won' && lead.actualValue) {
         totalValue += lead.actualValue;
@@ -744,6 +747,10 @@ export class LeadFunnel {
     for (const lead of leads) {
       if (lead.status !== 'closed_won' && lead.status !== 'closed_lost' && lead.estimatedValue) {
         const stageIndex = stageOrder.indexOf(lead.status);
+        // Guard against missing status (indexOf returns -1)
+        if (stageIndex === -1) {
+          continue;
+        }
         const conversionProbability = stageOrder
           .slice(stageIndex)
           .reduce((prob, _stage, idx) => {
@@ -853,8 +860,9 @@ export class LeadFunnel {
 
     for (const [key, value] of Object.entries(replacements)) {
       const regex = new RegExp(`{{${key}}}`, 'g');
-      subject = subject.replace(regex, value);
-      body = body.replace(regex, value);
+      // Use function replacer to avoid $& and other special replacement patterns
+      subject = subject.replace(regex, () => value);
+      body = body.replace(regex, () => value);
     }
 
     return { subject, body };
