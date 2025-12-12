@@ -1,0 +1,575 @@
+/**
+ * Multi-Line Risk Assessment Engine
+ *
+ * Analyzes a business across all insurance lines to identify:
+ * - Coverage gaps (where they're exposed)
+ * - Over-insurance (where they're paying too much)
+ * - Optimal coverage recommendations
+ * - Commission stack potential
+ *
+ * Philosophy:
+ * "Most people are overinsured in the wrong areas and underinsured where it matters."
+ *
+ * This engine uses:
+ * - Industry risk profiles
+ * - Company-specific factors
+ * - Compliance audit results
+ * - Historical litigation data
+ * - Actuarial models from the existing Infinity Soul infrastructure
+ */
+
+import { v4 as uuidv4 } from 'uuid';
+import {
+  RiskAssessmentRequest,
+  MultiLineRiskAssessmentResult,
+  InsuranceLineAnalysis,
+  CoverageGap,
+  OverinsuredArea,
+  InsuranceRecommendation,
+  InsuranceLine,
+  ComplianceGrade,
+  CurrentCoverage,
+  OperationalDetails,
+  IndustryVertical,
+} from './types';
+import { INSURANCE_LINE_CONFIGS, INDUSTRY_RISK_PROFILES } from './InsuranceComplianceHub';
+
+/**
+ * Risk scoring weights for overall assessment
+ */
+const RISK_WEIGHTS = {
+  industryLitigation: 0.20,
+  cyberExposure: 0.20,
+  complianceStatus: 0.15,
+  coverageGaps: 0.25,
+  operationalRisk: 0.20,
+};
+
+/**
+ * Multipliers for company size factors
+ */
+const SIZE_FACTORS = {
+  employeeCount: {
+    micro: { max: 10, multiplier: 0.5 },
+    small: { max: 50, multiplier: 0.75 },
+    medium: { max: 250, multiplier: 1.0 },
+    large: { max: 1000, multiplier: 1.25 },
+    enterprise: { max: Infinity, multiplier: 1.5 },
+  },
+  revenue: {
+    micro: { max: 500000, multiplier: 0.5 },
+    small: { max: 2000000, multiplier: 0.75 },
+    medium: { max: 10000000, multiplier: 1.0 },
+    large: { max: 50000000, multiplier: 1.25 },
+    enterprise: { max: Infinity, multiplier: 1.5 },
+  },
+};
+
+/**
+ * Operational risk factors by business characteristic
+ */
+const OPERATIONAL_RISK_FACTORS: Record<keyof OperationalDetails, { lines: InsuranceLine[]; riskIncrease: number }> = {
+  hasRemoteWorkers: {
+    lines: ['cyber', 'workers_comp'],
+    riskIncrease: 0.15,
+  },
+  handlesCustomerData: {
+    lines: ['cyber', 'errors_omissions'],
+    riskIncrease: 0.25,
+  },
+  acceptsCreditCards: {
+    lines: ['cyber'],
+    riskIncrease: 0.20,
+  },
+  hasContractors: {
+    lines: ['workers_comp', 'general_liability'],
+    riskIncrease: 0.20,
+  },
+  operatesVehicles: {
+    lines: ['general_liability', 'umbrella'],
+    riskIncrease: 0.30,
+  },
+  ownsProperty: {
+    lines: ['property'],
+    riskIncrease: 0.15,
+  },
+  hasInventory: {
+    lines: ['property'],
+    riskIncrease: 0.10,
+  },
+  providesServices: {
+    lines: ['errors_omissions', 'general_liability'],
+    riskIncrease: 0.15,
+  },
+  hasProfessionalLiability: {
+    lines: ['errors_omissions'],
+    riskIncrease: 0.25,
+  },
+};
+
+/**
+ * Multi-Line Risk Assessment Engine
+ */
+export class MultiLineRiskAssessment {
+  /**
+   * Run full risk assessment for a business
+   */
+  async analyze(data: unknown): Promise<MultiLineRiskAssessmentResult> {
+    const request = data as RiskAssessmentRequest;
+    const assessmentId = uuidv4();
+
+    // Get industry profile
+    const industryProfile = INDUSTRY_RISK_PROFILES[request.industry];
+
+    // Calculate size multipliers
+    const sizeMultiplier = this.calculateSizeMultiplier(request.employeeCount, request.annualRevenue);
+
+    // Analyze each insurance line
+    const lineAnalyses = this.analyzeAllLines(request, industryProfile, sizeMultiplier);
+
+    // Identify coverage gaps
+    const coverageGaps = this.identifyCoverageGaps(lineAnalyses, request.currentCoverage);
+
+    // Identify over-insured areas
+    const overinsuredAreas = this.identifyOverinsuredAreas(lineAnalyses, request.currentCoverage);
+
+    // Generate prioritized recommendations
+    const recommendations = this.generateRecommendations(lineAnalyses, coverageGaps, overinsuredAreas);
+
+    // Calculate overall scores
+    const overallRiskScore = this.calculateOverallRiskScore(lineAnalyses, coverageGaps, industryProfile);
+    const infinity8Score = this.calculateInfinity8Score(overallRiskScore, coverageGaps.length);
+    const complianceGrade = this.determineComplianceGrade(infinity8Score);
+
+    // Calculate totals
+    const estimatedTotalPremium = lineAnalyses.reduce((sum, la) => sum + la.estimatedPremium, 0);
+    const estimatedTotalCommission = lineAnalyses.reduce((sum, la) => sum + la.estimatedCommission, 0);
+
+    return {
+      id: assessmentId,
+      leadId: '', // Will be set by caller
+      timestamp: new Date(),
+      overallRiskScore,
+      infinity8Score,
+      complianceGrade,
+      lineAnalyses,
+      coverageGaps,
+      overinsuredAreas,
+      prioritizedRecommendations: recommendations,
+      estimatedTotalPremium,
+      estimatedTotalCommission,
+      complianceAuditSummary: null as unknown as MultiLineRiskAssessmentResult['complianceAuditSummary'],
+      lucyNarrative: '', // Will be generated by Lucy
+    };
+  }
+
+  /**
+   * Quick assessment for a single line
+   */
+  async analyzeLineTYPE(
+    line: InsuranceLine,
+    industry: IndustryVertical,
+    employeeCount: number,
+    annualRevenue: number
+  ): Promise<InsuranceLineAnalysis> {
+    const industryProfile = INDUSTRY_RISK_PROFILES[industry];
+    const lineConfig = INSURANCE_LINE_CONFIGS[line];
+    const sizeMultiplier = this.calculateSizeMultiplier(employeeCount, annualRevenue);
+
+    return this.analyzeInsuranceLine(line, lineConfig, industryProfile, sizeMultiplier, undefined, {
+      hasRemoteWorkers: false,
+      handlesCustomerData: false,
+      acceptsCreditCards: false,
+      hasContractors: false,
+      operatesVehicles: false,
+      ownsProperty: false,
+      hasInventory: false,
+      providesServices: true,
+      hasProfessionalLiability: false,
+    });
+  }
+
+  /**
+   * Calculate commission stack for a potential customer
+   */
+  calculateCommissionStack(
+    lineAnalyses: InsuranceLineAnalysis[]
+  ): { totalPremium: number; totalCommission: number; breakdown: { line: InsuranceLine; commission: number }[] } {
+    const breakdown = lineAnalyses
+      .filter(la => la.currentStatus !== 'overinsured')
+      .map(la => ({
+        line: la.line,
+        commission: la.estimatedCommission,
+      }));
+
+    return {
+      totalPremium: lineAnalyses.reduce((sum, la) => sum + la.estimatedPremium, 0),
+      totalCommission: breakdown.reduce((sum, b) => sum + b.commission, 0),
+      breakdown,
+    };
+  }
+
+  /**
+   * Calculate size multiplier based on employees and revenue
+   */
+  private calculateSizeMultiplier(employeeCount: number, annualRevenue: number): number {
+    let employeeMultiplier = 1.0;
+    for (const [, config] of Object.entries(SIZE_FACTORS.employeeCount)) {
+      if (employeeCount <= config.max) {
+        employeeMultiplier = config.multiplier;
+        break;
+      }
+    }
+
+    let revenueMultiplier = 1.0;
+    for (const [, config] of Object.entries(SIZE_FACTORS.revenue)) {
+      if (annualRevenue <= config.max) {
+        revenueMultiplier = config.multiplier;
+        break;
+      }
+    }
+
+    // Weighted average (revenue is slightly more important)
+    return employeeMultiplier * 0.4 + revenueMultiplier * 0.6;
+  }
+
+  /**
+   * Analyze all insurance lines for the business
+   */
+  private analyzeAllLines(
+    request: RiskAssessmentRequest,
+    industryProfile: typeof INDUSTRY_RISK_PROFILES[IndustryVertical],
+    sizeMultiplier: number
+  ): InsuranceLineAnalysis[] {
+    const analyses: InsuranceLineAnalysis[] = [];
+
+    for (const [lineKey, lineConfig] of Object.entries(INSURANCE_LINE_CONFIGS)) {
+      const line = lineKey as InsuranceLine;
+      const currentCoverage = request.currentCoverage.find(c => c.line === line);
+
+      const analysis = this.analyzeInsuranceLine(
+        line,
+        lineConfig,
+        industryProfile,
+        sizeMultiplier,
+        currentCoverage,
+        request.operationalDetails
+      );
+
+      analyses.push(analysis);
+    }
+
+    return analyses;
+  }
+
+  /**
+   * Analyze a single insurance line
+   */
+  private analyzeInsuranceLine(
+    line: InsuranceLine,
+    lineConfig: typeof INSURANCE_LINE_CONFIGS[InsuranceLine],
+    industryProfile: typeof INDUSTRY_RISK_PROFILES[IndustryVertical],
+    sizeMultiplier: number,
+    currentCoverage: CurrentCoverage | undefined,
+    operationalDetails: OperationalDetails
+  ): InsuranceLineAnalysis {
+    // Base risk from industry profile
+    const isRecommendedForIndustry = industryProfile.recommendedCoverage.includes(line);
+    let baseRisk = isRecommendedForIndustry ? 60 : 30;
+
+    // Adjust for operational factors
+    for (const [factor, config] of Object.entries(OPERATIONAL_RISK_FACTORS)) {
+      if (operationalDetails[factor as keyof OperationalDetails] && config.lines.includes(line)) {
+        baseRisk += config.riskIncrease * 100;
+      }
+    }
+
+    // Cap risk at 100
+    const riskScore = Math.min(100, baseRisk);
+
+    // Calculate recommended coverage based on risk and size
+    const basePremium = industryProfile.averagePremiums[line];
+    const adjustedPremium = Math.round(basePremium * sizeMultiplier);
+
+    // Determine urgency based on risk and whether recommended for industry
+    let urgency: 'critical' | 'high' | 'medium' | 'low';
+    if (riskScore >= 80 && isRecommendedForIndustry) {
+      urgency = 'critical';
+    } else if (riskScore >= 60 || isRecommendedForIndustry) {
+      urgency = 'high';
+    } else if (riskScore >= 40) {
+      urgency = 'medium';
+    } else {
+      urgency = 'low';
+    }
+
+    // Determine current status
+    let currentStatus: InsuranceLineAnalysis['currentStatus'];
+    let gap: number | undefined;
+
+    if (!currentCoverage) {
+      currentStatus = isRecommendedForIndustry || riskScore >= 50 ? 'not_covered' : 'not_covered';
+    } else if (currentCoverage.premium && currentCoverage.premium < adjustedPremium * 0.7) {
+      currentStatus = 'underinsured';
+      gap = adjustedPremium - (currentCoverage.premium || 0);
+    } else if (currentCoverage.premium && currentCoverage.premium > adjustedPremium * 1.3) {
+      currentStatus = 'overinsured';
+    } else {
+      currentStatus = 'covered';
+    }
+
+    // Calculate commission
+    const avgCommissionRate = (lineConfig.commissionRange.min + lineConfig.commissionRange.max) / 2;
+    const estimatedCommission = Math.round(adjustedPremium * avgCommissionRate);
+
+    // Generate rationale
+    const rationale = this.generateLineRationale(line, currentStatus, riskScore, isRecommendedForIndustry);
+
+    return {
+      line,
+      currentStatus,
+      riskScore,
+      recommendedCoverage: adjustedPremium * 10, // Rough coverage limit estimate
+      currentCoverage: currentCoverage?.coverageLimit,
+      gap,
+      estimatedPremium: adjustedPremium,
+      estimatedCommission,
+      urgency,
+      rationale,
+    };
+  }
+
+  /**
+   * Generate rationale for a line analysis
+   */
+  private generateLineRationale(
+    line: InsuranceLine,
+    status: InsuranceLineAnalysis['currentStatus'],
+    riskScore: number,
+    isRecommended: boolean
+  ): string {
+    const lineConfig = INSURANCE_LINE_CONFIGS[line];
+
+    switch (status) {
+      case 'not_covered':
+        if (isRecommended) {
+          return `${lineConfig.displayName} is standard coverage for your industry. Without it, you're exposed to ${lineConfig.keyRiskFactors.slice(0, 2).join(' and ')} risks.`;
+        }
+        return `${lineConfig.displayName} isn't critical for your industry, but your risk score of ${riskScore} suggests it may be worth considering.`;
+
+      case 'underinsured':
+        return `Your current ${lineConfig.displayName} coverage appears insufficient for your business size and risk profile. The gap leaves you exposed.`;
+
+      case 'overinsured':
+        return `You may be paying more than necessary for ${lineConfig.displayName}. There could be savings opportunities without reducing actual protection.`;
+
+      case 'covered':
+        return `Your ${lineConfig.displayName} coverage appears appropriate for your current risk level.`;
+    }
+  }
+
+  /**
+   * Identify coverage gaps
+   */
+  private identifyCoverageGaps(
+    analyses: InsuranceLineAnalysis[],
+    currentCoverage: CurrentCoverage[]
+  ): CoverageGap[] {
+    const gaps: CoverageGap[] = [];
+
+    for (const analysis of analyses) {
+      if (analysis.currentStatus === 'not_covered' && analysis.urgency !== 'low') {
+        const lineConfig = INSURANCE_LINE_CONFIGS[analysis.line];
+
+        gaps.push({
+          line: analysis.line,
+          description: `No ${lineConfig.displayName} coverage`,
+          riskExposure: analysis.riskScore,
+          potentialLoss: analysis.recommendedCoverage,
+          urgency: analysis.urgency,
+        });
+      } else if (analysis.currentStatus === 'underinsured' && analysis.gap) {
+        const lineConfig = INSURANCE_LINE_CONFIGS[analysis.line];
+        const current = currentCoverage.find(c => c.line === analysis.line);
+
+        gaps.push({
+          line: analysis.line,
+          description: `${lineConfig.displayName} coverage gap of approximately $${analysis.gap.toLocaleString()}`,
+          riskExposure: analysis.riskScore,
+          potentialLoss: analysis.gap * 10, // Rough estimate of exposure
+          urgency: analysis.urgency,
+        });
+      }
+    }
+
+    // Sort by urgency and risk
+    return gaps.sort((a, b) => {
+      const urgencyOrder = { critical: 0, high: 1, medium: 2, low: 3 };
+      if (urgencyOrder[a.urgency] !== urgencyOrder[b.urgency]) {
+        return urgencyOrder[a.urgency] - urgencyOrder[b.urgency];
+      }
+      return b.riskExposure - a.riskExposure;
+    });
+  }
+
+  /**
+   * Identify over-insured areas
+   */
+  private identifyOverinsuredAreas(
+    analyses: InsuranceLineAnalysis[],
+    currentCoverage: CurrentCoverage[]
+  ): OverinsuredArea[] {
+    const overinsured: OverinsuredArea[] = [];
+
+    for (const analysis of analyses) {
+      if (analysis.currentStatus === 'overinsured') {
+        const current = currentCoverage.find(c => c.line === analysis.line);
+        if (current?.premium) {
+          const lineConfig = INSURANCE_LINE_CONFIGS[analysis.line];
+          const savings = current.premium - analysis.estimatedPremium;
+
+          overinsured.push({
+            line: analysis.line,
+            description: `${lineConfig.displayName} premium may be higher than necessary`,
+            currentPremium: current.premium,
+            recommendedPremium: analysis.estimatedPremium,
+            potentialSavings: savings,
+          });
+        }
+      }
+    }
+
+    return overinsured.sort((a, b) => b.potentialSavings - a.potentialSavings);
+  }
+
+  /**
+   * Generate prioritized recommendations
+   */
+  private generateRecommendations(
+    analyses: InsuranceLineAnalysis[],
+    gaps: CoverageGap[],
+    overinsured: OverinsuredArea[]
+  ): InsuranceRecommendation[] {
+    const recommendations: InsuranceRecommendation[] = [];
+
+    // Add recommendations for gaps (priority)
+    for (const gap of gaps) {
+      const analysis = analyses.find(a => a.line === gap.line);
+      if (!analysis) continue;
+
+      recommendations.push({
+        rank: 0, // Will be set after sorting
+        line: gap.line,
+        action: analysis.currentStatus === 'not_covered' ? 'add' : 'increase',
+        description: gap.description,
+        estimatedPremium: analysis.estimatedPremium,
+        estimatedCommission: analysis.estimatedCommission,
+        roi: this.calculateROI(gap.potentialLoss, analysis.estimatedPremium),
+        urgencyScore: this.urgencyToScore(gap.urgency),
+      });
+    }
+
+    // Add recommendations for over-insurance (lower priority)
+    for (const over of overinsured) {
+      const analysis = analyses.find(a => a.line === over.line);
+      if (!analysis) continue;
+
+      recommendations.push({
+        rank: 0,
+        line: over.line,
+        action: 'decrease',
+        description: `Potential savings of $${over.potentialSavings.toLocaleString()} on ${INSURANCE_LINE_CONFIGS[over.line].displayName}`,
+        estimatedPremium: over.recommendedPremium,
+        estimatedCommission: Math.round(over.recommendedPremium * 0.15),
+        roi: `$${over.potentialSavings.toLocaleString()} annual savings`,
+        urgencyScore: 20, // Low urgency for savings
+      });
+    }
+
+    // Sort by urgency score and assign ranks
+    recommendations.sort((a, b) => b.urgencyScore - a.urgencyScore);
+    recommendations.forEach((rec, index) => {
+      rec.rank = index + 1;
+    });
+
+    return recommendations;
+  }
+
+  /**
+   * Calculate overall risk score
+   */
+  private calculateOverallRiskScore(
+    analyses: InsuranceLineAnalysis[],
+    gaps: CoverageGap[],
+    industryProfile: typeof INDUSTRY_RISK_PROFILES[IndustryVertical]
+  ): number {
+    // Industry litigation risk
+    const litigationScores = { low: 20, medium: 40, high: 60, very_high: 80 };
+    const industryLitigationScore = litigationScores[industryProfile.litigationFrequency];
+
+    // Cyber risk
+    const cyberScores = { low: 15, medium: 35, high: 55, critical: 75 };
+    const cyberScore = cyberScores[industryProfile.cyberRiskLevel];
+
+    // Coverage gap score (more gaps = higher risk)
+    const gapScore = Math.min(100, gaps.length * 15);
+
+    // Average operational risk from analyses
+    const avgLineRisk = analyses.reduce((sum, a) => sum + a.riskScore, 0) / analyses.length;
+
+    // Weighted combination
+    const overallScore = Math.round(
+      industryLitigationScore * RISK_WEIGHTS.industryLitigation +
+      cyberScore * RISK_WEIGHTS.cyberExposure +
+      gapScore * RISK_WEIGHTS.coverageGaps +
+      avgLineRisk * RISK_WEIGHTS.operationalRisk
+    );
+
+    return Math.min(100, Math.max(0, overallScore));
+  }
+
+  /**
+   * Calculate Infinity8 Score (0-1000 scale like credit score)
+   */
+  private calculateInfinity8Score(riskScore: number, gapCount: number): number {
+    // Inverse relationship: higher risk = lower score
+    const baseScore = 1000 - (riskScore * 7);
+
+    // Penalty for coverage gaps
+    const gapPenalty = gapCount * 30;
+
+    const finalScore = Math.max(0, Math.min(1000, baseScore - gapPenalty));
+    return Math.round(finalScore);
+  }
+
+  /**
+   * Determine compliance grade based on Infinity8 score
+   */
+  private determineComplianceGrade(infinity8Score: number): ComplianceGrade {
+    if (infinity8Score >= 950) return 'A+';
+    if (infinity8Score >= 850) return 'A';
+    if (infinity8Score >= 700) return 'B';
+    if (infinity8Score >= 500) return 'C';
+    if (infinity8Score >= 300) return 'D';
+    return 'F';
+  }
+
+  /**
+   * Calculate ROI string for a recommendation
+   */
+  private calculateROI(potentialLoss: number, premium: number): string {
+    const ratio = Math.round(potentialLoss / premium);
+    return `$1 premium protects ~$${ratio} exposure`;
+  }
+
+  /**
+   * Convert urgency to numeric score
+   */
+  private urgencyToScore(urgency: 'critical' | 'high' | 'medium' | 'low'): number {
+    const scores = { critical: 100, high: 75, medium: 50, low: 25 };
+    return scores[urgency];
+  }
+}
+
+// Export singleton instance
+export const multiLineRiskAssessment = new MultiLineRiskAssessment();
