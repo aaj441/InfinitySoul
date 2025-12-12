@@ -2,17 +2,33 @@
 
 **"We turn soundtracks into signals for support, not tools of control."**
 
+## 🔥 The Malcolm X of Cyber Insurance
+
+**"By any means necessary—but the means are agents, debt, and data, not bullets."**
+
+InfinitySoul is executing a revolutionary strategy to **liberate the security community from the insurance industrial complex** by combining:
+- **Malcolm X's philosophy** of self-determination, self-respect, and self-defense
+- **John Kluge's infrastructure arbitrage** playbook (buy distressed, optimize, sell high, keep the rails)
+- **Agentic automation** to replace rent-seeking middlemen with 30-second quotes and transparent pricing
+
+**📖 Read the Manifesto:** [MALCOLM_X_MANIFESTO.md](./MALCOLM_X_MANIFESTO.md)  
+**💰 The Kluge Playbook:** [KLUGE_PLAYBOOK.md](./KLUGE_PLAYBOOK.md)  
+**🗳️ Liberation Theology:** [LIBERATION_THEOLOGY.md](./LIBERATION_THEOLOGY.md)  
+**⚡ Execute the Revolution:** `./bin/manifesto --help`
+
+---
+
 ## What InfinitySoul Is
 
 InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** that bridges four worlds:
 
 1. **Accessibility & Compliance** (WCAG 2.2 scanning, litigation intelligence, Infinity8 scoring)
-2. **Cyber Security Auditing** (Small business cyber risk assessment and insurance enablement)
+2. **Cyber Security Auditing & Insurance** (Small business cyber risk assessment and MGA acquisition strategy)
 3. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
 4. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
 
 **Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
-**Secondary use case:** Small business cyber insurance (audit → fix → insure pathway).
+**Secondary use case:** Cyber insurance revolution via distressed MGA acquisition and agentic automation.  
 **Tertiary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
