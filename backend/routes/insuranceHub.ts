@@ -434,6 +434,12 @@ router.post('/audit', async (req: Request, res: Response) => {
       });
     }
 
+    if (!insuranceHub) {
+      return res.status(500).json({
+        success: false,
+        error: 'Server misconfiguration: insuranceHub is undefined',
+      });
+    }
     // Validate URL to prevent SSRF
     const urlValidation = validateUrl(websiteUrl);
     if (!urlValidation.success) {
