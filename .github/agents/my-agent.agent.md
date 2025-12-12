@@ -4,8 +4,8 @@
 # To make this agent available, merge this file into the default repository branch.
 # For format details, see: https://gh.io/customagents/config
 
-name:
-description:
+name: infinity-soul-symphony
+description: Master conductor orchestrating agentic workflows for 10x productivity at 1% cost with Microsoft-level production quality
 ---
 
 # My Agent
