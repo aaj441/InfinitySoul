@@ -90,7 +90,18 @@ See how the $35M/year perpetual revenue model works.
 **Key Quote**:
 > "The insurance system is not broken—it's designed to extract rent from security practitioners while refusing to price real risk."
 
-### 4. [MANIFESTO_QUICKSTART.md](./MANIFESTO_QUICKSTART.md) - The Handbook
+### 4. [THE_RAWKUS_PROTOCOL.md](./THE_RAWKUS_PROTOCOL.md) - The Tactical Execution
+**48 Pillars of Ironclad Dominance**
+
+- Infrastructure Moats (Pillars 1-12): The unforkable foundation
+- Tokenomic Armor (Pillars 13-24): The unsinkable treasury
+- Protocol Warfare (Pillars 25-36): The unstoppable growth loop
+- Operational Fortress (Pillars 37-48): The unbreachable execution
+
+**Key Insight**:
+> "The Wild West isn't risky—it's unpatched. I am the patch. I am the game. I am the scoreboard."
+
+### 5. [MANIFESTO_QUICKSTART.md](./MANIFESTO_QUICKSTART.md) - The Handbook
 **Everything You Need**
 
 - Complete command reference
@@ -98,7 +109,7 @@ See how the $35M/year perpetual revenue model works.
 - Key metrics and KPIs
 - Resources for developers, operators, investors
 
-### 5. [MALCOLM_X_IMPLEMENTATION_SUMMARY.md](./MALCOLM_X_IMPLEMENTATION_SUMMARY.md) - Status Report
+### 6. [MALCOLM_X_IMPLEMENTATION_SUMMARY.md](./MALCOLM_X_IMPLEMENTATION_SUMMARY.md) - Status Report
 **What's Built and What's Next**
 
 - Implementation status
