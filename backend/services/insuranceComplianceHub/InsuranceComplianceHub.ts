@@ -598,25 +598,13 @@ export class InsuranceComplianceHub {
   async startAssessment(request: StartAssessmentRequest): Promise<StartAssessmentResponse> {
     const assessmentId = uuidv4();
 
-    // Create or update lead
-    const leadId = uuidv4();
-    const lead: InsuranceLead = {
-      id: leadId,
-      email: request.email,
+    // Create or update lead via lead funnel so it enters the funnel system
+    const lead = this.leadFunnel.createLead(request.email, 'risk_assessment' as LeadSource, {
       companyName: request.companyName,
       industry: request.industry || 'other',
-      source: 'risk_assessment' as LeadSource,
       status: 'assessment_started',
-      interestedLines: [],
-      nurtureTouchpoints: [],
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.leads.set(leadId, lead);
-
-    // Initialize assessment
-    this.assessments.set(assessmentId, {
-      id: assessmentId,
+    });
+    const leadId = lead.id;
       leadId,
       status: 'started',
       createdAt: new Date(),
