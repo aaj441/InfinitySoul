@@ -32,7 +32,7 @@ import { INSURANCE_LINE_CONFIGS } from './InsuranceComplianceHub';
 /**
  * Lead scoring weights
  */
-const LEAD_SCORING = {
+export const LEAD_SCORING = {
   engagement: {
     assessment_started: 10,
     assessment_completed: 30,
