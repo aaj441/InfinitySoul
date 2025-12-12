@@ -158,6 +158,9 @@ class FigureEight:
     The loop is infinite: Function → Vibe → Adjust → Function → Vibe...
     """
     
+    # Constants
+    SAVE_FREQUENCY = 10  # Save tape every N iterations
+    
     def __init__(self, agent: RaWkusAgent, tape_filepath: str = "/tmp/infinite_tape.json"):
         self.agent = agent
         self.loop = InfiniteTape(filepath=tape_filepath)
@@ -195,7 +198,7 @@ class FigureEight:
         # (In a full implementation, the Conductor would have the full ensemble)
         
         # Save the tape periodically
-        if self.loop.count % 10 == 0:
+        if self.loop.count % self.SAVE_FREQUENCY == 0:
             self.loop.save()
         
         return Output(

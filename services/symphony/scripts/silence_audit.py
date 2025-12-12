@@ -44,8 +44,11 @@ def is_necessary_line(line: str, context_lines: List[str] = None) -> Tuple[bool,
     ]
     if any(pattern in line for pattern in debug_patterns):
         # Check if it's in a debug-specific block
-        if context_lines and any('if debug' in l.lower() or 'if __debug__' in l.lower() for l in context_lines):
-            return True, "conditional debug statement"
+        if context_lines:
+            for l in context_lines:
+                lower_line = l.lower()
+                if 'if debug' in lower_line or 'if __debug__' in lower_line:
+                    return True, "conditional debug statement"
         return False, "debug print statement"
     
     # TODO comments without substance

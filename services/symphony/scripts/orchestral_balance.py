@@ -10,6 +10,9 @@ import argparse
 import glob
 from typing import List, Dict, Any
 
+# Constants
+CONTEXT_LINES = 5  # Lines to check after a for loop for DB operations
+
 
 def check_agent_latency(filepath: str) -> Dict[str, Any]:
     """
@@ -47,9 +50,9 @@ def check_agent_latency(filepath: str) -> Dict[str, Any]:
                 })
             
             # Check for database queries in loops
-            if 'for ' in line and i < len(lines) - 5:
+            if 'for ' in line and i < len(lines) - CONTEXT_LINES:
                 # Check next 5 lines for DB operations
-                next_lines = ''.join(lines[i:i+5])
+                next_lines = ''.join(lines[i:i+CONTEXT_LINES])
                 if 'query' in next_lines.lower() or 'execute' in next_lines.lower():
                     latency_warnings.append({
                         "line": i,

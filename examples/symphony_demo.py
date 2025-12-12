@@ -152,11 +152,11 @@ def demo_conductor():
     ]
     
     print("🎼 Building the Ensemble...")
-    for agent in agents:
-        # Set some realistic values
-        agent.latency = 15.0 + (hash(agent.name) % 20)  # 15-35s
-        agent.vibe = 0.7 + (hash(agent.name) % 20) / 100.0  # 0.7-0.9
-        agent.roi = 10.0 + (hash(agent.name) % 10)  # 10-20
+    for i, agent in enumerate(agents):
+        # Set some realistic values deterministically
+        agent.latency = 15.0 + (i * 5)  # 15, 20, 25, 30s
+        agent.vibe = 0.7 + (i * 0.05)  # 0.7, 0.75, 0.8, 0.85
+        agent.roi = 10.0 + (i * 2)  # 10, 12, 14, 16
         
         conductor.add_agent(agent)
         print(f"   • {agent.name} ({agent.voice}): latency {agent.latency:.1f}s, vibe {agent.vibe:.2f}")
