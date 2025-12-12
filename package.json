@@ -73,7 +73,8 @@
     "react-dom": "^18.2.0",
     "inflight": "^1.0.6",
     "glob": "^10.3.10",
-    "node-domexception": "^2.0.0"
+    "node-domexception": "^2.0.0",
+    "lru-cache": "^10.0.0"
   },
   "devDependencies": {
     "typescript": "^5.2.2",

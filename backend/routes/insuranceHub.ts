@@ -24,6 +24,9 @@ import type {
   InsuranceLine,
   IndustryVertical,
 } from '../services/insuranceComplianceHub/types';
+import { formatErrorConditional, formatErrorResponse } from '../utils/errorHandler';
+import { validateUrl } from '../utils/urlValidator';
+import { parseEmployeeCount, parseAnnualRevenue } from '../utils/numberParser';
 
 const router = Router();
 
@@ -43,10 +46,8 @@ router.get('/config/lines', (_req: Request, res: Response) => {
       data: lines,
     });
   } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: (error as Error).message,
-    });
+    const errorResponse = formatErrorResponse(error, 500);
+    res.status(500).json(errorResponse);
   }
 });
 
@@ -73,7 +74,7 @@ router.get('/config/lines/:line', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -91,7 +92,7 @@ router.get('/config/industries', (_req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -119,7 +120,7 @@ router.get('/config/industries/:industry', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -140,7 +141,7 @@ router.get('/config/industries/:industry/recommended', (req: Request, res: Respo
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -161,7 +162,7 @@ router.get('/lead-magnets', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -194,7 +195,7 @@ router.post('/assessment/start', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -226,7 +227,7 @@ router.post('/assessment/:id/submit', async (req: Request, res: Response) => {
     }
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -253,7 +254,7 @@ router.get('/assessment/:id/status', async (req: Request, res: Response) => {
     }
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -273,10 +274,21 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
       });
     }
 
+    // Parse employee count and revenue with safe parsers
+    const parsedEmployeeCount = parseEmployeeCount(employeeCount);
+    const parsedAnnualRevenue = parseAnnualRevenue(annualRevenue);
+
+    if (parsedEmployeeCount === null || parsedAnnualRevenue === null) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid employeeCount or annualRevenue format',
+      });
+    }
+
     const stack = insuranceHub.calculateCommissionStack(
       industry as IndustryVertical,
-      parseInt(employeeCount),
-      parseInt(annualRevenue)
+      parsedEmployeeCount,
+      parsedAnnualRevenue
     );
 
     const totalPremium = stack.reduce((sum, s) => sum + s.premium, 0);
@@ -294,7 +306,7 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -326,9 +338,16 @@ router.post('/lucy/chat', async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
+    // Check for conversation not found error
+    if ((error as Error).message === 'Conversation not found') {
+      return res.status(404).json({
+        success: false,
+        error: 'Conversation not found',
+      });
+    }
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -354,7 +373,7 @@ router.get('/lucy/greeting', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -376,7 +395,7 @@ router.get('/lucy/topic/:topic', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -413,7 +432,7 @@ router.get('/lucy/knowledge', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -437,6 +456,15 @@ router.post('/audit', async (req: Request, res: Response) => {
       });
     }
 
+    // Validate URL to prevent SSRF attacks
+    const urlValidation = validateUrl(websiteUrl);
+    if (!urlValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        error: urlValidation.error || 'Invalid URL',
+      });
+    }
+
     const complianceDisplay = insuranceHub.getComplianceDisplay();
     const summary = await complianceDisplay.runAudit(websiteUrl, industry);
 
@@ -447,7 +475,7 @@ router.post('/audit', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -467,6 +495,15 @@ router.post('/audit/report', async (req: Request, res: Response) => {
       });
     }
 
+    // Validate URL to prevent SSRF attacks
+    const urlValidation = validateUrl(websiteUrl);
+    if (!urlValidation.isValid) {
+      return res.status(400).json({
+        success: false,
+        error: urlValidation.error || 'Invalid URL',
+      });
+    }
+
     const complianceDisplay = insuranceHub.getComplianceDisplay();
     const summary = await complianceDisplay.runAudit(websiteUrl, industry || 'other');
     const report = await complianceDisplay.generateReport(websiteUrl, summary, industry || 'other');
@@ -478,7 +515,7 @@ router.post('/audit/report', async (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -517,7 +554,7 @@ router.post('/quote', async (req: Request, res: Response) => {
     }
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -542,7 +579,7 @@ router.get('/funnel/metrics', (_req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -563,7 +600,7 @@ router.get('/funnel/sequences', (_req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -585,7 +622,7 @@ router.get('/funnel/priority-leads', (req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });
@@ -609,7 +646,7 @@ router.get('/commissions', async (_req: Request, res: Response) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: (error as Error).message,
+      error: formatErrorConditional(error, 500).error,
     });
   }
 });

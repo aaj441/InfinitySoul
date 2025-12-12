@@ -746,6 +746,10 @@ export class LeadFunnel {
     for (const lead of leads) {
       if (lead.status !== 'closed_won' && lead.status !== 'closed_lost' && lead.estimatedValue) {
         const stageIndex = stageOrder.indexOf(lead.status);
+        // Check for unknown status (-1 index) and skip
+        if (stageIndex === -1) {
+          continue;
+        }
         const conversionProbability = stageOrder
           .slice(stageIndex)
           .reduce((prob, _stage, idx) => {
@@ -855,8 +859,9 @@ export class LeadFunnel {
 
     for (const [key, value] of Object.entries(replacements)) {
       const regex = new RegExp(`{{${key}}}`, 'g');
-      subject = subject.replace(regex, value);
-      body = body.replace(regex, value);
+      // Use function replacer to prevent special replacement pattern interpretation ($&, $`, $', etc.)
+      subject = subject.replace(regex, () => value);
+      body = body.replace(regex, () => value);
     }
 
     return { subject, body };
