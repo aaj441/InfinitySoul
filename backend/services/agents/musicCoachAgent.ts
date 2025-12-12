@@ -216,7 +216,7 @@ function identifyAreasForGrowth(profile: StudentRiskProfile): Array<{
   if (traits.socialWithdrawalDetected) {
     areas.push({
       category: 'Social Engagement',
-      currentState: 'You've reduced social listening by >50% recently, which may indicate isolation.',
+      currentState: "You've reduced social listening by >50% recently, which may indicate isolation.",
       targetState: 'Re-engage with shared playlists and music-based social activities.',
       priority: 'high',
     });
@@ -458,7 +458,7 @@ export function formatCoachingPlan(plan: CoachingPlan): string {
   output += '\n';
 
   output += '💙 Remember: This is about growth and support, not judgment.\n';
-  output += 'You're taking proactive steps toward better well-being. We're here to help!\n\n';
+  output += "You're taking proactive steps toward better well-being. We're here to help!\n\n";
 
   output += '═'.repeat(80) + '\n';
 

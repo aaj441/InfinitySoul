@@ -1,34 +1,50 @@
 /**
- * Logger - Stub for MVP deployment
- *
- * Simplified console-based logger that allows the build to succeed.
- * Full Winston integration will be added in Phase V completion.
+ * Logger - Console-based logging with module context
  */
 
 export interface Logger {
-  info(message: string, ...meta: any[]): void;
-  error(message: string, ...meta: any[]): void;
-  warn(message: string, ...meta: any[]): void;
-  debug(message: string, ...meta: any[]): void;
+  info(message: string, context?: Record<string, unknown>): void;
+  error(message: string, context?: Record<string, unknown>): void;
+  warn(message: string, context?: Record<string, unknown>): void;
+  debug(message: string, context?: Record<string, unknown>): void;
 }
 
 class ConsoleLogger implements Logger {
-  info(message: string, ...meta: any[]) {
-    console.log(`[INFO] ${message}`, ...meta);
+  private module: string;
+
+  constructor(module?: string) {
+    this.module = module || 'app';
   }
 
-  error(message: string, ...meta: any[]) {
-    console.error(`[ERROR] ${message}`, ...meta);
+  private formatContext(context?: Record<string, unknown>): string {
+    return context ? ` ${JSON.stringify(context)}` : '';
   }
 
-  warn(message: string, ...meta: any[]) {
-    console.warn(`[WARN] ${message}`, ...meta);
+  info(message: string, context?: Record<string, unknown>) {
+    console.log(`[INFO] [${this.module}] ${message}${this.formatContext(context)}`);
   }
 
-  debug(message: string, ...meta: any[]) {
-    console.log(`[DEBUG] ${message}`, ...meta);
+  error(message: string, context?: Record<string, unknown>) {
+    console.error(`[ERROR] [${this.module}] ${message}${this.formatContext(context)}`);
+  }
+
+  warn(message: string, context?: Record<string, unknown>) {
+    console.warn(`[WARN] [${this.module}] ${message}${this.formatContext(context)}`);
+  }
+
+  debug(message: string, context?: Record<string, unknown>) {
+    if (process.env.DEBUG) {
+      console.log(`[DEBUG] [${this.module}] ${message}${this.formatContext(context)}`);
+    }
   }
 }
+
+/**
+ * Create a logger for a specific module
+ */
+export const createModuleLogger = (module: string): Logger => {
+  return new ConsoleLogger(module);
+};
 
 export const logger = new ConsoleLogger();
 export default logger;

@@ -501,7 +501,7 @@ function seedCSUDHPilot(): void {
     notesForRegulator: 'All NAIC AI principles compliant. Quarterly fairness audits passing. Human-in-the-loop operational.',
   };
 
-  pilotConfigs.set(csudh.id, csudh Pilot);
+  pilotConfigs.set(csudh.id, csudhPilot);
 
   // Seed some sample events
   const sampleEvents: Omit<CampusRiskEvent, 'id' | 'reportedAt'>[] = [

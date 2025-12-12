@@ -278,7 +278,7 @@ function identifyTopRiskFactors(traits: MusicDerivedTraits): Array<{
     factors.push({
       factor: 'Social withdrawal',
       contribution: 30,
-      interpretation: 'You've reduced social listening by >50% recently, which may indicate isolation risk.',
+      interpretation: "You've reduced social listening by >50% recently, which may indicate isolation risk.",
     });
   }
 

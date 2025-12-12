@@ -5,6 +5,9 @@
  * Full Sentry integration will be added later.
  */
 
+// Re-export error classes from unified errors module
+export { ExternalServiceError, AppError, ValidationError } from '../backend/errors';
+
 export function initErrorTracking() {
   console.log('[Error Tracking] Initialized (stub mode)');
 }

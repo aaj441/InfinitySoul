@@ -220,5 +220,5 @@ export interface RegulatorBriefing {
   // Summary for regulator
   executiveSummary: string;
   complianceConcerns: string[];
-  remediation Actions: string[];
+  remediationActions: string[];
 }
