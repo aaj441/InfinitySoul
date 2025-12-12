@@ -26,8 +26,6 @@ import {
   NurtureTouchpoint,
   NurtureSequence,
   NurtureEmail,
-  TriggerCondition,
-  IndustryVertical,
 } from './types';
 import { INSURANCE_LINE_CONFIGS } from './InsuranceComplianceHub';
 
