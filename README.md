@@ -8,12 +8,14 @@ InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** 
 
 1. **Accessibility & Compliance** (WCAG 2.2 scanning, litigation intelligence, Infinity8 scoring)
 2. **Cyber Security Auditing** (Small business cyber risk assessment and insurance enablement)
-3. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
-4. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
+3. **Cyber Insurance Platform** (Complete solo-operator cockpit for cyber insurance sales - NEW!)
+4. **Behavioral Risk Intelligence** (Music × engagement → early-warning signals for wellness & actuarial use)
+5. **Universal Risk Distribution** (Actuarial framework treating behavioral, operational, and AI risk as tradeable, poolable units)
 
 **Primary use case:** CSUDH and CSU-system campuses for student wellness, early intervention, and accessibility.  
-**Secondary use case:** Small business cyber insurance (audit → fix → insure pathway).
-**Tertiary use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
+**Secondary use case:** Cyber insurance sales platform - Lead qualification → risk assessment → outreach automation.
+**Tertiary use case:** Small business cyber auditing (audit → fix → insure pathway).
+**Additional use case:** Ethical sandbox for AI/behavioral insurance exploration under strict governance.
 
 ---
 
@@ -26,6 +28,28 @@ InfinitySoul is an **ethics-governed behavioral risk and accessibility engine** 
 - **Location:** `services/wcagScanner.ts`, `services/litigationDatabase.ts`, `services/infinity8Score.ts`
 - **Grounded in:** Public data only—PACER, RECAP, court records, open accessibility standards
 - **Value prop:** "We document the liability so you can fix it before you're liable."
+
+### Cyber Insurance Platform (NEW!)
+
+**What it does:** Complete solo-operator cockpit that transforms raw leads into qualified prospects with comprehensive cyber risk assessments, coverage maps, and personalized outreach sequences.
+
+- **Location:** `backend/cyber/`, `backend/agents/`, `backend/orchestration/`, `contexts/`, `workflows/`
+- **Core Features:**
+  - **Domain Engine**: Statistical risk models, carrier matching, premium estimation
+  - **Niche Contexts**: Healthcare, law firms, nonprofits, generic business
+  - **Agent Layer**: Qualification, risk assessment, discovery scripts, outreach generation
+  - **Quest System**: ADHD-friendly daily task management with panic mode
+  - **Workflows**: YAML-defined sales funnel and risk assessment pipelines
+- **API Endpoints:** `/api/cyber-copilot`, `/api/cyber-copilot/risk-assessment`, `/api/cyber-copilot/quests`
+- **Value prop:** "Solo insurance brokers get enterprise-level automation - lead to close in 48 hours"
+- **Documentation:** See `CYBER_COPILOT_README.md` for complete guide
+
+**Quick start:**
+```bash
+npm run backend
+# In another terminal:
+node test-cyber-copilot.js
+```
 
 ### Cyber Security Audit Tool
 
