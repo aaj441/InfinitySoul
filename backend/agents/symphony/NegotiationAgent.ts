@@ -113,7 +113,7 @@ export class NegotiationAgent {
   } {
     // Simulated strategy generation - in production: Use GPT-4
     const openings = [
-      'I've been looking at your operation - I think I can help you solve the profitability problem and exit on your terms.',
+      'I\'ve been looking at your operation - I think I can help you solve the profitability problem and exit on your terms.',
       'Your MGA has strong fundamentals but the market is changing fast. I have a proposal that could help you pivot.',
       'I know you\'re exploring options. I can move faster than anyone else and give you more upside.',
     ];

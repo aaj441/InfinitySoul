@@ -146,6 +146,85 @@ export class SymphonyOrchestrator {
   }
 
   /**
+   * Approve all pending requests agentically
+   * Auto-approves all pending items across all agents:
+   * - RelationshipAgent: Approve all relationship pings
+   * - ContentAgent: Approve all content drafts
+   * - GovernanceAgent: Auto-vote yes on all active proposals (as founder)
+   */
+  async approveAllRequests(): Promise<{
+    relationshipPings: number;
+    contentPieces: number;
+    governanceVotes: number;
+  }> {
+    console.log('\n🤖 AGENTIC AUTO-APPROVAL SYSTEM ACTIVATED\n');
+    console.log('═'.repeat(60));
+    
+    let relationshipCount = 0;
+    let contentCount = 0;
+    let governanceCount = 0;
+
+    // 1. Approve all relationship pings
+    console.log('\n👥 Approving relationship pings...');
+    const pings = this.relationshipAgent['pings'] || [];
+    const pendingPings = pings.filter((p: any) => p.requiresApproval);
+    
+    if (pendingPings.length > 0) {
+      for (const ping of pendingPings) {
+        await this.relationshipAgent.approvePing(ping.relationshipId);
+        relationshipCount++;
+      }
+      console.log(`   ✅ Approved ${relationshipCount} relationship ping(s)`);
+    } else {
+      console.log(`   ℹ️  No pending relationship pings`);
+    }
+
+    // 2. Approve all content pieces
+    console.log('\n📢 Approving content drafts...');
+    const drafts = this.contentAgent.getPendingDrafts();
+    
+    if (drafts.length > 0) {
+      await this.contentAgent.approveAll();
+      contentCount = drafts.length;
+      console.log(`   ✅ Approved ${contentCount} content piece(s)`);
+    } else {
+      console.log(`   ℹ️  No pending content drafts`);
+    }
+
+    // 3. Auto-vote on all active governance proposals
+    console.log('\n🗳️  Auto-voting on governance proposals...');
+    const activeProposals = this.governanceAgent.getActiveProposals();
+    
+    if (activeProposals.length > 0) {
+      for (const proposal of activeProposals) {
+        // Check if founder (You) has already voted
+        const hasVoted = proposal.votes.some(v => v.voter === 'You');
+        
+        if (!hasVoted) {
+          await this.governanceAgent.castVote(proposal.id, 'You', 'yes');
+          governanceCount++;
+        }
+      }
+      console.log(`   ✅ Cast ${governanceCount} governance vote(s)`);
+    } else {
+      console.log(`   ℹ️  No active governance proposals`);
+    }
+
+    console.log('\n═'.repeat(60));
+    console.log('\n📊 AUTO-APPROVAL SUMMARY:');
+    console.log(`   • Relationship pings approved: ${relationshipCount}`);
+    console.log(`   • Content pieces approved: ${contentCount}`);
+    console.log(`   • Governance votes cast: ${governanceCount}`);
+    console.log(`   • Total actions: ${relationshipCount + contentCount + governanceCount}\n`);
+
+    return {
+      relationshipPings: relationshipCount,
+      contentPieces: contentCount,
+      governanceVotes: governanceCount
+    };
+  }
+
+  /**
    * End day and generate report
    */
   async endDay(): Promise<DailyReport> {
