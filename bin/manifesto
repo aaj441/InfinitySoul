@@ -13,10 +13,6 @@
  *   ./bin/manifesto keep_the_rails
  */
 
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
 // Color codes for terminal output
 const colors = {
   reset: '\x1b[0m',
@@ -31,7 +27,8 @@ const colors = {
 };
 
 function log(message, color = 'white') {
-  console.log(`${colors[color]}${message}${colors.reset}`);
+  const colorCode = colors[color] || colors.white;
+  console.log(`${colorCode}${message}${colors.reset}`);
 }
 
 function banner() {
@@ -514,26 +511,38 @@ function main() {
       break;
       
     case 'deploy_agent':
-      const role = args.find(arg => arg.startsWith('--role='))?.split('=')[1] || 
-                   args[args.indexOf('--role') + 1] || 'underwriter';
+      const roleArg = args.find(arg => arg.startsWith('--role='));
+      const roleIndex = args.indexOf('--role');
+      const role = roleArg ? roleArg.split('=')[1] : 
+                   (roleIndex >= 0 && roleIndex + 1 < args.length) ? args[roleIndex + 1] : 
+                   'underwriter';
       deployAgent(role);
       break;
       
     case 'price_out':
-      const target = args.find(arg => arg.startsWith('--target='))?.split('=')[1] || 
-                     args[args.indexOf('--target') + 1] || 'ransomware_gang';
+      const targetArg = args.find(arg => arg.startsWith('--target='));
+      const targetIndex = args.indexOf('--target');
+      const target = targetArg ? targetArg.split('=')[1] : 
+                     (targetIndex >= 0 && targetIndex + 1 < args.length) ? args[targetIndex + 1] : 
+                     'ransomware_gang';
       priceOut(target);
       break;
       
     case 'community_vote':
-      const proposal = args.find(arg => arg.startsWith('--proposal='))?.split('=')[1] || 
-                       args[args.indexOf('--proposal') + 1] || 'insure_crypto_custodians';
+      const proposalArg = args.find(arg => arg.startsWith('--proposal='));
+      const proposalIndex = args.indexOf('--proposal');
+      const proposal = proposalArg ? proposalArg.split('=')[1] : 
+                       (proposalIndex >= 0 && proposalIndex + 1 < args.length) ? args[proposalIndex + 1] : 
+                       'insure_crypto_custodians';
       communityVote(proposal);
       break;
       
     case 'rebase_portfolio':
-      const threshold = args.find(arg => arg.startsWith('--cut_threshold='))?.split('=')[1] || 
-                        args[args.indexOf('--cut_threshold') + 1] || '10x';
+      const thresholdArg = args.find(arg => arg.startsWith('--cut_threshold='));
+      const thresholdIndex = args.indexOf('--cut_threshold');
+      const threshold = thresholdArg ? thresholdArg.split('=')[1] : 
+                        (thresholdIndex >= 0 && thresholdIndex + 1 < args.length) ? args[thresholdIndex + 1] : 
+                        '10x';
       rebasePortfolio(threshold);
       break;
       
@@ -550,8 +559,11 @@ function main() {
       break;
       
     case 'acquire':
-      const acqTarget = args.find(arg => arg.startsWith('--target='))?.split('=')[1] || 
-                        args[args.indexOf('--target') + 1] || 'CyberGuard MGA';
+      const acqTargetArg = args.find(arg => arg.startsWith('--target='));
+      const acqTargetIndex = args.indexOf('--target');
+      const acqTarget = acqTargetArg ? acqTargetArg.split('=')[1] : 
+                        (acqTargetIndex >= 0 && acqTargetIndex + 1 < args.length) ? args[acqTargetIndex + 1] : 
+                        'CyberGuard MGA';
       generateAcquisitionEmail(acqTarget);
       break;
       
