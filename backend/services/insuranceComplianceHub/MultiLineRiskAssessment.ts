@@ -390,7 +390,6 @@ export class MultiLineRiskAssessment {
         });
       } else if (analysis.currentStatus === 'underinsured' && analysis.gap) {
         const lineConfig = INSURANCE_LINE_CONFIGS[analysis.line];
-        const current = currentCoverage.find(c => c.line === analysis.line);
 
         gaps.push({
           line: analysis.line,

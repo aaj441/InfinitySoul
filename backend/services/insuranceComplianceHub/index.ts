@@ -24,7 +24,7 @@
  * Target: $100K+ commissions + $60K licensing Year 1 (30 customers)
  */
 
-export { InsuranceComplianceHub } from './InsuranceComplianceHub';
+export { InsuranceComplianceHub, insuranceHub, INSURANCE_LINE_CONFIGS, INDUSTRY_RISK_PROFILES } from './InsuranceComplianceHub';
 export { LucyAdvisor } from './LucyAdvisor';
 export { MultiLineRiskAssessment } from './MultiLineRiskAssessment';
 export { ComplianceAuditDisplay } from './ComplianceAuditDisplay';
