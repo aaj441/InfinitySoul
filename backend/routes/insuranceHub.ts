@@ -54,6 +54,12 @@ router.get('/config/lines', (_req: Request, res: Response) => {
 router.get('/config/lines/:line', (req: Request, res: Response) => {
   try {
     const line = req.params.line as InsuranceLine;
+    if (!insuranceHub) {
+      return res.status(500).json({
+        success: false,
+        error: "InsuranceHub service is unavailable.",
+      });
+    }
     const config = insuranceHub.getLineConfig(line);
 
     if (!config) {
