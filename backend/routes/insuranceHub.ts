@@ -270,8 +270,17 @@ router.post('/assessment/commission-stack', (req: Request, res: Response) => {
       });
     }
 
+    const typedIndustry = industry as IndustryVertical;
+
+    if (!INDUSTRY_RISK_PROFILES[typedIndustry]) {
+      return res.status(400).json({
+        success: false,
+        error: `Industry '${industry}' not found`,
+      });
+    }
+
     const stack = insuranceHub.calculateCommissionStack(
-      industry as IndustryVertical,
+      typedIndustry,
       employeeResult.value,
       revenueResult.value
     );
