@@ -45,6 +45,14 @@
     "symphony:approve-all": "npx ts-node bin/infinity_soul.ts approve_all_requests",
     "symphony:end": "npx ts-node bin/infinity_soul.ts end_day",
     "symphony:demo": "npx ts-node bin/infinity_soul.ts demo",
+    "rawkus": "node bin/rawkus",
+    "rawkus:scout": "node bin/rawkus deploy_scout_agent --count 3 --execute",
+    "rawkus:underwriter": "node bin/rawkus deploy_underwriting_agent --cell mga_001",
+    "rawkus:governance": "node bin/rawkus deploy_governance_agent --vote",
+    "rawkus:fire": "node bin/rawkus fire_underwriters --count 10 --confirm",
+    "rawkus:harden": "node bin/rawkus harden_protocol",
+    "rawkus:status": "node bin/rawkus status --net_worth --debt_ratio",
+    "rawkus:protocol": "npm run rawkus:scout && npm run rawkus:underwriter && npm run rawkus:fire && npm run rawkus:status"
     "test:auto-approval": "npx ts-node bin/test_auto_approval.ts"
   },
   "dependencies": {

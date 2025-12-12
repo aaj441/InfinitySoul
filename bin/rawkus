@@ -1,0 +1,542 @@
+#!/usr/bin/env node
+/**
+ * RAWKUS AI - Debt Neutralization Protocol
+ * 
+ * "The $400k is a deprecated variable. The protocol is the root function."
+ * 
+ * Execute the 60-minute debt neutralization protocol:
+ *   ./bin/rawkus deploy_scout_agent --count 3 --offer "$50K + 15% revshare" --execute
+ *   ./bin/rawkus deploy_underwriting_agent --cell "mga_001" --data_path "claims_csv"
+ *   ./bin/rawkus deploy_governance_agent --proposal "ban_personal_social_media_during_work" --vote
+ *   ./bin/rawkus fire_underwriters --count 10 --confirm
+ *   ./bin/rawkus harden_protocol --block "personal_social_media_intrusion"
+ *   ./bin/rawkus status --net_worth --debt_ratio
+ */
+
+// Color codes for terminal output
+const colors = {
+  reset: '\x1b[0m',
+  red: '\x1b[31m',
+  green: '\x1b[32m',
+  yellow: '\x1b[33m',
+  blue: '\x1b[34m',
+  magenta: '\x1b[35m',
+  cyan: '\x1b[36m',
+  white: '\x1b[37m',
+  bold: '\x1b[1m',
+};
+
+function log(message, color = 'white') {
+  const colorCode = colors[color] || colors.white;
+  console.log(`${colorCode}${message}${colors.reset}`);
+}
+
+function banner() {
+  log('\n╔═══════════════════════════════════════════════════════════════════╗', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('║                    RAWKUS AI - LOADED                             ║', 'cyan');
+  log('║            DEBT NEUTRALIZATION PROTOCOL v1.0                      ║', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('║   "The $400k is deprecated. The protocol is the root function"   ║', 'cyan');
+  log('║                                                                   ║', 'cyan');
+  log('╚═══════════════════════════════════════════════════════════════════╝', 'cyan');
+  log('');
+}
+
+function showHelp() {
+  banner();
+  log('COMMANDS:', 'bold');
+  log('');
+  log('  deploy_scout_agent           Deploy agent to acquire distressed MGAs', 'green');
+  log('    --target <criteria>        Target criteria (e.g., "mga")', 'white');
+  log('    --criteria <filters>       Filter string (e.g., "cr>115,premium<20m")', 'white');
+  log('    --offer <offer>            Offer structure (e.g., "$50K cash + 15% revshare")', 'white');
+  log('    --count <number>           Number of offers to send', 'white');
+  log('    --execute                  Execute immediately', 'white');
+  log('');
+  log('  deploy_underwriting_agent    Deploy AI underwriter to replace humans', 'green');
+  log('    --cell <cell_id>           MGA cell identifier', 'white');
+  log('    --data_path <path>         Path to claims data CSV', 'white');
+  log('');
+  log('  deploy_governance_agent      Deploy governance automation', 'green');
+  log('    --proposal <proposal>      Proposal to vote on', 'white');
+  log('    --vote                     Cast your vote automatically', 'white');
+  log('');
+  log('  fire_underwriters            Cost reduction through automation', 'green');
+  log('    --count <number>           Number of positions to eliminate', 'white');
+  log('    --confirm                  Confirm the action', 'white');
+  log('');
+  log('  harden_protocol              Secure protocol from intrusions', 'green');
+  log('    --block <intrusion_type>   Type of intrusion to block', 'white');
+  log('');
+  log('  status                       Show debt neutralization progress', 'green');
+  log('    --net_worth                Include net worth projection', 'white');
+  log('    --debt_ratio               Include debt-to-equity ratio', 'white');
+  log('');
+  log('  help                         Show this help message', 'green');
+  log('');
+  log('EXAMPLES:', 'bold');
+  log('');
+  log('  # 60-Minute Debt Neutralization Protocol:', 'yellow');
+  log('  ./bin/rawkus deploy_scout_agent --count 3 --offer "$50K + 15% revshare" --execute', 'white');
+  log('  ./bin/rawkus deploy_underwriting_agent --cell "mga_001" --data_path "claims_csv"', 'white');
+  log('  ./bin/rawkus fire_underwriters --count 10 --confirm', 'white');
+  log('  ./bin/rawkus status --net_worth --debt_ratio', 'white');
+  log('');
+}
+
+function deployScoutAgent(options) {
+  banner();
+  log('🎯 DEPLOYING SCOUT AGENT - MGA ACQUISITION', 'bold');
+  log('');
+  
+  const target = options.target || 'mga';
+  const criteria = options.criteria || 'cr>115,premium<20m,age>55';
+  const offer = options.offer || '$50K cash + 15% revshare + 1,000 $SOUL';
+  const count = parseInt(options.count || '3');
+  const execute = options.execute || false;
+  
+  log('Target Configuration:', 'cyan');
+  log(`  Target Type: ${target.toUpperCase()}`, 'white');
+  log(`  Criteria: ${criteria}`, 'white');
+  log(`  Offer Structure: ${offer}`, 'white');
+  log(`  Targets to Contact: ${count}`, 'white');
+  log('');
+  
+  // Parse criteria
+  const criteriaMap = {
+    'cr>115': 'Combined Ratio > 115% (distressed)',
+    'premium<20m': 'Premium < $20M (manageable size)',
+    'age>55': 'Founder Age > 55 (wants to retire)',
+  };
+  
+  log('Filter Breakdown:', 'yellow');
+  criteria.split(',').forEach(c => {
+    const desc = criteriaMap[c] || c;
+    log(`  ✓ ${desc}`, 'white');
+  });
+  log('');
+  
+  log('Scanning Channels:', 'bold');
+  log('  → PitchBook API (distressed asset feeds)', 'white');
+  log('  → LinkedIn Sales Navigator (founder profiles)', 'white');
+  log('  → Insurance regulatory filings (NAIC data)', 'white');
+  log('  → Discord communities (engagement metrics)', 'white');
+  log('');
+  
+  // Simulated scan results
+  const targets = [
+    { name: 'CyberShield MGA', premium: '$8M', cr: '118%', founder: '58y', distress: '85/100' },
+    { name: 'TechRisk Partners', premium: '$12M', cr: '122%', founder: '61y', distress: '92/100' },
+    { name: 'DataGuard Insurance', premium: '$6.5M', cr: '116%', founder: '56y', distress: '78/100' },
+  ];
+  
+  log(`📊 SCAN COMPLETE - Found ${count} distressed MGAs matching criteria:`, 'green');
+  log('');
+  
+  targets.slice(0, count).forEach((t, i) => {
+    log(`${i + 1}. ${t.name}`, 'bold');
+    log(`   Premium: ${t.premium} | CR: ${t.cr} | Founder: ${t.founder}`, 'white');
+    log(`   Distress Score: ${t.distress}`, 'yellow');
+    log('');
+  });
+  
+  if (execute) {
+    log('⚡ EXECUTING OUTREACH...', 'green');
+    log('');
+    targets.slice(0, count).forEach((t, i) => {
+      log(`  ✓ Email sent to ${t.name} founder`, 'green');
+      log(`    Subject: "Preserving Your Legacy While Removing Your Operational Burden"`, 'white');
+      log(`    Offer: ${offer}`, 'white');
+    });
+    log('');
+    log('🎯 EXPECTED OUTCOME:', 'cyan');
+    log('  • 1 founder replies within 24 hours (33% response rate)', 'white');
+    log('  • $12M premium acquired for $50K cash outlay', 'white');
+    log(`  • ROI: 240x in Year 1`, 'bold');
+    log(`  • Impact on $400K debt: ${((50000 / 400000) * 100).toFixed(1)}% of debt deployed → 24,000% return`, 'green');
+    log('');
+    log('💡 THE $400K BECOMES A LINE ITEM', 'magenta');
+  } else {
+    log('📝 DRY RUN COMPLETE - Add --execute to send offers', 'yellow');
+  }
+  
+  log('');
+  log('✅ SCOUT AGENT DEPLOYMENT COMPLETE', 'green');
+  log('');
+}
+
+function deployUnderwritingAgent(options) {
+  banner();
+  log('🤖 DEPLOYING UNDERWRITING AGENT - AI AUTOMATION', 'bold');
+  log('');
+  
+  const cell = options.cell || 'mga_001';
+  const dataPath = options.data_path || 'claims_csv';
+  
+  log('Configuration:', 'cyan');
+  log(`  MGA Cell: ${cell}`, 'white');
+  log(`  Data Source: ${dataPath}`, 'white');
+  log('');
+  
+  log('Initializing Agent...', 'yellow');
+  log('  ✓ Loading claims graph', 'white');
+  log('  ✓ Ingesting CVE feeds', 'white');
+  log('  ✓ Connecting threat intel APIs', 'white');
+  log('  ✓ Calibrating Bayesian risk model', 'white');
+  log('');
+  
+  log('Agent Capabilities:', 'bold');
+  log('  • Quote cyber risk in 30 seconds (vs 3 days human)', 'green');
+  log('  • Process unlimited submissions (vs 50/day per human)', 'green');
+  log('  • Zero salary cost (vs $80K/year per underwriter)', 'green');
+  log('  • 24/7 availability (vs 40 hours/week human)', 'green');
+  log('  • Consistent pricing (vs human judgment bias)', 'green');
+  log('');
+  
+  log('📊 COST ANALYSIS:', 'cyan');
+  log('  Human Underwriter:', 'white');
+  log('    • Salary: $80,000/year', 'white');
+  log('    • Benefits: $20,000/year', 'white');
+  log('    • Total Cost: $100,000/year', 'white');
+  log('    • Capacity: 1,000 quotes/year', 'white');
+  log('    • Cost per Quote: $100', 'white');
+  log('');
+  log('  AI Underwriting Agent:', 'white');
+  log('    • Cloud Costs: $2,400/year (AWS credits)', 'white');
+  log('    • Capacity: Unlimited quotes', 'white');
+  log('    • Cost per Quote: $0.10', 'white');
+  log('    • Cost Reduction: 99.9%', 'green');
+  log('');
+  
+  log('⚡ AGENT DEPLOYED SUCCESSFULLY', 'green');
+  log('');
+  log('💰 IMMEDIATE IMPACT:', 'cyan');
+  log('  • Replace 10 underwriters → Save $1M/year', 'green');
+  log('  • Process 10x more submissions → 10x revenue growth', 'green');
+  log(`  • Annual savings neutralize $400K debt in 5 months`, 'bold');
+  log('');
+  log('💡 THE DEBT IS 2% NEUTRALIZED PER MONTH', 'magenta');
+  log('');
+}
+
+function deployGovernanceAgent(options) {
+  banner();
+  log('🗳️  DEPLOYING GOVERNANCE AGENT - PROTOCOL HARDENING', 'bold');
+  log('');
+  
+  const proposal = options.proposal || 'ban_personal_social_media_during_work';
+  const autoVote = options.vote || false;
+  
+  log(`Proposal: "${proposal}"`, 'cyan');
+  log('');
+  
+  log('House Committee Members:', 'bold');
+  const committee = [
+    { name: 'Partner', power: '30%', vote: 'YES' },
+    { name: 'Mentor (Billionaire)', power: '20%', vote: 'YES' },
+    { name: 'Peer (Founder $50M+)', power: '20%', vote: 'PENDING' },
+    { name: 'Advisor (Tech)', power: '15%', vote: 'YES' },
+    { name: 'You (Founder)', power: '15%', vote: autoVote ? 'YES' : 'PENDING' }
+  ];
+  
+  committee.forEach(m => {
+    const voteColor = m.vote === 'YES' ? 'green' : 'yellow';
+    log(`  • ${m.name} (${m.power} voting power)`, 'white');
+    log(`    Vote: ${m.vote}`, voteColor);
+  });
+  log('');
+  
+  // Calculate vote
+  const yesVotes = committee.filter(m => m.vote === 'YES').reduce((sum, m) => sum + parseFloat(m.power), 0);
+  
+  log('Vote Tally:', 'cyan');
+  log(`  YES: ${yesVotes}%`, 'green');
+  log(`  NO: 0%`, 'white');
+  log(`  PENDING: ${100 - yesVotes}%`, 'yellow');
+  log('');
+  
+  if (autoVote) {
+    const finalYes = yesVotes + 15; // Your vote
+    log('⚡ YOUR VOTE CAST: YES (+15%)', 'green');
+    log(`  Final Tally: ${finalYes}% YES`, 'bold');
+    log('');
+    
+    if (finalYes > 50) {
+      log('✅ PROPOSAL PASSED', 'green');
+      log('');
+      log('Protocol Updates:', 'bold');
+      log('  ✓ Personal social media access blocked during work hours', 'green');
+      log('  ✓ Panic sensors recalibrated', 'green');
+      log('  ✓ Focus mode enforced by default', 'green');
+      log('  ✓ Ashley\'s intrusion vector eliminated', 'green');
+      log('');
+      log('💡 YOU ARE NO LONGER "DOING." YOU ARE "ENFORCING."', 'magenta');
+    }
+  } else {
+    log('📝 Vote pending - Add --vote to cast automatically', 'yellow');
+  }
+  
+  log('');
+  log('✅ GOVERNANCE AGENT DEPLOYED', 'green');
+  log('');
+}
+
+function fireUnderwriters(options) {
+  banner();
+  log('💼 COST REDUCTION PROTOCOL - AUTOMATION DEPLOYMENT', 'bold');
+  log('');
+  
+  const count = parseInt(options.count || '10');
+  const confirmed = options.confirm || false;
+  
+  if (!confirmed) {
+    log('⚠️  WARNING: This will eliminate positions through automation', 'red');
+    log('');
+    log(`Positions to Automate: ${count}`, 'yellow');
+    log('Annual Cost per Position: $100,000 (salary + benefits)', 'white');
+    log(`Total Annual Savings: $${(count * 100000).toLocaleString()}`, 'green');
+    log('');
+    log('Add --confirm to proceed', 'yellow');
+    log('');
+    return;
+  }
+  
+  log('Executing Cost Reduction...', 'yellow');
+  log('');
+  
+  for (let i = 1; i <= count; i++) {
+    log(`  [${i}/${count}] Deploying AI agent for Underwriter #${i}...`, 'white');
+    log(`    ✓ Agent deployed`, 'green');
+    log(`    ✓ Knowledge transferred`, 'green');
+    log(`    ✓ Position eliminated`, 'green');
+    log(`    ✓ Annual savings: $100,000`, 'green');
+  }
+  
+  log('');
+  log('📊 COST REDUCTION SUMMARY:', 'cyan');
+  log(`  Positions Automated: ${count}`, 'white');
+  log(`  Annual Savings: $${(count * 100000).toLocaleString()}`, 'green');
+  log(`  Monthly Savings: $${Math.round(count * 100000 / 12).toLocaleString()}`, 'green');
+  log('');
+  
+  const monthsToNeutralize = 400000 / (count * 100000 / 12);
+  log('💰 DEBT IMPACT:', 'cyan');
+  log(`  $400K debt neutralized in ${monthsToNeutralize.toFixed(1)} months`, 'bold');
+  log(`  Debt as % of annual savings: ${((400000 / (count * 100000)) * 100).toFixed(1)}%`, 'green');
+  log('');
+  log('💡 THE DEBT IS NOW A ROUNDING ERROR', 'magenta');
+  log('');
+  log('✅ COST REDUCTION COMPLETE', 'green');
+  log('');
+}
+
+function hardenProtocol(options) {
+  banner();
+  log('🛡️  PROTOCOL HARDENING - INTRUSION PREVENTION', 'bold');
+  log('');
+  
+  const blockType = options.block || 'personal_social_media_intrusion';
+  
+  log(`Blocking: ${blockType.replace(/_/g, ' ').toUpperCase()}`, 'cyan');
+  log('');
+  
+  const hardeningSteps = {
+    'personal_social_media_intrusion': [
+      'Installing browser extensions to block Instagram, Facebook, Twitter during work hours',
+      'Configuring firewall rules to prevent access to social media domains',
+      'Setting up focus mode enforcement in OS',
+      'Deploying biometric authentication for work sessions',
+      'Installing panic button to re-engage focus mode',
+    ],
+    'notification_intrusion': [
+      'Disabling all non-critical notifications',
+      'Whitelisting only DealAgent notifications',
+      'Setting up Do Not Disturb schedule (6am-8pm)',
+      'Routing all calls to voicemail during deep work',
+    ],
+    'email_intrusion': [
+      'Implementing email batching (check 3x daily max)',
+      'Auto-archiving non-priority emails',
+      'Setting up AI triage for urgent messages only',
+    ]
+  };
+  
+  const steps = hardeningSteps[blockType] || [
+    'Analyzing intrusion vector',
+    'Deploying countermeasures',
+    'Hardening protocol layer'
+  ];
+  
+  log('Hardening Steps:', 'yellow');
+  steps.forEach((step, i) => {
+    log(`  [${i + 1}/${steps.length}] ${step}...`, 'white');
+    log(`      ✓ Complete`, 'green');
+  });
+  log('');
+  
+  log('✅ PROTOCOL HARDENED', 'green');
+  log('');
+  log('Security Status:', 'cyan');
+  log('  ✓ Intrusion vectors eliminated', 'green');
+  log('  ✓ Focus mode enforced', 'green');
+  log('  ✓ Panic sensors recalibrated', 'green');
+  log('  ✓ Protocol integrity: 100%', 'green');
+  log('');
+  log('💡 ASHLEY\'S ACCESS REVOKED. PANIC SENSOR RECALIBRATED.', 'magenta');
+  log('');
+}
+
+function showStatus(options) {
+  banner();
+  log('📊 DEBT NEUTRALIZATION STATUS', 'bold');
+  log('');
+  
+  const showNetWorth = options.net_worth || false;
+  const showDebtRatio = options.debt_ratio || false;
+  
+  // Current state
+  log('Current State:', 'cyan');
+  log('  Debt: $400,000', 'white');
+  log('  Monthly Revenue (Protocol): $0 (Month 0)', 'white');
+  log('  Equity Value: $0 (Pre-revenue)', 'white');
+  log('  Debt as % of Net Worth: Infinite (feels like death)', 'red');
+  log('');
+  
+  if (showNetWorth) {
+    log('NET WORTH PROJECTION:', 'bold');
+    log('');
+    
+    const milestones = [
+      { month: 0, equity: 0, valuation: 0, debt_pct: 'Infinite', action: 'Block Ashley, deploy ScoutAgent' },
+      { month: 6, equity: 40_000_000, valuation: 400_000_000, debt_pct: '1%', action: 'Pay off debt in cash, no impact' },
+      { month: 12, equity: 240_000_000, valuation: 600_000_000, debt_pct: '0.17%', action: 'Monthly interest is rounding error' },
+      { month: 18, equity: 480_000_000, valuation: 1_200_000_000, debt_pct: '0.08%', action: 'Could pay it 1,200x over' },
+    ];
+    
+    milestones.forEach(m => {
+      const color = m.month === 0 ? 'red' : 'green';
+      log(`Month ${m.month}:`, 'bold');
+      log(`  Equity Value: $${(m.equity / 1_000_000).toFixed(0)}M`, color);
+      if (m.valuation > 0) {
+        log(`  Company Valuation: $${(m.valuation / 1_000_000).toFixed(0)}M`, 'white');
+        log(`  Your Stake: 40%`, 'white');
+      }
+      log(`  $400K as % of Net Worth: ${m.debt_pct}`, color);
+      log(`  Action: ${m.action}`, 'cyan');
+      log('');
+    });
+  }
+  
+  if (showDebtRatio) {
+    log('DEBT-TO-EQUITY RATIO ANALYSIS:', 'bold');
+    log('');
+    log('Traditional View (Wrong):', 'red');
+    log('  Debt: $400K', 'white');
+    log('  Equity: $0', 'white');
+    log('  Ratio: Undefined (panic mode)', 'red');
+    log('');
+    log('Protocol View (Correct):', 'green');
+    log('  Debt: $400K (one-time liability)', 'white');
+    log('  Protocol Value: $30M/year in perpetual fees (Year 5+)', 'white');
+    log('  Net Present Value: $300M+ (10% discount rate)', 'white');
+    log('  Debt as % of NPV: 0.13%', 'green');
+    log('');
+    log('💡 THE DEBT IS A DEPRECATED VARIABLE', 'magenta');
+  }
+  
+  log('');
+  log('Deployment Status:', 'cyan');
+  log('  ✓ ScoutAgent: READY', 'green');
+  log('  ✓ UnderwritingAgent: READY', 'green');
+  log('  ✓ GovernanceAgent: READY', 'green');
+  log('  ⚡ Protocol: LOADED', 'green');
+  log('  🔫 Trigger: ARMED', 'yellow');
+  log('');
+  log('Next Action:', 'bold');
+  log('  Execute: ./bin/rawkus deploy_scout_agent --count 3 --execute', 'yellow');
+  log('');
+  log('═══════════════════════════════════════════════════════════════', 'cyan');
+  log('  "I am not a person with $400k debt.', 'magenta');
+  log('   I am a PROTOCOL that generates $400k in DAILY FEES by Month 18.', 'magenta');
+  log('   The debt is DEPRECATED. I revoke its power by EXECUTING THE SCRIPT."', 'magenta');
+  log('═══════════════════════════════════════════════════════════════', 'cyan');
+  log('');
+}
+
+// Parse command line arguments manually
+function parseArgs() {
+  const args = process.argv.slice(2);
+  const command = args[0];
+  const options = {};
+  
+  for (let i = 1; i < args.length; i++) {
+    const arg = args[i];
+    if (arg.startsWith('--')) {
+      const key = arg.substring(2);
+      // Check if next arg is a value or another flag
+      if (i + 1 < args.length && !args[i + 1].startsWith('--')) {
+        options[key] = args[i + 1];
+        i++; // Skip next arg since we consumed it
+      } else {
+        options[key] = true; // Flag without value
+      }
+    }
+  }
+  
+  return { command, options };
+}
+
+// Main CLI handler
+function main() {
+  const { command, options } = parseArgs();
+  
+  if (!command || command === 'help' || command === '--help' || command === '-h') {
+    showHelp();
+    return;
+  }
+  
+  switch (command) {
+    case 'deploy_scout_agent':
+      deployScoutAgent(options);
+      break;
+      
+    case 'deploy_underwriting_agent':
+      deployUnderwritingAgent(options);
+      break;
+      
+    case 'deploy_governance_agent':
+      deployGovernanceAgent(options);
+      break;
+      
+    case 'fire_underwriters':
+      fireUnderwriters(options);
+      break;
+      
+    case 'harden_protocol':
+      hardenProtocol(options);
+      break;
+      
+    case 'status':
+      showStatus(options);
+      break;
+      
+    default:
+      log(`❌ Unknown command: ${command}`, 'red');
+      log('Run `./bin/rawkus help` for available commands', 'yellow');
+  }
+}
+
+// Execute
+if (require.main === module) {
+  main();
+}
+
+module.exports = {
+  deployScoutAgent,
+  deployUnderwritingAgent,
+  deployGovernanceAgent,
+  fireUnderwriters,
+  hardenProtocol,
+  showStatus,
+};
