@@ -4,6 +4,19 @@
 
 ---
 
+## ⚠️ IMPORTANT DISCLAIMER
+
+This document is a **strategic framework** that presents competitive tactics in an aggressive, provocative style. Some pillars describe tactics that may be:
+- **Ethically questionable** (consult legal counsel before implementing)
+- **Legally risky** (requires careful compliance review)
+- **Reputationally dangerous** (may backfire if executed poorly)
+
+**This is NOT legal advice.** All tactics must be vetted by qualified legal, compliance, and ethics advisors before implementation. The aggressive tone is intentional (styled after tech industry disruptors) but does not constitute a recommendation to violate laws, regulations, or ethical standards.
+
+**Use at your own risk.** The authors assume no liability for consequences of implementing these tactics.
+
+---
+
 ## **INFRASTRUCTURE MOATS** (Pillars 1-12: The Unforkable Foundation)
 
 **1. MGA License Velocity as Competitive Moat**
@@ -23,6 +36,7 @@ AWS credits expire in 24 months. **Use this deadline** to **optimize agent compu
 
 **6. GPL Infection as Competitive Nuke**
 If a competitor forks your Apache 2.0 code and adds GPL, **they're forced to open-source their entire stack**. **You win by default** (they can't commercialize). **Seed a GPL-infected fork on GitHub** under a pseudonym. **Let them step on the landmine.**
+*⚠️ WARNING: Deceptive practices may violate fraud laws and terms of service. Consult legal counsel.*
 
 **7. Reinsurance Clash as Cell Diversification Engine**
 The 20% vertical cap is a **forced portfolio optimizer**. **Rawkus AI accidentally becomes the most diversified cyber insurer**. **Berkshire's actuaries drool** over your low correlation. **You get a 5% discount on ceding commission.**
@@ -35,6 +49,7 @@ Every agent's ethical reasoning is **on-chain and timestamped**. When a policyho
 
 **10. GDPR Breach as Marketing Event**
 If you get breached, you **immediately publish the TTPs** (transparent). **The community forks your repo, patches it, and credits you**. **You get 10,000 new GitHub stars**. **The fine is cheaper than a Super Bowl ad.**
+*⚠️ WARNING: GDPR and breach notification laws require strict compliance. Consult legal counsel before any breach response.*
 
 **11. Producer Escrow as Capital Efficiency**
 Holding producer commissions for 90 days is **free float**. **You earn 5% APR on $5M** = **$250k/year**. **This is Zuckerberg's "float is our business model" from Facebook Credits.**
@@ -94,6 +109,7 @@ Flex commutation **forces you to maintain MFA mandate**. **Your loss ratio stays
 
 **27. Discord Raid as Stress Test**
 A raid **proves your mod team works**. **You ban 1,000 bots in 10 minutes**. **You screenshot it**. **Investors see "battle-tested community."** **Valuation +$20M.**
+*⚠️ NOTE: Only document genuine security incidents. Never fabricate or exaggerate incidents for marketing purposes.*
 
 **28. IPFS Hosting as Censorship-Proofing**
 IPFS costs **$200/month** but **guarantees the ethics lab lives forever**. **When GitHub bans you, you tweet the IPFS hash**. **You become a legend.**
@@ -272,9 +288,10 @@ Each pillar comes with risks. Here's how to mitigate:
 
 ### Legal Risks
 - **Pillars 3, 16, 30, 44**: Retain specialized securities and tax counsel
-- **Pillar 6**: Use pseudonymous accounts; maintain plausible deniability
+- **Pillar 6**: **CRITICAL**: Deceptive practices (pseudonymous GPL seeding) may constitute fraud. Only use transparent competitive tactics. Consult legal counsel before any such actions.
 - **Pillar 9**: Ensure on-chain logs comply with evidence rules
-- **Pillar 10**: Pre-clear breach disclosure with privacy counsel
+- **Pillar 10**: **CRITICAL**: Breach disclosure must comply with all applicable laws (GDPR, state breach notification, etc.). Marketing considerations are secondary to legal compliance.
+- **Pillar 27**: Only document genuine incidents; fabrication may violate securities fraud laws if used in investor materials.
 
 ### Operational Risks
 - **Pillars 2, 39**: Test circuit breakers extensively; have manual override
