@@ -218,9 +218,9 @@ export function parseRangeValue(
 
   const str = String(value).trim();
 
-  // Try to parse as plain number first
+  // Try to parse as plain number first (but not if it looks like a range)
   const plainNumber = parseFloat(str);
-  if (!isNaN(plainNumber) && !str.includes('-') && !str.includes('+')) {
+  if (!isNaN(plainNumber) && !/\d\s*-\s*\d/.test(str)) {
     return { success: true, value: plainNumber };
   }
 
@@ -325,12 +325,21 @@ export function validateUrl(
       };
     }
 
-    // Check for localhost
-    if (!allowLocalhost && (url.hostname === 'localhost' || url.hostname === '127.0.0.1')) {
-      return {
-        success: false,
-        error: new ValidationError('Localhost URLs are not allowed'),
-      };
+    // Check for localhost (including IPv6 and 127.0.0.0/8 range)
+    if (!allowLocalhost) {
+      const hostname = url.hostname.toLowerCase();
+      if (
+        hostname === 'localhost' ||
+        hostname === '::1' ||
+        hostname.startsWith('127.') ||
+        hostname === '0.0.0.0' ||
+        hostname === '[::]'
+      ) {
+        return {
+          success: false,
+          error: new ValidationError('Localhost URLs are not allowed'),
+        };
+      }
     }
 
     // Check for private IP ranges (basic check)
@@ -338,7 +347,7 @@ export function validateUrl(
       const hostname = url.hostname;
       if (
         hostname.startsWith('10.') ||
-        hostname.startsWith('172.16.') ||
+        /^172\.(1[6-9]|2[0-9]|3[01])\./.test(hostname) || // 172.16.0.0/12
         hostname.startsWith('192.168.') ||
         hostname === '0.0.0.0' ||
         hostname.startsWith('169.254.')

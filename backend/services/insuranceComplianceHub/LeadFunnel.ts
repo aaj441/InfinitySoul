@@ -714,6 +714,8 @@ export class LeadFunnel {
       // Validate status exists in byStage before incrementing
       if (lead.status in byStage) {
         byStage[lead.status]++;
+      } else {
+        console.warn(`Invalid lead status encountered: ${lead.status} for lead ${lead.id}`);
       }
 
       if (lead.status === 'closed_won' && lead.actualValue) {
@@ -749,6 +751,7 @@ export class LeadFunnel {
         const stageIndex = stageOrder.indexOf(lead.status);
         // Guard against missing status (indexOf returns -1)
         if (stageIndex === -1) {
+          console.warn(`Invalid lead status in projected value calculation: ${lead.status} for lead ${lead.id}`);
           continue;
         }
         const conversionProbability = stageOrder
