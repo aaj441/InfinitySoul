@@ -21,6 +21,7 @@ import cyberAuditRouter from './routes/cyberAudit';
 import insuranceHubRouter from './routes/insuranceHub';
 import revenueAnalyticsRouter from './routes/revenueAnalytics';
 import croRouter from './routes/cro';
+import pricingRouter from './routes/pricing';
 import { enqueueScan, getJobStatus, getQueueStats, checkQueueHealth } from './services/queue';
 
 dotenv.config();
@@ -295,6 +296,7 @@ app.use('/api/cyber-audit', cyberAuditRouter);
 app.use('/api/insurance-hub', insuranceHubRouter);
 app.use('/api/analytics', revenueAnalyticsRouter);
 app.use('/api/cro', croRouter);
+app.use('/api/pricing', pricingRouter);
 
 // ============ HEALTH CHECK ============
 
