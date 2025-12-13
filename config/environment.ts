@@ -117,6 +117,11 @@ const envSchema = Joi.object({
     .optional()
     .description('OpenAI API key'),
 
+  // Music/Wellness Integration
+  LASTFM_API_KEY: Joi.string()
+    .optional()
+    .description('Last.fm API key for music data'),
+
   // Rate limiting
   RATE_LIMIT_WINDOW_MS: Joi.number()
     .default(60000)
@@ -166,6 +171,7 @@ export interface Config {
   PERPLEXITY_API_KEY?: string;
   ANTHROPIC_API_KEY?: string;
   OPENAI_API_KEY?: string;
+  LASTFM_API_KEY?: string;
   RATE_LIMIT_WINDOW_MS: number;
   RATE_LIMIT_MAX_REQUESTS: number;
   API_KEY?: string;
@@ -262,6 +268,7 @@ export const printConfig = () => {
   console.log('  Perplexity AI:', config.PERPLEXITY_API_KEY ? '✅ Configured' : '❌ Not configured');
   console.log('  Claude AI:', config.ANTHROPIC_API_KEY ? '✅ Configured' : '❌ Not configured');
   console.log('  OpenAI:', config.OPENAI_API_KEY ? '✅ Configured' : '❌ Not configured');
+  console.log('  Last.fm:', config.LASTFM_API_KEY ? '✅ Configured' : '❌ Not configured');
   console.log('  Database:', config.DATABASE_URL ? '✅ Connected' : '❌ Not configured');
   console.log('  Redis:', config.REDIS_URL ? '✅ Connected' : '❌ Not configured');
   console.log('');

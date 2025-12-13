@@ -18,6 +18,7 @@ import evidenceRouter from './routes/evidence';
 import automationRouter from './routes/automation';
 import acquisitionRouter from './routes/acquisition';
 import governanceRouter from './routes/governance';
+import wellnessRouter from './routes/wellness';
 import { enqueueScan, getJobStatus, getQueueStats, checkQueueHealth } from './services/queue';
 
 dotenv.config();
@@ -318,6 +319,7 @@ app.use('/api/evidence', evidenceRouter);
 app.use('/api/automation', automationRouter);
 app.use('/api/acquisition', acquisitionRouter);
 app.use('/api/governance', governanceRouter);
+app.use('/api/wellness', wellnessRouter);
 
 // ============ HEALTH CHECK ============
 
