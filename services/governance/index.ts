@@ -36,6 +36,7 @@ export * from './types';
 // Individual registers
 export { default as StoriesEngine, StandardAudiences } from './stories';
 export { default as FablesRegistry, CanonicalFables } from './fables';
+export { default as SonicFablesRegistry, SonicFables } from './sonic-fables';
 export { default as MythsInfrastructure, FoundationalMyths } from './myths';
 export { default as NumbersAuditSystem, CanonicalMetrics } from './numbers';
 
@@ -58,6 +59,15 @@ export {
   applyFable,
   generateTrainingScenarios
 } from './fables';
+
+export {
+  // Sonic Fables
+  getSonicFable,
+  getSonicFableByTitle,
+  getAllSonicFables,
+  matchSonicFables,
+  assessWithSonicFables
+} from './sonic-fables';
 
 export {
   // Myths
