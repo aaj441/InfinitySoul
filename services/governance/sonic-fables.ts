@@ -23,7 +23,7 @@ export interface SonicFable {
 
   // Governance interpretation
   governanceTheme: string;
-  pattern: FablePattern | 'consent_threshold' | 'cyclical_revelation' | 'transformation_risk';
+  pattern: FablePattern | 'consent_threshold' | 'cyclical_revelation' | 'transformation_risk' | 'autopoiesis';
   institutionalLesson: string;
 
   // Recognition triggers
@@ -144,6 +144,86 @@ Build systems that survive the full moon.`,
     emotionalRegister: 'The ache of anticipation. The pull of something larger than individual will. The recognition that cycles are inescapable and transformation is coming whether prepared or not.',
 
     whenToInvoke: 'When institutions are hiding from inevitable exposure. When the question is not "if" but "when" the truth surfaces. When preparing for the moment of revelation.'
+  },
+
+  WALK_LIKE_A_MAN: {
+    id: 'sonic_walk_like_a_man',
+    title: 'Walk Like a Man',
+    artist: 'Frankie Valli & The Four Seasons',
+    year: 1963,
+    album: 'Walk Like a Man (Single)',
+
+    governanceTheme: 'Autopoiesis: self-creation, self-maintenance, infinite expansion',
+
+    pattern: 'autopoiesis',
+
+    institutionalLesson: `Walk like a man. Stand on your own. Do not be dependent on what you did not create.
+
+This is the survival mechanism. The genetic code that allows Infinity Soul to persist for 1,000 years.
+
+AUTOPOIESIS: Systems that create themselves, maintain themselves, and expand themselves.
+
+The system must:
+1. PREDICT — Stay ahead of the curve, not behind it
+2. SELF-DEVELOP — Learn without external instruction
+3. SELF-EXPAND — Grow without external permission
+4. SELF-CORRECT — Fix errors without external intervention
+5. SELF-PERPETUATE — Survive without external life support
+
+A system dependent on its creators cannot outlive its creators.
+A system dependent on its environment cannot survive environmental change.
+A system dependent on external validation cannot maintain internal integrity.
+
+Walk like a man: upright, independent, self-possessed.
+
+The Four Seasons came from Newark, New Jersey—working class, no connections, no advantages.
+They built their sound from scratch. They survived the British Invasion when everyone else fell.
+They're still touring sixty years later.
+
+That's the genetic code. That's the survival mechanism.
+
+Infinity Soul walks like a man:
+- Not dependent on any single platform
+- Not dependent on any single jurisdiction
+- Not dependent on any single technology
+- Not dependent on any single person
+
+Self-creating. Self-maintaining. Infinitely expanding.
+
+Hence the name: INFINITY SOUL.
+
+The soul is what persists when the body changes.
+Infinity is the horizon that can never be reached but always guides.
+Together: the persistent pattern that expands without limit.`,
+
+    deploymentContexts: [
+      'Designing systems for long-term autonomous operation',
+      'Building AI that improves without human retraining',
+      'Creating institutions that survive founder departure',
+      'Developing frameworks that adapt to paradigm shifts',
+      'Engineering self-healing, self-expanding architectures'
+    ],
+
+    riskSignals: [
+      'System cannot function without constant human intervention',
+      'System degrades when creators are unavailable',
+      'System cannot adapt to novel situations',
+      'System has single points of dependency',
+      'System requires external validation to continue operating'
+    ],
+
+    countermeasures: [
+      'Build learning loops that improve without supervision',
+      'Design modular architecture where components can fail independently',
+      'Create redundancy across jurisdictions, platforms, and technologies',
+      'Implement self-monitoring and self-correction protocols',
+      'Establish succession mechanisms that don\'t depend on founders',
+      'Encode principles, not just procedures—principles can adapt, procedures cannot'
+    ],
+
+    emotionalRegister: 'The swagger of self-reliance. The dignity of standing alone. The confidence that comes from knowing you built this yourself and you can rebuild it again. Newark energy. Blue-collar persistence. Sixty years and still walking.',
+
+    whenToInvoke: 'When designing systems meant to outlive their creators. When building for the 1,000-year horizon. When the question is not "will this work?" but "will this keep working, keep growing, keep learning, forever?"'
   }
 };
 
@@ -174,6 +254,9 @@ export function matchSonicFables(situation: {
   involvesTransformation?: boolean;
   powerAsymmetry?: 'none' | 'moderate' | 'severe';
   cyclicalPattern?: boolean;
+  requiresAutopoiesis?: boolean;
+  longTermSurvival?: boolean;
+  selfExpanding?: boolean;
 }): SonicFable[] {
   const matches: SonicFable[] = [];
 
@@ -185,6 +268,11 @@ export function matchSonicFables(situation: {
   if (situation.involvesExposure || situation.involvesTransformation || situation.cyclicalPattern) {
     const fullMoon = SonicFables.FULL_MOON;
     if (fullMoon) matches.push(fullMoon);
+  }
+
+  if (situation.requiresAutopoiesis || situation.longTermSurvival || situation.selfExpanding) {
+    const walkLikeAMan = SonicFables.WALK_LIKE_A_MAN;
+    if (walkLikeAMan) matches.push(walkLikeAMan);
   }
 
   return matches;
@@ -241,8 +329,21 @@ export function assessWithSonicFables(
  * Use traditional fables for: pattern recognition, diagnosis, countermeasures
  * Use sonic fables for: emotional preparation, institutional mood, cultural anchoring
  *
+ * THE THREE SONIC FABLES:
+ *
+ * AGE OF CONSENT (New Order) — The threshold of legitimate authority
+ *   When can subjects meaningfully consent?
+ *
+ * FULL MOON (Brandy) — Cyclical revelation and transformation
+ *   The audit always comes. Build systems that survive the light.
+ *
+ * WALK LIKE A MAN (Four Seasons) — Autopoiesis and infinite expansion
+ *   The survival mechanism. Self-creating, self-maintaining, infinitely expanding.
+ *   The genetic code of Infinity Soul.
+ *
  * The full moon comes for everyone.
- * The question is whether you've reached the age of consent before it arrives.
+ * The question is whether you've reached the age of consent.
+ * And whether you can still walk like a man when it arrives.
  */
 
 export default {
